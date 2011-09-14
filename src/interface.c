@@ -4,7 +4,10 @@
 
 #include "interface.h"
 
-/* TODO: colored output */
+#define COLOR_GREEN      "[1;32m"
+#define COLOR_YELLOW     "[1;33m"
+#define COLOR_RED        "[1;31m"
+#define COLOR_OFF        "[0m"
 
 inline void get_input(char str[]) {
 	int c, i = 0;
@@ -20,7 +23,7 @@ void ok_printf(const char *fmt, ...) {
 	va_list args;
 
 	va_start(args, fmt);
-	fprintf(stderr, "[ok] ");
+	fprintf(stderr, "[" COLOR_GREEN "ok" COLOR_OFF "] ");
 	vfprintf(stderr, fmt, args);
 	va_end(args);
 	printf("\n");
@@ -30,7 +33,7 @@ void fail_printf(const char *fmt, ...) {
 	va_list args;
 
 	va_start(args, fmt);
-	fprintf(stderr, "[no] ");
+	fprintf(stderr,  "[" COLOR_RED "no" COLOR_OFF "] ");
 	vfprintf(stderr, fmt, args);
 	va_end(args);
 	printf("\n");
