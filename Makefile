@@ -5,12 +5,19 @@
 CFLAGS=-Wall -pedantic -g
 LDFLAGS=-ljansson -lgpgme
 
+PREFIX=$(DESTDIR)/usr
+
+BINDIR?=$(PREFIX)/bin
+
 OBJS=src/db.o src/gpg.o src/interface.o src/item.o src/main.o src/security.o
 
 all: safely
 
 safely: $(OBJS)
 	cc $(CFLAGS) -o safely $(OBJS) $(LDFLAGS)
+
+install:
+	$(INSTALL) -m 4755 -o 0 -g 0 $(BINDIR)/safely
 
 clean:
 	rm -rf safely src/*.o
