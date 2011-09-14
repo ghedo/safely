@@ -1,7 +1,10 @@
 #include <jansson.h>
 
 #include "db.h"
+#include "gpg.h"
 #include "interface.h"
+
+#define GPG_KEY "A4F455C3414B10563FCC9244AFA51BD6CDE573CB"
 
 db_t *db_load(const char *path) {
 	db_t *db;
@@ -29,14 +32,13 @@ db_t *db_load(const char *path) {
 
 	fclose(f);
 
-	/* TODO: decrypt data to json here */
-	/*json = data;*/
+	json = gpg_decrypt(data);
 
-	root = json_loads(data, 0, &error);
+	root = json_loads(json, 0, &error);
 	free(data);
+	free(json);
 
 	if (!root) fail_printf("JSON error on line %d: %s", error.line, error.text);
-
 
 	db = (void *) root;
 
@@ -51,15 +53,17 @@ const char *db_dump(db_t *db) {
 }
 
 void db_sync(db_t *db, const char *path) {
-	/* TODO: encrypt db_dump() before writing */
 	FILE *f = fopen(path, "w");
 	const char *dump = db_dump(db);
+	char *cipher = gpg_encrypt(dump, GPG_KEY);
 
 	if (f == NULL) fail_printf("Cannot open file '%s'", path);
 
-	fprintf(f, "%s", dump);
+	fprintf(f, "%s", cipher);
 	fclose(f);
+
 	free((void *) dump);
+	free(cipher);
 }
 
 void db_unload(db_t *db) {
