@@ -61,7 +61,7 @@ static void gpg_init(gpgme_protocol_t proto) {
 static gpgme_error_t passphrase_cb(void *opaque, const char *uid_hint,
 	const char *passphrase_info, int last_was_bad, int fd) {
 
-	char *pass;
+	char *pass = NULL;
 	int res, off = 0, passlen;
 
 	security_echo_off();
@@ -69,6 +69,8 @@ static gpgme_error_t passphrase_cb(void *opaque, const char *uid_hint,
 	get_input(pass);
 	security_echo_on();
 	putchar('\n');
+
+	if (pass = NULL) fail_printf("NULL password");
 
 	passlen = strlen(pass);
 
@@ -79,20 +81,6 @@ static gpgme_error_t passphrase_cb(void *opaque, const char *uid_hint,
 	} while (res > 0 && off != passlen);
 
 	return off == passlen ? 0 : gpgme_error_from_errno(errno);
-}
-
-static void gpg_print_data(gpgme_data_t dh) {
-	#define BUF_SIZE 512
-	char buf[BUF_SIZE + 1];
-	int ret;
-
-	ret = gpgme_data_seek(dh, 0, SEEK_SET);
-	if (ret) fail_printf("Failed GPG data seek");
-
-	while ((ret = gpgme_data_read(dh, buf, BUF_SIZE)) > 0)
-		fwrite(buf, ret, 1, stdout);
-
-	if (ret < 0) fail_printf("Failed GPG data read");
 }
 
 static char *gpg_data_to_char(gpgme_data_t dh) {
@@ -115,7 +103,6 @@ static char *gpg_data_to_char(gpgme_data_t dh) {
 }
 
 char *gpg_encrypt(const char *str, const char *keyfpr) {
-	int length;
 	char *agent_info;
 	char *return_buf = NULL;
 
