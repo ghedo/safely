@@ -28,12 +28,14 @@ static struct option long_options[] = {
 #define DB_FILE "safely.db"
 
 int main(int argc, char *argv[]) {
+	db_t *db;
+	char *db_path;
 	int opts, i = 0;
-	char *db_path = get_db_path();
 
-	/* TODO: security checks (e.g. no root, no ptrace, no core dumps, ...) */
+	security_check();
 
-	db_t *db = db_load(db_path);
+	db_path = get_db_path();
+	db = db_load(db_path);
 
 	opts = getopt_long(argc, argv, "asrld", long_options, &i);
 
