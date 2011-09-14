@@ -29,6 +29,16 @@ void ok_printf(const char *fmt, ...) {
 	printf("\n");
 }
 
+void debug_printf(const char *fmt, ...) {
+	va_list args;
+
+	va_start(args, fmt);
+	fprintf(stderr,  "[" COLOR_YELLOW "db" COLOR_OFF "] ");
+	vfprintf(stderr, fmt, args);
+	va_end(args);
+	printf("\n");
+}
+
 void fail_printf(const char *fmt, ...) {
 	va_list args;
 
