@@ -238,8 +238,8 @@ static inline char *get_db_path() {
 	if (path == NULL) {
 		char *home = getenv("HOME");
 
-		path = (char *) malloc((strlen(home) + strlen(DB_FILE) + 1) * sizeof(char));
-		sprintf(path, "%s/%s", home, DB_FILE);
+		path = (char *) malloc((strlen(home) + strlen(DB_FILE) + 1 + 1) * sizeof(char));
+		sprintf(path, "%s/.%s", home, DB_FILE);
 	}
 
 	return path;
