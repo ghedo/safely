@@ -37,6 +37,7 @@
 #include <unistd.h>
 #include <termios.h>
 
+#include <sys/mman.h>
 #include <sys/resource.h>
 
 #include "security.h"
@@ -47,19 +48,21 @@ static struct termios termset;
 static inline void security_check_root();
 static inline void security_check_core_dump();
 static inline void security_check_memlock();
+static inline void security_check_ptrace();
 static inline void security_check_stdinout();
 
 void security_check() {
 	security_check_root();
 	security_check_core_dump();
 	security_check_memlock();
+	security_check_ptrace();
 	security_check_stdinout();
 }
 
 static inline void security_check_root() {
 	const char *msg = "Running as non-root";
 
-	if (geteuid() && getegid() && getuid() && getgid())
+	if (getuid() && getgid())
 		ok_printf(msg);
 	else
 		fail_printf(msg);
@@ -79,14 +82,38 @@ static inline void security_check_core_dump() {
 }
 
 static inline void security_check_memlock() {
-	/* TODO: finish memlock check */
 	struct rlimit rl;
-	const char *msg = "memlock";
+	const char *msg = "Memory locked";
 
 	if (getrlimit(RLIMIT_MEMLOCK, &rl) < 0)
 		fail_printf("Can't get RLIMIT_MEMLOCK info");
 
+	if (!geteuid())
+		mlockall(MCL_CURRENT | MCL_FUTURE);
+
+
 	if (rl.rlim_cur == rl.rlim_max)
+		ok_printf(msg);
+	else
+		fail_printf(msg);
+}
+
+static inline void security_check_ptrace() {
+	int check = 0;
+	const char *msg = "Protection from ptrace()";
+
+	if (!geteuid()) {
+		/* drop root priviledges */
+		setuid(getuid());	setuid(getuid());
+		setgid(getgid());	setgid(getgid());
+
+		check = 1;
+	}
+
+	if (getuid() && !setuid(0))
+		check = 0;
+
+	if (check == 1)
 		ok_printf(msg);
 	else
 		fail_printf(msg);
@@ -104,8 +131,6 @@ static inline void security_check_stdinout() {
 	else
 		fail_printf(msg);
 }
-
-/* TODO: add no-ptrace check */
 
 void security_echo_on() {
 	tcsetattr(STDIN_FILENO, TCSANOW, &termset);
