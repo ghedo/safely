@@ -81,9 +81,8 @@ int main(int argc, char *argv[]) {
 		case 'u': { cmd_user(optarg);	break; }
 		case 'r': { cmd_remove(optarg);	break; }
 		case 'd': { cmd_dump();		break; }
+		default:
 		case 'h': { cmd_help();		break; }
-
-		default: { }
 	}
 
 	return 0;
