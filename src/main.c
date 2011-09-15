@@ -105,10 +105,11 @@ static inline void cmd_create() {
 	fclose(f);
 
 	db = db_create();
-	ok_printf("Database '%s' created", db_path);
 
 	db_sync(db, db_path);
 	db_unload(db);
+
+	ok_printf("Database '%s' created", db_path);
 
 	free(db_path);
 }
@@ -132,10 +133,11 @@ static inline void cmd_add(const char *arg) {
 	putchar('\n');
 
 	item_add(db, arg, usr, pwd);
-	ok_printf("Added new item");
 
 	db_sync(db, db_path);
 	db_unload(db);
+
+	ok_printf("Added new item");
 
 	free(db_path);
 }
@@ -153,7 +155,6 @@ static inline void cmd_passwd(const char *arg) {
 
 	puts(pwd);
 
-	db_sync(db, db_path);
 	db_unload(db);
 
 	free(db_path);
@@ -172,7 +173,6 @@ static inline void cmd_user(const char *arg) {
 
 	puts(usr);
 
-	db_sync(db, db_path);
 	db_unload(db);
 
 	free(db_path);
@@ -187,10 +187,11 @@ static inline void cmd_remove(const char *arg) {
 	db = db_load(db_path);
 
 	item_remove(db, arg);
-	ok_printf("Removed item");
 
 	db_sync(db, db_path);
 	db_unload(db);
+
+	ok_printf("Removed item");
 
 	free(db_path);
 }
@@ -209,7 +210,6 @@ static inline void cmd_dump(){
 	puts(dump);
 	free((void *) dump);
 
-	db_sync(db, db_path);
 	db_unload(db);
 
 	free(db_path);
