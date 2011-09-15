@@ -33,6 +33,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <regex.h>
 #include <jansson.h>
 
 #include "db.h"
@@ -84,6 +85,31 @@ const char *db_dump(db_t *db) {
 	const char *dump = json_dumps(root, JSON_PRESERVE_ORDER | JSON_INDENT(4) | JSON_SORT_KEYS);
 
 	return dump;
+}
+
+int db_search(db_t *db, const char *pattern) {
+	regex_t regex;
+	int status, count = 0;
+
+	const char *key;
+	json_t *root = (json_t *) db;
+	void *iter = json_object_iter(root);
+
+	regcomp(&regex, pattern, REG_EXTENDED);
+
+	while (iter) {
+		key = json_object_iter_key(iter);
+		status = regexec(&regex, key, 0, NULL, 0);
+
+		if (status == 0) {
+			printf("%s\n", key);
+			count++;
+		}
+
+		iter = json_object_iter_next(root, iter);
+	}
+
+	return count;
 }
 
 void db_sync(db_t *db, const char *path) {

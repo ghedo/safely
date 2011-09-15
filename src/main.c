@@ -38,6 +38,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include <regex.h>
 #include <getopt.h>
 
 #include "db.h"
@@ -50,6 +51,7 @@ static inline void cmd_add(const char *arg);
 static inline void cmd_passwd(const char *arg);
 static inline void cmd_user(const char *arg);
 static inline void cmd_remove(const char *arg);
+static inline void cmd_search(const char *arg);
 static inline void cmd_dump();
 static inline void cmd_help();
 
@@ -61,7 +63,7 @@ static struct option long_options[] = {
 	{"passwd",	required_argument,	0, 'p'},
 	{"user",	required_argument,	0, 'u'},
 	{"remove",	required_argument,	0, 'r'},
-	{"list",	no_argument,		0, 'l'},
+	{"search",	required_argument,	0, 's'},
 	{"dump",	no_argument,		0, 'd'},
 	{"help",	no_argument,		0, 'h'},
 	{0, 0, 0, 0}
@@ -72,7 +74,7 @@ static struct option long_options[] = {
 int main(int argc, char *argv[]) {
 	int opts, i = 0;
 
-	opts = getopt_long(argc, argv, "capurldh", long_options, &i);
+	opts = getopt_long(argc, argv, "capursdh", long_options, &i);
 
 	switch (opts) {
 		case 'c': { cmd_create();	break; }
@@ -80,6 +82,7 @@ int main(int argc, char *argv[]) {
 		case 'p': { cmd_passwd(optarg);	break; }
 		case 'u': { cmd_user(optarg);	break; }
 		case 'r': { cmd_remove(optarg);	break; }
+		case 's': { cmd_search(optarg);	break; }
 		case 'd': { cmd_dump();		break; }
 		default:
 		case 'h': { cmd_help();		break; }
@@ -196,6 +199,24 @@ static inline void cmd_remove(const char *arg) {
 	free(db_path);
 }
 
+static inline void cmd_search(const char *arg) {
+	int count = 0;
+	db_t *db; char *db_path;
+
+	security_check();
+
+	db_path = get_db_path();
+	db = db_load(db_path);
+
+	count = db_search(db, arg);
+
+	db_unload(db);
+
+	ok_printf("%d items match", count);
+
+	free(db_path);
+}
+
 static inline void cmd_dump(){
 	const char *dump;
 	db_t *db; char *db_path;
@@ -226,6 +247,7 @@ static inline void cmd_help() {
 	CMD_HELP("--passwd",	"Show given account's password");
 	CMD_HELP("--user",	"Show given account's username");
 	CMD_HELP("--remove",	"Remove given account");
+	CMD_HELP("--search",	"Search the given pattern");
 	CMD_HELP("--dump",	"Dump JSON database");
 	CMD_HELP("--help",	"Show this help");
 }
