@@ -1,5 +1,5 @@
 safely(1) -- secure and simple command-line password store
-===================================================
+==========================================================
 
 ## SYNOPSIS
 
@@ -18,26 +18,29 @@ and safely provides sane default values for them.
 
 ## COMMANDS ##
 
-`--create, -c`
+`--create`
 &nbsp;&nbsp;&nbsp;Create a new password db.
 
-`--add, -a`
-Add a new account.
+`--add`
+&nbsp;&nbsp;&nbsp;Add a new account.
 
-`--passwd, -p`
-Show given account's password.
+`--passwd`
+&nbsp;&nbsp;&nbsp;Show given account's password.
 
-`--user, -u`
-Show given account's username.
+`--user`
+&nbsp;&nbsp;&nbsp;Show given account's username.
 
-`--remove, -r`
-Remove given account.
+`--remove`
+&nbsp;&nbsp;&nbsp;Remove given account.
 
-`--dump, -d`
-Dump JSON database.
+`--search`
+&nbsp;&nbsp;&nbsp;Remove given account.
 
-`--help, -h`
-Show the help.
+`--dump`
+&nbsp;&nbsp;&nbsp;Dump JSON database.
+
+`--help`
+&nbsp;&nbsp;&nbsp;Show the help.
 
 ## ENVIRONMENT ##
 
