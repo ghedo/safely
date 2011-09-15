@@ -61,12 +61,22 @@ static void gpg_init(gpgme_protocol_t proto) {
 static gpgme_error_t passphrase_cb(void *opaque, const char *uid_hint,
 	const char *passphrase_info, int last_was_bad, int fd) {
 
-	char *pass = NULL;
+	int c, i = 0;
+	char pass[INPUT_MAX_SIZE];
 	int res, off = 0, passlen;
 
 	security_echo_off();
-	printf("Enter password for GPG key [%s]: ", "xxxx");
-	get_input(pass);
+	printf("Enter password for GPG key: ");
+
+	while ((c = fgetc(stdin)) && i < INPUT_MAX_SIZE) {
+		pass[i++] = c;
+
+		if (c == '\n')
+			break;
+	}
+
+	pass[i] = '\0';
+
 	security_echo_on();
 	putchar('\n');
 
@@ -238,7 +248,7 @@ char *gpg_decrypt_file(const char *path) {
 	err = gpgme_data_new(&out);
 	if (err) fail_printf("Failed GPG new data: %s", gpgme_strerror(err));
 
-	err = gpgme_op_decrypt_verify (ctx, in, out);
+	err = gpgme_op_decrypt_verify(ctx, in, out);
 	if(err) fail_printf("Failed GPG decrypt/verify: %s", gpgme_strerror(err));
 	decrypt_result = gpgme_op_decrypt_result (ctx);
 
