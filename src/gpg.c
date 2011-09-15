@@ -70,7 +70,7 @@ static gpgme_error_t passphrase_cb(void *opaque, const char *uid_hint,
 	security_echo_on();
 	putchar('\n');
 
-	if (pass = NULL) fail_printf("NULL password");
+	if (pass == NULL) fail_printf("NULL password");
 
 	passlen = strlen(pass);
 
