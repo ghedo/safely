@@ -70,8 +70,6 @@ static struct option long_options[] = {
 int main(int argc, char *argv[]) {
 	int opts, i = 0;
 
-	security_check();
-
 	opts = getopt_long(argc, argv, "capurld", long_options, &i);
 
 	switch (opts) {
@@ -89,9 +87,11 @@ int main(int argc, char *argv[]) {
 }
 
 static inline void cmd_create() {
-	FILE *f;
-	db_t *db;
-	char *db_path = get_db_path();
+	FILE *f; db_t *db; char *db_path;
+
+	security_check();
+
+	db_path = get_db_path();
 
 	if (access(db_path, F_OK | W_OK) != -1) {
 		fail_printf("DB file '%s' already exists", db_path);
@@ -111,8 +111,12 @@ static inline void cmd_create() {
 }
 
 static inline void cmd_add(const char *arg) {
-	char *db_path = get_db_path();
-	db_t *db = db_load(db_path);
+	db_t *db; char *db_path;
+
+	security_check();
+
+	db_path = get_db_path();
+	db = db_load(db_path);
 
 	char usr[INPUT_MAX_SIZE], pwd[INPUT_MAX_SIZE];
 
@@ -135,8 +139,12 @@ static inline void cmd_add(const char *arg) {
 }
 
 static inline void cmd_passwd(const char *arg) {
-	char *db_path = get_db_path();
-	db_t *db = db_load(db_path);
+	db_t *db; char *db_path;
+
+	security_check();
+
+	db_path = get_db_path();
+	db = db_load(db_path);
 
 	const char *pwd = item_get_pwd(db, arg);
 
@@ -149,8 +157,12 @@ static inline void cmd_passwd(const char *arg) {
 }
 
 static inline void cmd_user(const char *arg) {
-	char *db_path = get_db_path();
-	db_t *db = db_load(db_path);
+	db_t *db; char *db_path;
+
+	security_check();
+
+	db_path = get_db_path();
+	db = db_load(db_path);
 
 	const char *usr = item_get_usr(db, arg);
 
@@ -163,8 +175,12 @@ static inline void cmd_user(const char *arg) {
 }
 
 static inline void cmd_remove(const char *arg) {
-	char *db_path = get_db_path();
-	db_t *db = db_load(db_path);
+	db_t *db; char *db_path;
+
+	security_check();
+
+	db_path = get_db_path();
+	db = db_load(db_path);
 
 	item_remove(db, arg);
 	ok_printf("Removed item");
@@ -176,8 +192,12 @@ static inline void cmd_remove(const char *arg) {
 }
 
 static inline void cmd_dump(){
-	char *db_path = get_db_path();
-	db_t *db = db_load(db_path);
+	db_t *db; char *db_path;
+
+	security_check();
+
+	db_path = get_db_path();
+	db = db_load(db_path);
 
 	const char *dump = db_dump(db);
 
