@@ -61,7 +61,7 @@ void ok_printf(const char *fmt, ...) {
 	fprintf(stderr, "[" COLOR_GREEN "ok" COLOR_OFF "] ");
 	vfprintf(stderr, fmt, args);
 	va_end(args);
-	printf("\n");
+	fprintf(stderr, "\n");
 }
 
 void debug_printf(const char *fmt, ...) {
@@ -71,7 +71,7 @@ void debug_printf(const char *fmt, ...) {
 	fprintf(stderr,  "[" COLOR_YELLOW "db" COLOR_OFF "] ");
 	vfprintf(stderr, fmt, args);
 	va_end(args);
-	printf("\n");
+	fprintf(stderr, "\n");
 }
 
 void fail_printf(const char *fmt, ...) {
@@ -81,7 +81,7 @@ void fail_printf(const char *fmt, ...) {
 	fprintf(stderr,  "[" COLOR_RED "no" COLOR_OFF "] ");
 	vfprintf(stderr, fmt, args);
 	va_end(args);
-	printf("\n");
+	fprintf(stderr, "\n");
 
 	exit(-1);
 }
