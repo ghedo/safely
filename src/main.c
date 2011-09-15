@@ -51,6 +51,7 @@ static inline void cmd_passwd(const char *arg);
 static inline void cmd_user(const char *arg);
 static inline void cmd_remove(const char *arg);
 static inline void cmd_dump();
+static inline void cmd_help();
 
 static inline char *get_db_path();
 
@@ -62,6 +63,7 @@ static struct option long_options[] = {
 	{"remove",	required_argument,	0, 'r'},
 	{"list",	no_argument,		0, 'l'},
 	{"dump",	no_argument,		0, 'd'},
+	{"help",	no_argument,		0, 'h'},
 	{0, 0, 0, 0}
 };
 
@@ -70,7 +72,7 @@ static struct option long_options[] = {
 int main(int argc, char *argv[]) {
 	int opts, i = 0;
 
-	opts = getopt_long(argc, argv, "capurld", long_options, &i);
+	opts = getopt_long(argc, argv, "capurldh", long_options, &i);
 
 	switch (opts) {
 		case 'c': { cmd_create();	break; }
@@ -79,6 +81,7 @@ int main(int argc, char *argv[]) {
 		case 'u': { cmd_user(optarg);	break; }
 		case 'r': { cmd_remove(optarg);	break; }
 		case 'd': { cmd_dump();		break; }
+		case 'h': { cmd_help();		break; }
 
 		default: { }
 	}
@@ -210,6 +213,21 @@ static inline void cmd_dump(){
 	db_unload(db);
 
 	free(db_path);
+}
+
+static inline void cmd_help() {
+	#define CMD_HELP(CMDL, MSG) printf("\t%s   \t%s.\n", CMDL, MSG);
+
+	printf("  Usage:\n\tsafely [COMMAND] args...\n\n");
+	printf("  Commands:\n");
+
+	CMD_HELP("--create",	"Create a new password db");
+	CMD_HELP("--add",	"Add a new account");
+	CMD_HELP("--passwd",	"Show given account's password");
+	CMD_HELP("--user",	"Show given account's username");
+	CMD_HELP("--remove",	"Remove given account");
+	CMD_HELP("--dump",	"Dump JSON database");
+	CMD_HELP("--help",	"Show this help");
 }
 
 static inline char *get_db_path() {
