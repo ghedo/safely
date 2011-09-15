@@ -59,33 +59,13 @@ db_t *db_create() {
 db_t *db_load(const char *path) {
 	db_t *db;
 
-	char *data;
 	char *json;
 	json_t *root;
 	json_error_t error;
 
-	int size = 0;
-	FILE *f = fopen(path, "rb");
-
-	if (f == NULL) fail_printf("Cannot open file '%s'", path);
-
-	fseek(f, 0, SEEK_END);
-	size = ftell(f);
-	fseek(f, 0, SEEK_SET);
-
-	data = (char *) malloc(size + 1);
-
-	if (size != fread(data, sizeof(char), size, f)) {
-		free(data);
-		return NULL;
-	}
-
-	fclose(f);
-
-	json = gpg_decrypt(data);
+	json = gpg_decrypt_file(path);
 
 	root = json_loads(json, 0, &error);
-	free(data);
 	free(json);
 
 	if (!root) fail_printf("JSON error on line %d: %s", error.line, error.text);

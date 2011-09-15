@@ -210,3 +210,51 @@ char *gpg_decrypt(const char *cipher) {
 
 	return return_buf;
 }
+
+char *gpg_decrypt_file(const char *path) {
+	char *agent_info;
+	char *return_buf = NULL;
+
+	gpgme_ctx_t ctx;
+	gpgme_error_t err;
+	gpgme_data_t in, out;
+
+	gpgme_decrypt_result_t decrypt_result;
+	gpgme_verify_result_t verify_result;
+
+	gpg_init(GPGME_PROTOCOL_OpenPGP);
+
+	err = gpgme_new(&ctx);
+	if (err) fail_printf("Failed GPG new: %s", gpgme_strerror(err));
+
+	agent_info = getenv("GPG_AGENT_INFO");
+
+	if (!(agent_info && strchr(agent_info, ':')))
+		gpgme_set_passphrase_cb(ctx, passphrase_cb, NULL);
+
+	err = gpgme_data_new_from_file(&in, path, 1);
+	if (err) fail_printf("Failed GPG new data from file: %s", gpgme_strerror(err));
+
+	err = gpgme_data_new(&out);
+	if (err) fail_printf("Failed GPG new data: %s", gpgme_strerror(err));
+
+	err = gpgme_op_decrypt_verify (ctx, in, out);
+	if(err) fail_printf("Failed GPG decrypt/verify: %s", gpgme_strerror(err));
+	decrypt_result = gpgme_op_decrypt_result (ctx);
+
+	if (decrypt_result -> unsupported_algorithm)
+		fail_printf("Unsupported GPG algorithm: %s\n", decrypt_result -> unsupported_algorithm);
+
+	return_buf = gpg_data_to_char(out);
+
+	verify_result = gpgme_op_verify_result(ctx);
+
+	/* TODO: check verify_result */
+
+	gpgme_data_release(in);
+	gpgme_data_release(out);
+
+	gpgme_release(ctx);
+
+	return return_buf;
+}
