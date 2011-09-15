@@ -36,6 +36,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <getopt.h>
 
@@ -44,6 +45,7 @@
 #include "interface.h"
 #include "security.h"
 
+static inline void cmd_create();
 static inline void cmd_add(const char *arg);
 static inline void cmd_show(const char *arg);
 static inline void cmd_remove(const char *arg);
@@ -52,6 +54,7 @@ static inline void cmd_dump();
 static inline char *get_db_path();
 
 static struct option long_options[] = {
+	{"create",	no_argument,		0, 'c'},
 	{"add",		required_argument,	0, 'a'},
 	{"show",	required_argument,	0, 's'},
 	{"remove",	required_argument,	0, 'r'},
@@ -67,9 +70,10 @@ int main(int argc, char *argv[]) {
 
 	security_check();
 
-	opts = getopt_long(argc, argv, "asrld", long_options, &i);
+	opts = getopt_long(argc, argv, "casrld", long_options, &i);
 
 	switch (opts) {
+		case 'c': { cmd_create();	break; }
 		case 'a': { cmd_add(optarg);	break; }
 		case 's': { cmd_show(optarg);	break; }
 		case 'r': { cmd_remove(optarg);	break; }
@@ -79,6 +83,28 @@ int main(int argc, char *argv[]) {
 	}
 
 	return 0;
+}
+
+static inline void cmd_create() {
+	FILE *f;
+	db_t *db;
+	char *db_path = get_db_path();
+
+	if (access(db_path, F_OK | W_OK) != -1) {
+		fail_printf("DB file '%s' already exists", db_path);
+	}
+
+	f = fopen(db_path, "w");
+
+	if (f == NULL) fail_printf("Cannot open file '%s'", db_path);
+	fclose(f);
+
+	db = db_create();
+
+	db_sync(db, db_path);
+	db_unload(db);
+
+	free(db_path);
 }
 
 static inline void cmd_add(const char *arg) {

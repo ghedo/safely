@@ -41,6 +41,21 @@
 
 #define GPG_KEY "A4F455C3414B10563FCC9244AFA51BD6CDE573CB"
 
+db_t *db_create() {
+	db_t *db;
+
+	json_t *root;
+	json_error_t error;
+
+	root = json_object();
+
+	if (!root) fail_printf("JSON error on line %d: %s", error.line, error.text);
+
+	db = (void *) root;
+
+	return db;
+}
+
 db_t *db_load(const char *path) {
 	db_t *db;
 
@@ -89,12 +104,13 @@ const char *db_dump(db_t *db) {
 
 void db_sync(db_t *db, const char *path) {
 	FILE *f = fopen(path, "w");
-	const char *dump = db_dump(db);
+	json_t *root = (json_t *) db;
+	const char *dump = json_dumps(root, JSON_COMPACT);
 	char *cipher = gpg_encrypt(dump, GPG_KEY);
 
 	if (f == NULL) fail_printf("Cannot open file '%s'", path);
 
-	fprintf(f, "%s", cipher);
+	fprintf(f, "%s\n", cipher);
 	fclose(f);
 
 	free((void *) dump);

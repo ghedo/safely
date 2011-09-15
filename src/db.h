@@ -35,6 +35,7 @@
 
 typedef void db_t;
 
+extern db_t *db_create();
 extern db_t *db_load(const char *path);
 
 extern const char *db_dump(db_t *db);
