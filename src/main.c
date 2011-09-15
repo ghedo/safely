@@ -110,7 +110,7 @@ static inline void cmd_create() {
 	db = db_create();
 
 	db_sync(db, db_path);
-	db_unload(db);
+	db_unload(db, db_path);
 
 	ok_printf("Database '%s' created", db_path);
 
@@ -138,7 +138,7 @@ static inline void cmd_add(const char *arg) {
 	item_add(db, arg, usr, pwd);
 
 	db_sync(db, db_path);
-	db_unload(db);
+	db_unload(db, db_path);
 
 	ok_printf("Added new item");
 
@@ -158,7 +158,7 @@ static inline void cmd_passwd(const char *arg) {
 
 	puts(pwd);
 
-	db_unload(db);
+	db_unload(db, db_path);
 
 	free(db_path);
 }
@@ -176,7 +176,7 @@ static inline void cmd_user(const char *arg) {
 
 	puts(usr);
 
-	db_unload(db);
+	db_unload(db, db_path);
 
 	free(db_path);
 }
@@ -192,7 +192,7 @@ static inline void cmd_remove(const char *arg) {
 	item_remove(db, arg);
 
 	db_sync(db, db_path);
-	db_unload(db);
+	db_unload(db, db_path);
 
 	ok_printf("Removed item");
 
@@ -210,7 +210,7 @@ static inline void cmd_search(const char *arg) {
 
 	count = db_search(db, arg);
 
-	db_unload(db);
+	db_unload(db, db_path);
 
 	ok_printf("%d items match", count);
 
@@ -231,7 +231,7 @@ static inline void cmd_dump(){
 	puts(dump);
 	free((void *) dump);
 
-	db_unload(db);
+	db_unload(db, db_path);
 
 	free(db_path);
 }

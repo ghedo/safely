@@ -33,7 +33,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <errno.h>
 #include <regex.h>
+#include <string.h>
+#include <unistd.h>
+
 #include <jansson.h>
 
 #include "db.h"
@@ -59,13 +63,24 @@ db_t *db_create() {
 	return db;
 }
 
-/* TODO: implement db_lock() */
 db_t *db_load(const char *path) {
 	db_t *db;
+	FILE *lock_file;
+	char *lock_file_name, *json;
 
-	char *json;
 	json_t *root;
 	json_error_t error;
+
+	lock_file_name = malloc(strlen(path) + 5 + 1);
+	lock_file_name = strcpy(lock_file_name, path);
+	lock_file_name = strcat(lock_file_name, ".lock");
+
+	if (access(lock_file_name, F_OK) == 0)
+		fail_printf("Database locked: %s", strerror(errno));
+
+	lock_file = fopen(lock_file_name, "w");
+	fclose(lock_file);
+	free(lock_file_name);
 
 	json = gpg_decrypt_file(path);
 
@@ -128,8 +143,16 @@ void db_sync(db_t *db, const char *path) {
 	free(cipher);
 }
 
-void db_unload(db_t *db) {
+void db_unload(db_t *db, const char *path) {
+	char *lock_file_name;
 	json_t *root = (json_t *) db;
+
+	lock_file_name = malloc(strlen(path) + 5 + 1);
+	lock_file_name = strcpy(lock_file_name, path);
+	lock_file_name = strcat(lock_file_name, ".lock");
+
+	if (unlink(lock_file_name) < 0)
+		fail_printf("Can't remove lock %s: %s", lock_file_name, strerror(errno));
 
 	json_decref(root);
 }
