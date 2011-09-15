@@ -1,0 +1,65 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "SAFELY" "1" "September 2011" "" ""
+.
+.SH "NAME"
+\fBsafely\fR \- secure and simple command\-line password store
+.
+.SH "SYNOPSIS"
+\fBsafely [COMMAND] args\.\.\.\fR
+.
+.SH "DESCRIPTION"
+\fBsafely\fR is a command\-line based, tool to manage password in an extremely easy to use and secure way\. The passwords database is a simple GnuPG encrypted JSON document; this makes manual access and manipulation of the database very simple\.
+.
+.P
+safely\'s configuration is entirely handled via environment variables in order to avoid yet another dotfile under your $HOME\. Every config option is optional, and safely provides sane default values for them\.
+.
+.SH "COMMANDS"
+\fB\-\-create, \-c\fR \~\~\~Create a new password db\.
+.
+.P
+\fB\-\-add, \-a\fR Add a new account\.
+.
+.P
+\fB\-\-passwd, \-p\fR Show given account\'s password\.
+.
+.P
+\fB\-\-user, \-u\fR Show given account\'s username\.
+.
+.P
+\fB\-\-remove, \-r\fR Remove given account\.
+.
+.P
+\fB\-\-dump, \-d\fR Dump JSON database\.
+.
+.P
+\fB\-\-help, \-h\fR Show the help\.
+.
+.SH "ENVIRONMENT"
+The following environment variables affect safely behaviour:
+.
+.IP "\(bu" 4
+\fBSAFELY_DB\fR Specifies the path to the password database to be used by safely (default \fB~/\.safely\.db\fR)\.
+.
+.IP "" 0
+.
+.SH "BUGS"
+Please report any bugs or feature requests to GitHub issues tracker at \fB<http://github\.com/AlexBio/Safely/issues>\fR\.
+.
+.SH "SUPPORT"
+You can look for information at:
+.
+.IP "\(bu" 4
+GitHub repository \fB<http://github\.com/AlexBio/Safely>\fR
+.
+.IP "" 0
+.
+.SH "AUTHOR"
+Alessandro Ghedini \fIal3xbio@gmail\.com\fR
+.
+.SH "COPYRIGHT"
+Copyright (C) 2011 Alessandro Ghedini \fIal3xbio@gmail\.com\fR
+.
+.P
+This program is released under the BSD license (see \fBCOPYING\fR)\.
