@@ -107,6 +107,7 @@ static inline void cmd_create() {
 	fclose(f);
 
 	db = db_create();
+	ok_printf("Database '%s' created", db_path);
 
 	db_sync(db, db_path);
 	db_unload(db);
