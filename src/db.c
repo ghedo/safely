@@ -41,8 +41,6 @@
 #include "item.h"
 #include "interface.h"
 
-#define GPG_KEY "A4F455C3414B10563FCC9244AFA51BD6CDE573CB"
-
 db_t *db_create() {
 	db_t *db;
 
@@ -115,8 +113,9 @@ int db_search(db_t *db, const char *pattern) {
 void db_sync(db_t *db, const char *path) {
 	FILE *f = fopen(path, "w");
 	json_t *root = (json_t *) db;
+	char *key_fpr = gpg_get_keyfpr_first();
 	const char *dump = json_dumps(root, JSON_COMPACT);
-	char *cipher = gpg_encrypt(dump, GPG_KEY);
+	char *cipher = gpg_encrypt(dump, key_fpr);
 
 	if (f == NULL) fail_printf("Cannot open file '%s'", path);
 
@@ -124,6 +123,7 @@ void db_sync(db_t *db, const char *path) {
 	fclose(f);
 
 	free((void *) dump);
+	free(key_fpr);
 	free(cipher);
 }
 

@@ -45,8 +45,6 @@
 #include "interface.h"
 #include "security.h"
 
-/* TODO: implement gpg_get_keys() */
-
 static void gpg_init(gpgme_protocol_t proto) {
 	gpgme_error_t err;
 
@@ -264,6 +262,39 @@ char *gpg_decrypt_file(const char *path) {
 	gpgme_data_release(in);
 	gpgme_data_release(out);
 
+	gpgme_release(ctx);
+
+	return return_buf;
+}
+
+char *gpg_get_keyfpr_first() {
+	char *return_buf = NULL;
+
+	gpgme_ctx_t ctx;
+	gpgme_key_t key;
+	gpgme_error_t err;
+
+	gpg_init(GPGME_PROTOCOL_OpenPGP);
+
+	err = gpgme_new(&ctx);
+	if (err) fail_printf("Failed GPG new: %s", gpgme_strerror(err));
+
+	err = gpgme_op_keylist_start(ctx, NULL, 1);
+
+	while ((gpgme_op_keylist_next(ctx, &key) != GPG_ERR_EOF) && key) {
+		if (
+		   !key -> disabled	&&
+		   !key -> expired	&&
+		   !key -> invalid	&&
+		   !key -> revoked
+		) {
+			return_buf = strdup(key -> subkeys -> fpr);
+		}
+
+		gpgme_key_unref(key);
+	}
+
+	err = gpgme_op_keylist_end(ctx);
 	gpgme_release(ctx);
 
 	return return_buf;
