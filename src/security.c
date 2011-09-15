@@ -52,11 +52,13 @@ static inline void security_check_ptrace();
 static inline void security_check_stdinout();
 
 void security_check() {
+#ifndef DEBUG
 	security_check_root();
 	security_check_core_dump();
 	security_check_memlock();
 	security_check_ptrace();
 	security_check_stdinout();
+#endif
 }
 
 static inline void security_check_root() {

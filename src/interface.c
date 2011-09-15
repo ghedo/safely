@@ -47,7 +47,7 @@
 inline void get_input(char str[]) {
 	int c, i = 0;
 
-	while ((c = getchar())!= '\n' && c != EOF && i < INPUT_MAX_SIZE){
+	while ((c = fgetc(stdin)) != '\n' && c != EOF && i < INPUT_MAX_SIZE) {
 		str[i++] = c;
 	}
 
@@ -65,6 +65,7 @@ void ok_printf(const char *fmt, ...) {
 }
 
 void debug_printf(const char *fmt, ...) {
+#ifndef DEBUG
 	va_list args;
 
 	va_start(args, fmt);
@@ -72,6 +73,7 @@ void debug_printf(const char *fmt, ...) {
 	vfprintf(stderr, fmt, args);
 	va_end(args);
 	fprintf(stderr, "\n");
+#endif
 }
 
 void fail_printf(const char *fmt, ...) {
