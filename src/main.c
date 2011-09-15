@@ -47,7 +47,8 @@
 
 static inline void cmd_create();
 static inline void cmd_add(const char *arg);
-static inline void cmd_show(const char *arg);
+static inline void cmd_passwd(const char *arg);
+static inline void cmd_user(const char *arg);
 static inline void cmd_remove(const char *arg);
 static inline void cmd_dump();
 
@@ -56,7 +57,8 @@ static inline char *get_db_path();
 static struct option long_options[] = {
 	{"create",	no_argument,		0, 'c'},
 	{"add",		required_argument,	0, 'a'},
-	{"show",	required_argument,	0, 's'},
+	{"passwd",	required_argument,	0, 'p'},
+	{"user",	required_argument,	0, 'u'},
 	{"remove",	required_argument,	0, 'r'},
 	{"list",	no_argument,		0, 'l'},
 	{"dump",	no_argument,		0, 'd'},
@@ -70,12 +72,13 @@ int main(int argc, char *argv[]) {
 
 	security_check();
 
-	opts = getopt_long(argc, argv, "casrld", long_options, &i);
+	opts = getopt_long(argc, argv, "capurld", long_options, &i);
 
 	switch (opts) {
 		case 'c': { cmd_create();	break; }
 		case 'a': { cmd_add(optarg);	break; }
-		case 's': { cmd_show(optarg);	break; }
+		case 'p': { cmd_passwd(optarg);	break; }
+		case 'u': { cmd_user(optarg);	break; }
 		case 'r': { cmd_remove(optarg);	break; }
 		case 'd': { cmd_dump();		break; }
 
@@ -131,15 +134,27 @@ static inline void cmd_add(const char *arg) {
 	free(db_path);
 }
 
-static inline void cmd_show(const char *arg) {
+static inline void cmd_passwd(const char *arg) {
 	char *db_path = get_db_path();
 	db_t *db = db_load(db_path);
 
-	/* TODO: implement better show command */
-	const char *usr = item_get_usr(db, arg);
 	const char *pwd = item_get_pwd(db, arg);
 
-	ok_printf("user: %s, password: %s", usr, pwd);
+	puts(pwd);
+
+	db_sync(db, db_path);
+	db_unload(db);
+
+	free(db_path);
+}
+
+static inline void cmd_user(const char *arg) {
+	char *db_path = get_db_path();
+	db_t *db = db_load(db_path);
+
+	const char *usr = item_get_usr(db, arg);
+
+	puts(usr);
 
 	db_sync(db, db_path);
 	db_unload(db);
