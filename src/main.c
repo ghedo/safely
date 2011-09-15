@@ -112,13 +112,12 @@ static inline void cmd_create() {
 
 static inline void cmd_add(const char *arg) {
 	db_t *db; char *db_path;
+	char usr[INPUT_MAX_SIZE], pwd[INPUT_MAX_SIZE];
 
 	security_check();
 
 	db_path = get_db_path();
 	db = db_load(db_path);
-
-	char usr[INPUT_MAX_SIZE], pwd[INPUT_MAX_SIZE];
 
 	printf("Enter user name  [%s]: ", arg);
 	get_input(usr);
@@ -139,6 +138,7 @@ static inline void cmd_add(const char *arg) {
 }
 
 static inline void cmd_passwd(const char *arg) {
+	const char *pwd;
 	db_t *db; char *db_path;
 
 	security_check();
@@ -146,7 +146,7 @@ static inline void cmd_passwd(const char *arg) {
 	db_path = get_db_path();
 	db = db_load(db_path);
 
-	const char *pwd = item_get_pwd(db, arg);
+	pwd = item_get_pwd(db, arg);
 
 	puts(pwd);
 
@@ -157,6 +157,7 @@ static inline void cmd_passwd(const char *arg) {
 }
 
 static inline void cmd_user(const char *arg) {
+	const char *usr;
 	db_t *db; char *db_path;
 
 	security_check();
@@ -164,7 +165,7 @@ static inline void cmd_user(const char *arg) {
 	db_path = get_db_path();
 	db = db_load(db_path);
 
-	const char *usr = item_get_usr(db, arg);
+	usr = item_get_usr(db, arg);
 
 	puts(usr);
 
@@ -192,6 +193,7 @@ static inline void cmd_remove(const char *arg) {
 }
 
 static inline void cmd_dump(){
+	const char *dump;
 	db_t *db; char *db_path;
 
 	security_check();
@@ -199,7 +201,7 @@ static inline void cmd_dump(){
 	db_path = get_db_path();
 	db = db_load(db_path);
 
-	const char *dump = db_dump(db);
+	dump = db_dump(db);
 
 	puts(dump);
 	free((void *) dump);
