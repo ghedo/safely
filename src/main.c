@@ -89,7 +89,6 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
-/* FIXME: cmd_create() not working correctly (corrupted data after db_load()) */
 static inline void cmd_create() {
 	FILE *f; db_t *db; char *db_path;
 

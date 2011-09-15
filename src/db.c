@@ -37,6 +37,7 @@
 
 #include "db.h"
 #include "gpg.h"
+#include "item.h"
 #include "interface.h"
 
 #define GPG_KEY "A4F455C3414B10563FCC9244AFA51BD6CDE573CB"
@@ -52,6 +53,9 @@ db_t *db_create() {
 	if (!root) fail_printf("JSON error on line %d: %s", error.line, error.text);
 
 	db = (void *) root;
+
+	/* FIXME: properly solve data corruption */
+	item_add(db, "null", "", "");
 
 	return db;
 }
