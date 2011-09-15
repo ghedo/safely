@@ -120,7 +120,7 @@ char *gpg_encrypt(const char *str, const char *keyfpr) {
 
 	gpgme_key_t key[2] = { NULL, NULL };
 
-	gpgme_encrypt_result_t result;
+	gpgme_encrypt_result_t crypt_result;
 	gpgme_sign_result_t sign_result;
 
 	gpg_init(GPGME_PROTOCOL_OpenPGP);
@@ -147,16 +147,18 @@ char *gpg_encrypt(const char *str, const char *keyfpr) {
 	err = gpgme_op_encrypt_sign(ctx, key, GPGME_ENCRYPT_ALWAYS_TRUST, in, out);
 	if (err) fail_printf("Failed GPG encrypt/sign: %s", gpgme_strerror(err));
 
-	result = gpgme_op_encrypt_result(ctx);
+	crypt_result = gpgme_op_encrypt_result(ctx);
 
-	/* TODO: check result */
-
-	if (result -> invalid_recipients)
-		fail_printf("Invalid GPG recipient: %s\n", result -> invalid_recipients -> fpr);
+	if (crypt_result -> invalid_recipients)
+		fail_printf("Invalid GPG recipient: %s\n", crypt_result -> invalid_recipients -> fpr);
 
 	sign_result = gpgme_op_sign_result(ctx);
 
-	/* TODO: check sign_result */
+	if (sign_result -> invalid_signers)
+		fail_printf("Invalid signers: %s", sign_result -> invalid_signers -> fpr);
+
+	if (!sign_result -> signatures || sign_result -> signatures -> next)
+		fail_printf("Unexpected number of signatures created");
 
 	return_buf = gpg_data_to_char(out);
 
@@ -203,13 +205,17 @@ char *gpg_decrypt(const char *cipher) {
 	decrypt_result = gpgme_op_decrypt_result (ctx);
 
 	if (decrypt_result -> unsupported_algorithm)
+		fail_printf("Unsupported algorithm");
+
+	if (decrypt_result -> unsupported_algorithm)
 		fail_printf("Unsupported GPG algorithm: %s\n", decrypt_result -> unsupported_algorithm);
 
 	return_buf = gpg_data_to_char(out);
 
 	verify_result = gpgme_op_verify_result(ctx);
 
-	/* TODO: check verify_result */
+	if (gpg_err_code(verify_result -> signatures -> validity_reason) != GPG_ERR_NO_ERROR)
+		fail_printf("Unexpected validity reason: %i", verify_result -> signatures -> validity_reason);
 
 	gpgme_data_release(in);
 	gpgme_data_release(out);
@@ -257,7 +263,8 @@ char *gpg_decrypt_file(const char *path) {
 
 	verify_result = gpgme_op_verify_result(ctx);
 
-	/* TODO: check verify_result */
+	if (gpg_err_code(verify_result -> signatures -> validity_reason) != GPG_ERR_NO_ERROR)
+		fail_printf("Unexpected validity reason: %i", verify_result -> signatures -> validity_reason);
 
 	gpgme_data_release(in);
 	gpgme_data_release(out);

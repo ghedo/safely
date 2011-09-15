@@ -59,6 +59,7 @@ db_t *db_create() {
 	return db;
 }
 
+/* TODO: implement db_lock() */
 db_t *db_load(const char *path) {
 	db_t *db;
 
