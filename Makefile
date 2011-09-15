@@ -21,10 +21,13 @@ safely: $(OBJS)
 	$(CC) $(CFLAGS) -o safely $(OBJS) $(LDFLAGS)
 
 install:
-	$(INSTALL) -m 4755 -o 0 -g 0 ./safely $(BINDIR)/safely
+	$(INSTALL) -m 4755 -o 0 -g 0 safely $(BINDIR)/safely
+	gzip -9 --stdout < man/safely.1 > man/safely.1.gz
+	$(INSTALL) -m 0644 -o 0 -g 0 man/safely.1.gz $(MANDIR)/safely.1.gz
 
 clean:
 	$(RM) -rf safely src/*.o
+	$(RM) -rf man/safely.1.gz
 
 src/db.o: src/db.c \
 	src/db.h \
