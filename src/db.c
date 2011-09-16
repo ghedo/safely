@@ -33,6 +33,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <time.h>
 #include <errno.h>
 #include <regex.h>
 #include <string.h>
@@ -48,17 +49,13 @@
 db_t *db_create() {
 	db_t *db;
 
-	json_t *root;
 	json_error_t error;
+	json_t *root = json_object(),
+	       *accounts = json_object();
 
-	root = json_object();
-
-	if (!root) fail_printf("JSON error on line %d: %s", error.line, error.text);
+	json_object_set(root, "accounts", accounts);
 
 	db = (void *) root;
-
-	/* FIXME: properly solve data corruption */
-	item_add(db, "null", "", "");
 
 	return db;
 }
@@ -105,9 +102,11 @@ int db_search(db_t *db, const char *pattern) {
 	regex_t regex;
 	int status, count = 0;
 
+	void *iter;
 	const char *key;
-	json_t *root = (json_t *) db;
-	void *iter = json_object_iter(root);
+	json_t *root = (json_t *) db, *accounts = json_object_get(root, "accounts");
+
+	iter = json_object_iter(accounts);
 
 	regcomp(&regex, pattern, REG_EXTENDED);
 
@@ -120,7 +119,7 @@ int db_search(db_t *db, const char *pattern) {
 			count++;
 		}
 
-		iter = json_object_iter_next(root, iter);
+		iter = json_object_iter_next(accounts, iter);
 	}
 
 	return count;

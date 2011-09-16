@@ -33,6 +33,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <time.h>
+
 #include <jansson.h>
 
 #include "db.h"
@@ -40,32 +42,41 @@
 #include "interface.h"
 
 #define ITEM_USR_FIELD "user"
-#define ITEM_PWD_FIELD "pwd"
+#define ITEM_PWD_FIELD "pass"
+#define ITEM_DAT_FIELD "date"
 
 void item_add(db_t *db, const char *item, const char *usr, const char *pwd) {
-	json_t *root = (json_t *) db;
+	char *date = malloc(19);
+	json_t *new, *root = (json_t *) db,
+	       *accounts = json_object_get(root, "accounts");
 
-	json_t *new = json_pack(
-		"{ssss}",
+	time_t t = time(NULL);
+	struct tm *tmp = localtime(&t);
+
+	strftime(date, 18, "%Y-%m-%d %H:%M", tmp);
+
+	new = json_pack(
+		"{ssssss}",
 		ITEM_USR_FIELD, usr,
-		ITEM_PWD_FIELD, pwd
+		ITEM_PWD_FIELD, pwd,
+		ITEM_DAT_FIELD, date
 	);
 
-	json_object_set(root, item, new);
+	json_object_set(accounts, item, new);
 
 	json_decref(new);
+	free(date);
 }
 
 const char *item_get_fld(db_t *db, const char *item, const char *field) {
 	json_t *item_obj, *field_obj;
-	json_t *root = (json_t *) db;
+	json_t *root = (json_t *) db,
+	       *accounts = json_object_get(root, "accounts");
 
-	item_obj = json_object_get(root, item);
-
+	item_obj = json_object_get(accounts, item);
 	if (!json_is_object(item_obj)) fail_printf("Not a JSON object");
 
 	field_obj = json_object_get(item_obj, field);
-
 	if (!json_is_string(field_obj)) fail_printf("Not a JSON string");
 
 	return json_string_value(field_obj);
@@ -80,7 +91,8 @@ const char *item_get_pwd(db_t *db, const char *item) {
 }
 
 void item_remove(db_t *db, const char *item) {
-	json_t *root = (json_t *) db;
+	json_t *root = (json_t *) db,
+	       *accounts = json_object_get(root, "accounts");
 
-	json_object_del(root, item);
+	json_object_del(accounts, item);
 }
