@@ -74,7 +74,7 @@ static struct option long_options[] = {
 int main(int argc, char *argv[]) {
 	int opts, i = 0;
 
-	opts = getopt_long(argc, argv, "capursdh", long_options, &i);
+	opts = getopt_long(argc, argv, "ca:p:u:r:s:dh", long_options, &i);
 
 	switch (opts) {
 		case 'c': { cmd_create();	break; }
