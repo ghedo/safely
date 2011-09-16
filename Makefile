@@ -2,13 +2,15 @@
 # Copyright (C) 2011 Alessandro Ghedini <al3xbio@gmail.com>
 # This file is released under the BSD license, see the COPYING file
 
-INSTALL=install
 RM=rm
+RMDIR=rmdir
+MKDIR=mkdir
+INSTALL=install
 
 CFLAGS=-Wall -pedantic -O3
 LDFLAGS=-ljansson -lgpgme
 
-PREFIX=$(DESTDIR)/usr
+PREFIX=$(DESTDIR)/usr/local
 
 BINDIR?=$(PREFIX)/bin
 MANDIR?=$(PREFIX)/share/man/man1
@@ -21,9 +23,15 @@ safely: $(OBJS)
 	$(CC) $(CFLAGS) -o safely $(OBJS) $(LDFLAGS)
 
 install: all
+	mkdir -p $(BINDIR) $(MANDIR)
 	$(INSTALL) -m 4755 -o 0 -g 0 safely $(BINDIR)/safely
 	gzip -9 --stdout < man/safely.1 > man/safely.1.gz
 	$(INSTALL) -m 0644 -o 0 -g 0 man/safely.1.gz $(MANDIR)/safely.1.gz
+
+uninstall:
+	$(RM) -f $(BINDIR)/safely
+	$(RM) -f $(MANDIR)/safely.1.gz
+	$(RMDIR) --ignore-fail-on-non-empty $(BINDIR) $(MANDIR)
 
 clean:
 	$(RM) -rf safely src/*.o
