@@ -8,20 +8,20 @@ easy to use and secure way. The passwords database is a simple GnuPG encrypted
 JSON document; this makes manual access and manipulation of the database very
 simple.
 
-safely's configuration is entirely handled via environment variables in order
+Its configuration is entirely handled via environment variables in order
 to avoid yet another dotfile under your $HOME. Every config option is optional,
 and safely provides sane default values for them.
 
-It was implemented with the following "design goals" in mind:
+safely was implemented with the following "design goals" in mind:
 
- * Secure, GPG-based encryption (see next point)
  * Simple database format and schema (to ease manual manipulation)
+ * Secure, GPG-based encryption which allows manual decryption (see above)
  * Simple, command-line based and non interactive interface
  * Featureless ("do one thing, do it well")
 
 ## GETTING STARTED
 
-Create a new database:
+ * Create a new database:
 
 ~~~~
 $ safely --create
@@ -34,7 +34,7 @@ Enter password for GPG key:
 [ok] Database '/home/ale/.safely.db' created
 ~~~~
 
-Add a new account:
+ * Add a new account:
 
 ~~~~
 $ safely --add google.com
@@ -45,7 +45,7 @@ Enter password   [google.com]:
 [ok] Added new item
 ~~~~
 
-Show password/username of an account:
+ * Show password/username of an account:
 
 ~~~~
 $ safely --passwd google.com
@@ -53,14 +53,14 @@ $ safely --passwd google.com
 mygooglepassword
 ~~~~
 
-Save password to X clipboard:
+ * Save password to X clipboard:
 
 ~~~~
 $ safely --passwd google.com | xclip -loops 1
 [...]
 ~~~~
 
-Search accounts matching to a string:
+ * Search accounts matching to a string:
 
 ~~~~
 $ safely --search '.com'
@@ -71,7 +71,7 @@ google.com
 [ok] 3 items match
 ~~~~
 
-Remove account:
+ * Remove account:
 
 ~~~~
 $ safely --remove 'google.com'
