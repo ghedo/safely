@@ -55,8 +55,6 @@ static inline void cmd_search(const char *arg);
 static inline void cmd_dump();
 static inline void cmd_help();
 
-static inline char *get_db_path();
-
 static struct option long_options[] = {
 	{"create",	no_argument,		0, 'c'},
 	{"add",		required_argument,	0, 'a'},
@@ -68,8 +66,6 @@ static struct option long_options[] = {
 	{"help",	no_argument,		0, 'h'},
 	{0, 0, 0, 0}
 };
-
-#define DB_FILE "safely.db"
 
 int main(int argc, char *argv[]) {
 	int opts, i = 0;
@@ -92,39 +88,25 @@ int main(int argc, char *argv[]) {
 }
 
 static inline void cmd_create() {
-	FILE *f; db_t *db; char *db_path;
+	db_t *db;
 
 	security_check();
 
-	db_path = get_db_path();
-
-	if (access(db_path, F_OK | W_OK) != -1) {
-		fail_printf("DB file '%s' already exists", db_path);
-	}
-
-	f = fopen(db_path, "w");
-
-	if (f == NULL) fail_printf("Cannot open file '%s'", db_path);
-	fclose(f);
-
 	db = db_create();
 
-	db_sync(db, db_path);
-	db_unload(db, db_path);
+	db_sync(db);
+	db_unload(db);
 
-	ok_printf("Database '%s' created", db_path);
-
-	free(db_path);
+	ok_printf("New database created");
 }
 
 static inline void cmd_add(const char *arg) {
-	db_t *db; char *db_path;
+	db_t *db;
 	char usr[INPUT_MAX_SIZE], pwd[INPUT_MAX_SIZE];
 
 	security_check();
 
-	db_path = get_db_path();
-	db = db_load(db_path);
+	db = db_load();
 
 	printf("Enter user name  [%s]: ", arg);
 	get_input(usr);
@@ -137,103 +119,86 @@ static inline void cmd_add(const char *arg) {
 
 	item_add(db, arg, usr, pwd);
 
-	db_sync(db, db_path);
-	db_unload(db, db_path);
+	db_sync(db);
+	db_unload(db);
 
 	ok_printf("Added new item");
-
-	free(db_path);
 }
 
 static inline void cmd_passwd(const char *arg) {
+	db_t *db;
 	const char *pwd;
-	db_t *db; char *db_path;
 
 	security_check();
 
-	db_path = get_db_path();
-	db = db_load(db_path);
+	db = db_load();
 
 	pwd = item_get_pwd(db, arg);
 
 	puts(pwd);
 
-	db_unload(db, db_path);
-
-	free(db_path);
+	db_unload(db);
 }
 
 static inline void cmd_user(const char *arg) {
+	db_t *db;
 	const char *usr;
-	db_t *db; char *db_path;
 
 	security_check();
 
-	db_path = get_db_path();
-	db = db_load(db_path);
+	db = db_load();
 
 	usr = item_get_usr(db, arg);
 
 	puts(usr);
 
-	db_unload(db, db_path);
-
-	free(db_path);
+	db_unload(db);
 }
 
 static inline void cmd_remove(const char *arg) {
-	db_t *db; char *db_path;
+	db_t *db;
 
 	security_check();
 
-	db_path = get_db_path();
-	db = db_load(db_path);
+	db = db_load();
 
 	item_remove(db, arg);
 
-	db_sync(db, db_path);
-	db_unload(db, db_path);
+	db_sync(db);
+	db_unload(db);
 
 	ok_printf("Removed item");
-
-	free(db_path);
 }
 
 static inline void cmd_search(const char *arg) {
-	int count = 0;
-	db_t *db; char *db_path;
+	db_t *db;
+	unsigned int count = 0;
 
 	security_check();
 
-	db_path = get_db_path();
-	db = db_load(db_path);
+	db = db_load();
 
 	count = db_search(db, arg);
 
-	db_unload(db, db_path);
+	db_unload(db);
 
 	ok_printf("%d items match", count);
-
-	free(db_path);
 }
 
 static inline void cmd_dump(){
+	db_t *db;
 	const char *dump;
-	db_t *db; char *db_path;
 
 	security_check();
 
-	db_path = get_db_path();
-	db = db_load(db_path);
+	db = db_load();
 
 	dump = db_dump(db);
 
 	puts(dump);
 	free((void *) dump);
 
-	db_unload(db, db_path);
-
-	free(db_path);
+	db_unload(db);
 }
 
 static inline void cmd_help() {
@@ -250,17 +215,4 @@ static inline void cmd_help() {
 	CMD_HELP("--search",	"Search the given pattern");
 	CMD_HELP("--dump",	"Dump JSON database");
 	CMD_HELP("--help",	"Show this help");
-}
-
-static inline char *get_db_path() {
-	char *path = getenv("SAFELY_DB") != NULL ? strdup(getenv("SAFELY_DB")) : NULL;
-
-	if (path == NULL) {
-		char *home = getenv("HOME");
-
-		path = (char *) malloc((strlen(home) + strlen(DB_FILE) + 1 + 1) * sizeof(char));
-		sprintf(path, "%s/.%s", home, DB_FILE);
-	}
-
-	return path;
 }

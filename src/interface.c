@@ -37,6 +37,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
+#include "db.h"
 #include "interface.h"
 
 #define COLOR_GREEN      "[1;32m"
@@ -84,6 +85,9 @@ void fail_printf(const char *fmt, ...) {
 	vfprintf(stderr, fmt, args);
 	va_end(args);
 	fprintf(stderr, "\n");
+
+	/* FIXME: hackish way to not leave db lock around */
+	db_rm_lock();
 
 	exit(-1);
 }

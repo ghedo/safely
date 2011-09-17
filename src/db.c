@@ -46,31 +46,34 @@
 #include "item.h"
 #include "interface.h"
 
-db_t *db_create() {
-	db_t *db;
+#define DB_FILE "safely.db"
 
-	json_error_t error;
-	json_t *root = json_object(),
-	       *accounts = json_object();
+static char *db_get_path() {
+	char *db_file_name = getenv("SAFELY_DB") != NULL ? strdup(getenv("SAFELY_DB")) : NULL;
 
-	json_object_set(root, "accounts", accounts);
+	if (db_file_name == NULL) {
+		char *home = getenv("HOME");
 
-	db = (void *) root;
+		db_file_name = (char *) malloc((strlen(home) + strlen(DB_FILE) + 1 + 1) * sizeof(char));
+		sprintf(db_file_name, "%s/.%s", home, DB_FILE);
+	}
 
-	return db;
+	return db_file_name;
 }
 
-db_t *db_load(const char *path) {
-	db_t *db;
-	FILE *lock_file;
-	char *lock_file_name, *json;
+static char *db_lock_get_path() {
+	char *db_file_name = db_get_path();
+	char *lock_file_name = malloc(strlen(db_file_name) + 5 + 1);
 
-	json_t *root;
-	json_error_t error;
-
-	lock_file_name = malloc(strlen(path) + 5 + 1);
-	lock_file_name = strcpy(lock_file_name, path);
+	lock_file_name = strcpy(lock_file_name, db_file_name);
 	lock_file_name = strcat(lock_file_name, ".lock");
+
+	return lock_file_name;
+}
+
+void db_get_lock() {
+	FILE *lock_file;
+	char *lock_file_name = db_lock_get_path();
 
 	if (access(lock_file_name, F_OK) == 0)
 		fail_printf("Database locked: %s", strerror(errno));
@@ -78,8 +81,58 @@ db_t *db_load(const char *path) {
 	lock_file = fopen(lock_file_name, "w");
 	fclose(lock_file);
 	free(lock_file_name);
+}
 
-	json = gpg_decrypt_file(path);
+void db_rm_lock() {
+	char *lock_file_name = db_lock_get_path();
+
+	if (unlink(lock_file_name) < 0) {
+		free(lock_file_name);
+		fail_printf("Can't remove lock %s: %s", lock_file_name, strerror(errno));
+	}
+
+	free(lock_file_name);
+}
+
+db_t *db_create() {
+	db_t *db;
+	FILE *f;
+	char *db_path;
+
+	json_t *root = json_object(),
+	       *accounts = json_object();
+
+	db_get_lock();
+
+	json_object_set(root, "accounts", accounts);
+
+	db_path = db_get_path();
+
+	if (access(db_path, F_OK | W_OK) != -1) {
+		fail_printf("DB file '%s' already exists", db_path);
+	}
+
+	f = fopen(db_path, "w");
+
+	if (f == NULL) fail_printf("Cannot open file '%s'", db_path);
+	free(db_path);
+	fclose(f);
+
+	db = (void *) root;
+
+	return db;
+}
+
+db_t *db_load() {
+	db_t *db;
+	char *json, *db_path = db_get_path();
+
+	json_t *root;
+	json_error_t error;
+
+	db_get_lock();
+
+	json = gpg_decrypt_file(db_path);
 
 	root = json_loads(json, 0, &error);
 	free(json);
@@ -125,16 +178,23 @@ int db_search(db_t *db, const char *pattern) {
 	return count;
 }
 
-void db_sync(db_t *db, const char *path) {
-	FILE *f = fopen(path, "w");
+void db_sync(db_t *db) {
+	FILE *f;
 	json_t *root = (json_t *) db;
-	char *key_fpr = gpg_get_keyfpr_first();
-	const char *dump = json_dumps(root, JSON_COMPACT);
-	char *cipher = gpg_encrypt(dump, key_fpr);
+	char *db_path, *key_fpr, *cipher, *dump;
 
-	if (f == NULL) fail_printf("Cannot open file '%s'", path);
+	dump = json_dumps(root, JSON_COMPACT);
 
-	fprintf(f, "%s\n", cipher);
+	key_fpr = gpg_get_keyfpr_first();
+	cipher  = gpg_encrypt(dump, key_fpr);
+
+	db_path = db_get_path();
+	f = fopen(db_path, "w");
+	if (f == NULL) fail_printf("Cannot open file '%s'", db_path);
+
+	free(db_path);
+
+	fprintf(f, "%s", cipher);
 	fclose(f);
 
 	free((void *) dump);
@@ -142,16 +202,9 @@ void db_sync(db_t *db, const char *path) {
 	free(cipher);
 }
 
-void db_unload(db_t *db, const char *path) {
-	char *lock_file_name;
+void db_unload(db_t *db) {
 	json_t *root = (json_t *) db;
 
-	lock_file_name = malloc(strlen(path) + 5 + 1);
-	lock_file_name = strcpy(lock_file_name, path);
-	lock_file_name = strcat(lock_file_name, ".lock");
-
-	if (unlink(lock_file_name) < 0)
-		fail_printf("Can't remove lock %s: %s", lock_file_name, strerror(errno));
-
 	json_decref(root);
+	db_rm_lock();
 }

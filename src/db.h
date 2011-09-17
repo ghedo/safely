@@ -35,12 +35,15 @@
 
 typedef void db_t;
 
+extern void db_get_lock();
+extern void db_rm_lock();
+
 extern db_t *db_create();
-extern db_t *db_load(const char *path);
+extern db_t *db_load();
 
 extern const char *db_dump(db_t *db);
 
 extern int db_search(db_t *db, const char *pattern);
 
-extern void db_sync(db_t *db, const char *path);
-extern void db_unload(db_t *db, const char *path);
+extern void db_sync(db_t *db);
+extern void db_unload(db_t *db);
