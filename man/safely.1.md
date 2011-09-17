@@ -18,28 +18,28 @@ and safely provides sane default values for them.
 
 ## COMMANDS ##
 
-`--create`
+`--create, -c`
 &nbsp;&nbsp;&nbsp;Create a new password db.
 
-`--add`
+`--add, -a`
 &nbsp;&nbsp;&nbsp;Add a new account.
 
-`--passwd`
+`--passwd, -p`
 &nbsp;&nbsp;&nbsp;Show given account's password.
 
-`--user`
+`--user, -u`
 &nbsp;&nbsp;&nbsp;Show given account's username.
 
-`--remove`
+`--remove, -r`
 &nbsp;&nbsp;&nbsp;Remove given account.
 
-`--search`
+`--search, -s`
 &nbsp;&nbsp;&nbsp;Remove given account.
 
-`--dump`
+`--dump, -d`
 &nbsp;&nbsp;&nbsp;Dump JSON database.
 
-`--help`
+`--help, -h`
 &nbsp;&nbsp;&nbsp;Show the help.
 
 ## ENVIRONMENT ##

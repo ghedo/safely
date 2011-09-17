@@ -202,17 +202,17 @@ static inline void cmd_dump(){
 }
 
 static inline void cmd_help() {
-	#define CMD_HELP(CMDL, MSG) printf("\t%s   \t%s.\n", CMDL, MSG);
+	#define CMD_HELP(CMDL, CMDS, MSG) printf("\t%s, %s\t%s.\n", CMDL, CMDS, MSG);
 
 	printf("  Usage:\n\tsafely [COMMAND] args...\n\n");
 	printf("  Commands:\n");
 
-	CMD_HELP("--create",	"Create a new password db");
-	CMD_HELP("--add",	"Add a new account");
-	CMD_HELP("--passwd",	"Show given account's password");
-	CMD_HELP("--user",	"Show given account's username");
-	CMD_HELP("--remove",	"Remove given account");
-	CMD_HELP("--search",	"Search the given pattern");
-	CMD_HELP("--dump",	"Dump JSON database");
-	CMD_HELP("--help",	"Show this help");
+	CMD_HELP("--create", "-c",	"Create a new password db");
+	CMD_HELP("--add", "-a",		"Add a new account");
+	CMD_HELP("--passwd", "-p",	"Show given account's password");
+	CMD_HELP("--user", "-u",	"Show given account's username");
+	CMD_HELP("--remove", "-r",	"Remove given account");
+	CMD_HELP("--search", "-s",	"Search the given pattern");
+	CMD_HELP("--dump", "-d",	"Dump JSON database");
+	CMD_HELP("--help", "-h",	"Show this help");
 }
