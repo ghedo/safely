@@ -64,7 +64,7 @@ static gpgme_error_t passphrase_cb(void *opaque, const char *uid_hint,
 	int res, off = 0, passlen;
 
 	security_echo_off();
-	printf("Enter password for GPG key: ");
+	fprintf(stderr, "Enter password for GPG key: ");
 
 	while ((c = fgetc(stdin)) && i < INPUT_MAX_SIZE) {
 		pass[i++] = c;
@@ -76,7 +76,7 @@ static gpgme_error_t passphrase_cb(void *opaque, const char *uid_hint,
 	pass[i] = '\0';
 
 	security_echo_on();
-	putchar('\n');
+	fprintf(stderr, "\n");
 
 	if (pass == NULL) fail_printf("NULL password");
 
