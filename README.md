@@ -25,58 +25,36 @@ safely was implemented with the following "design goals" in mind:
 
 ~~~~
 $ safely --create
-[ok] Running as non-root
-[ok] Disabled core dumps
-[ok] Memory locked
-[ok] Protection from ptrace()
-[ok] Valid stdin, stdout, stderr
-Enter password for GPG key:
-[ok] Database '/home/ale/.safely.db' created
 ~~~~
 
  * Add a new account:
 
 ~~~~
 $ safely --add google.com
-[...]
-Enter user name  [google.com]: user
-Enter password   [google.com]:
-[...]
-[ok] Added new item
 ~~~~
 
- * Show password/username of an account:
+ * Show password of a given account:
 
 ~~~~
 $ safely --passwd google.com
-[...]
-mygooglepassword
 ~~~~
 
  * Save password to X clipboard:
 
 ~~~~
 $ safely --passwd google.com | xclip -loops 1
-[...]
 ~~~~
 
  * Search accounts matching to a string:
 
 ~~~~
 $ safely --search '.com'
-[...]
-instapaper.com
-github.com
-google.com
-[ok] 3 items match
 ~~~~
 
  * Remove account:
 
 ~~~~
 $ safely --remove 'google.com'
-[...]
-[ok] Removed item
 ~~~~
 
 ## SECURITY
@@ -90,7 +68,8 @@ safely checks, at startup, that the following conditions are true:
  * stdin, stdout, stderr are valid
 
 If any of them fails, safely refuses to work. Note that the ptrace() and memlock
-checks need to be run as euid 0 (mode 4755).
+checks need to be run as euid 0 (mode 4755). If `make install` is executed (with
+root priviledges) everything will be ok.
 
 ## DEPENDENCIES
 
