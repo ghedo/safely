@@ -46,14 +46,14 @@
 #define ITEM_DAT_FIELD "date"
 
 void item_add(db_t *db, const char *item, const char *usr, const char *pwd) {
-	char *date = malloc(19);
+	char *date = malloc(22);
 	json_t *new, *root = (json_t *) db,
 	       *accounts = json_object_get(root, "accounts");
 
 	time_t t = time(NULL);
 	struct tm *tmp = localtime(&t);
 
-	strftime(date, 18, "%Y-%m-%d %H:%M", tmp);
+	strftime(date, 21, "%Y-%m-%d %H:%M:%S", tmp);
 
 	new = json_pack(
 		"{ssssss}",
@@ -93,7 +93,7 @@ const char *item_get_pwd(db_t *db, const char *item) {
 void item_remove(db_t *db, const char *item) {
 	json_t *root = (json_t *) db,
 	       *accounts = json_object_get(root, "accounts");
-	
+
 	/* FIXME: for some reason this does not work, investigate */
 	if (!json_object_del(accounts, item)) fail_printf("Invalid object");
 }
