@@ -74,10 +74,10 @@ const char *item_get_fld(db_t *db, const char *item, const char *field) {
 	       *accounts = json_object_get(root, "accounts");
 
 	item_obj = json_object_get(accounts, item);
-	if (!json_is_object(item_obj)) fail_printf("Not a JSON object");
+	if (!json_is_object(item_obj)) fail_printf("Invalid object");
 
 	field_obj = json_object_get(item_obj, field);
-	if (!json_is_string(field_obj)) fail_printf("Not a JSON string");
+	if (!json_is_string(field_obj)) fail_printf("Invalid string");
 
 	return json_string_value(field_obj);
 }
@@ -93,6 +93,7 @@ const char *item_get_pwd(db_t *db, const char *item) {
 void item_remove(db_t *db, const char *item) {
 	json_t *root = (json_t *) db,
 	       *accounts = json_object_get(root, "accounts");
-
-	json_object_del(accounts, item);
+	
+	/* FIXME: for some reason this does not work, investigate */
+	if (!json_object_del(accounts, item)) fail_printf("Invalid object");
 }
