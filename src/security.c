@@ -45,62 +45,78 @@
 
 static struct termios termset;
 
-static inline void security_check_root();
-static inline void security_check_core_dump();
-static inline void security_check_memlock();
-static inline void security_check_ptrace();
-static inline void security_check_stdinout();
+static inline int security_check_root();
+static inline int security_check_core_dump();
+static inline int security_check_memlock();
+static inline int security_check_ptrace();
+static inline int security_check_stdinout();
+
+#define MAX_SCORE 5
 
 void security_check() {
 #ifndef DEBUG
-	security_check_root();
-	security_check_core_dump();
-	security_check_memlock();
-	security_check_ptrace();
-	security_check_stdinout();
+	int score = 0;
+
+	score += security_check_root();
+	score += security_check_core_dump();
+	score += security_check_memlock();
+	score += security_check_ptrace();
+	score += security_check_stdinout();
+
+	if (score < MAX_SCORE)
+		fail_printf("%d/%d security tests failed", (MAX_SCORE - score), MAX_SCORE);
 #endif
 }
 
-static inline void security_check_root() {
+static inline int security_check_root() {
 	const char *msg = "Running as non-root";
 
-	if (getuid() && getgid())
+	if (getuid() && getgid()) {
 		ok_printf(msg);
-	else
-		fail_printf(msg);
+		return 1;
+	} else {
+		err_printf(msg);
+		return 0;
+	}
 }
 
-static inline void security_check_core_dump() {
+static inline int security_check_core_dump() {
 	struct rlimit rl;
 	const char *msg = "Disabled core dumps";
 
 	if (getrlimit(RLIMIT_CORE, &rl) < 0)
 		fail_printf("Can't get RLIMIT_CORE info");
 
-	if (rl.rlim_cur == 0)
+	if (rl.rlim_cur == 0) {
 		ok_printf(msg);
-	else
-		fail_printf(msg);
+		return 1;
+	} else {
+		err_printf(msg);
+		return 0;
+	}
 }
 
-static inline void security_check_memlock() {
+static inline int security_check_memlock() {
 	struct rlimit rl;
 	const char *msg = "Memory locked";
 
 	if (getrlimit(RLIMIT_MEMLOCK, &rl) < 0)
-		fail_printf("Can't get RLIMIT_MEMLOCK info");
+		err_printf("Can't get RLIMIT_MEMLOCK info");
 
 	if (!geteuid())
 		mlockall(MCL_CURRENT | MCL_FUTURE);
 
 
-	if (rl.rlim_cur == rl.rlim_max)
+	if (rl.rlim_cur == rl.rlim_max) {
 		ok_printf(msg);
-	else
-		fail_printf(msg);
+		return 1;
+	} else {
+		err_printf(msg);
+		return 0;
+	}
 }
 
-static inline void security_check_ptrace() {
+static inline int security_check_ptrace() {
 	int check = 0;
 	const char *msg = "Protection from ptrace()";
 
@@ -115,23 +131,29 @@ static inline void security_check_ptrace() {
 	if (getuid() && !setuid(0))
 		check = 0;
 
-	if (check == 1)
+	if (check == 1) {
 		ok_printf(msg);
-	else
-		fail_printf(msg);
+		return 1;
+	} else {
+		err_printf(msg);
+		return 0;
+	}
 }
 
-static inline void security_check_stdinout() {
+static inline int security_check_stdinout() {
 	int check;
 	const char *msg = "Valid stdin, stdout, stderr";
 
 	check = dup(0);
 	close(check);
 
-	if (check == 3)
+	if (check == 3) {
 		ok_printf(msg);
-	else
-		fail_printf(msg);
+		return 1;
+	} else {
+		err_printf(msg);
+		return 0;
+	}
 }
 
 void security_echo_on() {
