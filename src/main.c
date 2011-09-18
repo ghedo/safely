@@ -190,7 +190,7 @@ static inline void cmd_search(const char *arg) {
 
 static inline void cmd_dump(){
 	db_t *db;
-	const char *dump;
+	char *dump;
 
 	security_check();
 
@@ -199,7 +199,7 @@ static inline void cmd_dump(){
 	dump = db_dump(db);
 
 	puts(dump);
-	free((void *) dump);
+	free(dump);
 
 	db_unload(db);
 }

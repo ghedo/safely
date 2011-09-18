@@ -41,7 +41,7 @@ extern void db_release_lock();
 extern db_t *db_create();
 extern db_t *db_load();
 
-extern const char *db_dump(db_t *db);
+extern char *db_dump(db_t *db);
 
 extern int db_search(db_t *db, const char *pattern);
 

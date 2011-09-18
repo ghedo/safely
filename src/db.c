@@ -149,9 +149,9 @@ db_t *db_load() {
 	return db;
 }
 
-const char *db_dump(db_t *db) {
+char *db_dump(db_t *db) {
 	json_t *root = (json_t *) db;
-	const char *dump = json_dumps(root, JSON_PRESERVE_ORDER | JSON_INDENT(4) | JSON_SORT_KEYS);
+	char *dump = json_dumps(root, JSON_PRESERVE_ORDER | JSON_INDENT(4) | JSON_SORT_KEYS);
 
 	return dump;
 }
