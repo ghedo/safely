@@ -69,7 +69,7 @@ safely checks, at startup, that the following conditions are true:
 
 If any of them fails, safely refuses to work. Note that the ptrace() and memlock
 checks need to be run as euid 0 (mode 4755). If `make install` is executed (with
-root priviledges) everything will be ok.
+root privileges) everything will be ok.
 
 ## DEPENDENCIES
 
