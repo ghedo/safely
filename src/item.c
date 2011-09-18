@@ -94,6 +94,5 @@ void item_remove(db_t *db, const char *item) {
 	json_t *root = (json_t *) db,
 	       *accounts = json_object_get(root, "accounts");
 
-	/* FIXME: for some reason this does not work, investigate */
-	if (!json_object_del(accounts, item)) fail_printf("Invalid object");
+	if (json_object_del(accounts, item)) fail_printf("Invalid object");
 }
