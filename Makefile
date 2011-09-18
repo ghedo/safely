@@ -10,12 +10,13 @@ INSTALL=install
 CFLAGS=-Wall -pedantic -O3
 LDFLAGS=-ljansson -lgpgme
 
-PREFIX=$(DESTDIR)/usr/local
-
-BINDIR?=$(PREFIX)/bin
-MANDIR?=$(PREFIX)/share/man/man1
+PREFIX?=/usr/local
+BINDIR?=$(DESTDIR)$(PREFIX)/bin
+MANDIR?=$(DESTDIR)$(PREFIX)/share/man/man1
 
 OBJS=src/db.o src/gpg.o src/interface.o src/item.o src/main.o src/security.o
+
+.PHONY: all install uninstall clean
 
 all: safely
 
@@ -31,7 +32,6 @@ install: all
 uninstall:
 	$(RM) -f $(BINDIR)/safely
 	$(RM) -f $(MANDIR)/safely.1.gz
-	$(RMDIR) --ignore-fail-on-non-empty $(BINDIR) $(MANDIR)
 
 clean:
 	$(RM) -rf safely src/*.o
@@ -57,3 +57,4 @@ src/main.o: src/main.c \
 src/security.o: src/security.c \
 	src/security.h \
 	src/interface.h
+
