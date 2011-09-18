@@ -48,13 +48,13 @@ $ safely --passwd google.com | xclip -loops 1
  * Search accounts matching to a string:
 
 ~~~~
-$ safely --search '.com'
+$ safely --search google
 ~~~~
 
  * Remove account:
 
 ~~~~
-$ safely --remove 'google.com'
+$ safely --remove google.com
 ~~~~
 
 ## SECURITY
@@ -62,7 +62,7 @@ $ safely --remove 'google.com'
 safely checks, at startup, that the following conditions are true:
 
  * Running as non-root
- * Core dump are disabled
+ * Core dumps are disabled
  * Memory is locked (via `mlockall()`)
  * ptrace() is not working
  * stdin, stdout, stderr are valid
