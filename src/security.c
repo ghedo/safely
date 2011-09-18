@@ -56,6 +56,7 @@ static inline int security_check_stdinout();
 void security_check() {
 #ifndef DEBUG
 	int score = 0;
+	int pedantic = getenv("SAFELY_NOSECURE") != NULL ? 0 : 1;
 
 	score += security_check_root();
 	score += security_check_core_dump();
@@ -64,7 +65,10 @@ void security_check() {
 	score += security_check_stdinout();
 
 	if (score < MAX_SCORE)
-		fail_printf("%d/%d security tests failed", (MAX_SCORE - score), MAX_SCORE);
+		if (pedantic == 1)
+			fail_printf("%d/%d security tests failed", (MAX_SCORE - score), MAX_SCORE);
+		else
+			err_printf("%d/%d security tests failed", (MAX_SCORE - score), MAX_SCORE);
 #endif
 }
 
