@@ -39,6 +39,9 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #include <jansson.h>
 
 #include "db.h"
@@ -107,6 +110,8 @@ db_t *db_create() {
 	json_object_set(root, "accounts", accounts);
 
 	db_path = db_get_path();
+
+	umask(066);
 
 	if (access(db_path, F_OK | W_OK) != -1) {
 		fail_printf("DB file '%s' already exists", db_path);
