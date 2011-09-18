@@ -35,8 +35,8 @@
 
 typedef void db_t;
 
-extern void db_get_lock();
-extern void db_rm_lock();
+extern void db_acquire_lock();
+extern void db_release_lock();
 
 extern db_t *db_create();
 extern db_t *db_load();

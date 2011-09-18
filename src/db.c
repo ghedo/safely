@@ -74,7 +74,7 @@ static char *db_lock_get_path() {
 	return lock_file_name;
 }
 
-void db_get_lock() {
+void db_acquire_lock() {
 	FILE *lock_file;
 	char *lock_file_name = db_lock_get_path();
 
@@ -86,7 +86,7 @@ void db_get_lock() {
 	free(lock_file_name);
 }
 
-void db_rm_lock() {
+void db_release_lock() {
 	char *lock_file_name = db_lock_get_path();
 
 	if (unlink(lock_file_name) < 0) {
@@ -105,7 +105,7 @@ db_t *db_create() {
 	json_t *root = json_object(),
 	       *accounts = json_object();
 
-	db_get_lock();
+	db_acquire_lock();
 
 	json_object_set(root, "accounts", accounts);
 
@@ -135,7 +135,7 @@ db_t *db_load() {
 	json_t *root;
 	json_error_t error;
 
-	db_get_lock();
+	db_acquire_lock();
 
 	json = gpg_decrypt_file(db_path);
 
@@ -211,5 +211,5 @@ void db_unload(db_t *db) {
 	json_t *root = (json_t *) db;
 
 	json_decref(root);
-	db_rm_lock();
+	db_release_lock();
 }

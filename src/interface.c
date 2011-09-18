@@ -87,7 +87,7 @@ void fail_printf(const char *fmt, ...) {
 	fprintf(stderr, "\n");
 
 	/* FIXME: hackish way to not leave db lock around */
-	db_rm_lock();
+	db_release_lock();
 
 	exit(-1);
 }
