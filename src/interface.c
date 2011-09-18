@@ -77,6 +77,16 @@ void debug_printf(const char *fmt, ...) {
 #endif
 }
 
+void err_printf(const char *fmt, ...) {
+	va_list args;
+
+	va_start(args, fmt);
+	fprintf(stderr,  "[" COLOR_RED "no" COLOR_OFF "] ");
+	vfprintf(stderr, fmt, args);
+	va_end(args);
+	fprintf(stderr, "\n");
+}
+
 void fail_printf(const char *fmt, ...) {
 	va_list args;
 
