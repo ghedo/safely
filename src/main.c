@@ -119,6 +119,9 @@ static inline void cmd_add(const char *arg) {
 
 	item_add(db, arg, usr, pwd);
 
+	memset(usr, 0, INPUT_MAX_SIZE);
+	memset(pwd, 0, INPUT_MAX_SIZE);
+
 	db_sync(db);
 	db_unload(db);
 

@@ -88,6 +88,8 @@ static gpgme_error_t passphrase_cb(void *opaque, const char *uid_hint,
 		if (res > 0) off += res;
 	} while (res > 0 && off != passlen);
 
+	memset(pass, 0, INPUT_MAX_SIZE);
+
 	return off == passlen ? 0 : gpgme_error_from_errno(errno);
 }
 
