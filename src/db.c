@@ -89,11 +89,13 @@ void db_acquire_lock() {
 void db_release_lock() {
 	char *lock_file_name = db_lock_get_path();
 
-	if (unlink(lock_file_name) < 0) {
-		free(lock_file_name);
-		fail_printf("Can't remove lock %s: %s", lock_file_name, strerror(errno));
-	}
+	if (access(lock_file_name, F_OK))
+		goto ret;
 
+	if (unlink(lock_file_name) < 0)
+		err_printf("Can't remove lock %s: %s", lock_file_name, strerror(errno));
+
+ret:
 	free(lock_file_name);
 }
 
