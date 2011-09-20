@@ -79,10 +79,10 @@ executed (with root privileges) everything will be ok.
 
 ## BUILDING
 
-Securely is distributed as source code. Install with:
+Safely is distributed as source code. Install with:
 
 ~~~~
-$ git clone git://github.com/AlexBio/Securely.git && cd Securely
+$ git clone git://github.com/AlexBio/Safely.git && cd Safely
 $ make
 # make install
 ~~~~

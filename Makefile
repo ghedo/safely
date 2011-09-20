@@ -1,4 +1,4 @@
-# Securely Makefile
+# Safely Makefile
 # Copyright (C) 2011 Alessandro Ghedini <al3xbio@gmail.com>
 # This file is released under the BSD license, see the COPYING file
 
