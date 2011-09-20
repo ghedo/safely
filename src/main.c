@@ -134,9 +134,8 @@ static inline void cmd_passwd(const char *arg) {
 
 	security_check();
 
-	db = db_load();
-
-	pwd = item_get_pwd(db, arg);
+	db	= db_load();
+	pwd	= item_get_pwd(db, arg);
 
 	puts(pwd);
 
@@ -149,9 +148,8 @@ static inline void cmd_user(const char *arg) {
 
 	security_check();
 
-	db = db_load();
-
-	usr = item_get_usr(db, arg);
+	db	= db_load();
+	usr	= item_get_usr(db, arg);
 
 	puts(usr);
 
@@ -179,9 +177,8 @@ static inline void cmd_search(const char *arg) {
 
 	security_check();
 
-	db = db_load();
-
-	count = db_search(db, arg);
+	db	= db_load();
+	count	= db_search(db, arg);
 
 	db_unload(db);
 
@@ -194,9 +191,8 @@ static inline void cmd_dump(){
 
 	security_check();
 
-	db = db_load();
-
-	dump = db_dump(db);
+	db	= db_load();
+	dump	= db_dump(db);
 
 	puts(dump);
 	free(dump);

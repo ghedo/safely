@@ -49,7 +49,7 @@
 #include "item.h"
 #include "interface.h"
 
-#define DB_FILE "safely.db"
+#define DB_FILE ".safely.db"
 
 static char *db_get_path() {
 	char *db_file_name = getenv("SAFELY_DB") != NULL ? strdup(getenv("SAFELY_DB")) : NULL;
@@ -57,19 +57,22 @@ static char *db_get_path() {
 	if (db_file_name == NULL) {
 		char *home = getenv("HOME");
 
-		db_file_name = (char *) malloc((strlen(home) + strlen(DB_FILE) + 1 + 1) * sizeof(char));
-		sprintf(db_file_name, "%s/.%s", home, DB_FILE);
+		db_file_name = malloc(strlen(home) + strlen(DB_FILE) + 2);
+		sprintf(db_file_name, "%s/%s", home, DB_FILE);
 	}
 
 	return db_file_name;
 }
 
 static char *db_lock_get_path() {
-	char *db_file_name = db_get_path();
-	char *lock_file_name = malloc(strlen(db_file_name) + 5 + 1);
+	char *db_file_name, *lock_file_name;
 
-	lock_file_name = strcpy(lock_file_name, db_file_name);
-	lock_file_name = strcat(lock_file_name, ".lock");
+	db_file_name = db_get_path();
+	lock_file_name = malloc(strlen(db_file_name) + 5 + 1);
+
+	sprintf(lock_file_name, "%s.lock", db_file_name);
+
+	free(db_file_name);
 
 	return lock_file_name;
 }
@@ -122,7 +125,6 @@ db_t *db_create() {
 	f = fopen(db_path, "w");
 
 	if (f == NULL) fail_printf("Cannot open file '%s'", db_path);
-	free(db_path);
 	fclose(f);
 
 	db = (void *) root;
@@ -132,16 +134,18 @@ db_t *db_create() {
 
 db_t *db_load() {
 	db_t *db;
-	char *json, *db_path = db_get_path();
+	char *json, *db_file_name;
 
 	json_t *root;
 	json_error_t error;
 
 	db_acquire_lock();
 
-	json = gpg_decrypt_file(db_path);
+	db_file_name	= db_get_path();
+	json		= gpg_decrypt_file(db_file_name);
+	root		= json_loads(json, 0, &error);
 
-	root = json_loads(json, 0, &error);
+	free(db_file_name);
 	free(json);
 
 	if (!root) fail_printf("JSON error on line %d: %s", error.line, error.text);
@@ -199,12 +203,11 @@ void db_sync(db_t *db) {
 	f = fopen(db_path, "w");
 	if (f == NULL) fail_printf("Cannot open file '%s'", db_path);
 
-	free(db_path);
-
 	fprintf(f, "%s", cipher);
 	fclose(f);
 
 	free((void *) dump);
+	free(db_path);
 	free(key_fpr);
 	free(cipher);
 }
