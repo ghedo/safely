@@ -115,6 +115,7 @@ static inline void cmd_add(const char *arg) {
 	char usr[INPUT_MAX_SIZE], pwd[INPUT_MAX_SIZE];
 
 	security_check();
+	db_make_backup();
 
 	db = db_load();
 
@@ -170,6 +171,7 @@ static inline void cmd_remove(const char *arg) {
 	db_t *db;
 
 	security_check();
+	db_make_backup();
 
 	db = db_load();
 

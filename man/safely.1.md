@@ -48,6 +48,7 @@ The following environment variables affect safely behaviour:
 
  * **SAFELY_DB** Specifies the path to the password database to be used by
    safely (default **~/.safely.db**).
+ * **SAFELY_NOBACKUP** If set, safely will not create a backup of the db.
  * **SAFELY_NOSECURE** If set, safely will still work if any of the security
    tests fails (use with caution).
 

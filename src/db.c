@@ -77,6 +77,40 @@ static char *db_lock_get_path() {
 	return lock_file_name;
 }
 
+static void db_make_backup() {
+	FILE *f1, *f2;
+	size_t db_size;
+	char *db_file_name, *bk_file_name, *buf;
+	int dobackup = getenv("SAFELY_NOBACKUP") != NULL ? 0 : 1;
+
+	if (dobackup == 0)
+		return;
+
+	db_file_name = db_get_path();
+	bk_file_name = malloc(strlen(db_file_name) + 2);
+
+	sprintf(bk_file_name, "%s~", db_file_name);
+
+	f1 = fopen(db_file_name, "rb");
+	f2 = fopen(bk_file_name, "wb");
+
+	fseek(f1, 0, SEEK_END);
+	db_size = ftell(f1);
+	fseek(f1, 0, SEEK_SET);
+
+	buf = malloc(db_size);
+
+	fread(buf, db_size, 1, f1);
+	fwrite(buf, db_size, 1, f2);
+
+	fclose(f1);
+	fclose(f2);
+
+	free(db_file_name);
+	free(bk_file_name);
+	free(buf);
+}
+
 void db_acquire_lock() {
 	FILE *lock_file;
 	char *lock_file_name = db_lock_get_path();
