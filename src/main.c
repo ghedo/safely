@@ -40,6 +40,7 @@
 
 #include <regex.h>
 #include <getopt.h>
+#include <signal.h>
 
 #include "db.h"
 #include "item.h"
@@ -54,6 +55,8 @@ static inline void cmd_remove(const char *arg);
 static inline void cmd_search(const char *arg);
 static inline void cmd_dump();
 static inline void cmd_help();
+
+static void leave(int signal);
 
 static struct option long_options[] = {
 	{"create",	no_argument,		0, 'c'},
@@ -70,6 +73,8 @@ static struct option long_options[] = {
 int main(int argc, char *argv[]) {
 	int opts, i = 0;
 
+	signal(SIGINT, leave);
+
 	opts = getopt_long(argc, argv, "ca:p:u:r:s:dh", long_options, &i);
 
 	switch (opts) {
@@ -85,6 +90,11 @@ int main(int argc, char *argv[]) {
 	}
 
 	return 0;
+}
+
+static void leave(int signal) {
+	fprintf(stderr, "\n");
+	fail_printf("Received SIGINT. Exiting...");
 }
 
 static inline void cmd_create() {
