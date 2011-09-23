@@ -45,5 +45,6 @@ extern char *db_dump(db_t *db);
 
 extern int db_search(db_t *db, const char *pattern);
 
+extern void db_make_backup();
 extern void db_sync(db_t *db);
 extern void db_unload(db_t *db);

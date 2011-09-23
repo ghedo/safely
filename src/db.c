@@ -77,7 +77,7 @@ static char *db_lock_get_path() {
 	return lock_file_name;
 }
 
-static void db_make_backup() {
+void db_make_backup() {
 	FILE *f1, *f2;
 	size_t db_size;
 	char *db_file_name, *bk_file_name, *buf;
