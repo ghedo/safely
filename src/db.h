@@ -38,6 +38,8 @@ typedef void db_t;
 extern void db_acquire_lock();
 extern void db_release_lock();
 
+extern void db_make_backup();
+
 extern db_t *db_create();
 extern db_t *db_load();
 
@@ -45,6 +47,5 @@ extern char *db_dump(db_t *db);
 
 extern int db_search(db_t *db, const char *pattern);
 
-extern void db_make_backup();
 extern void db_sync(db_t *db);
 extern void db_unload(db_t *db);
