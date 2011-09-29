@@ -23,27 +23,39 @@ safely was implemented with the following "design goals" in mind:
 
  * Create a new database:
 
-    $ safely --create
+~~~~
+$ safely --create
+~~~~
 
  * Add a new account:
 
-    $ safely --add google.com
+~~~~
+$ safely --add google.com
+~~~~
 
  * Show password of a given account:
 
-    $ safely --passwd google.com
+~~~~
+$ safely --passwd google.com
+~~~~
 
  * Save password to X clipboard:
 
-    $ safely --passwd google.com | xclip -loops 1
+~~~~
+$ safely --passwd google.com | xclip -loops 1
+~~~~
 
  * Search accounts matching to a string:
 
-    $ safely --search google
+~~~~
+$ safely --search google
+~~~~
 
  * Remove account:
 
-    $ safely --remove google.com
+~~~~
+$ safely --remove google.com
+~~~~
 
 ## SECURITY
 
