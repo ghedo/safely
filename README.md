@@ -23,39 +23,27 @@ safely was implemented with the following "design goals" in mind:
 
  * Create a new database:
 
-~~~~
-$ safely --create
-~~~~
+    $ safely --create
 
  * Add a new account:
 
-~~~~
-$ safely --add google.com
-~~~~
+    $ safely --add google.com
 
  * Show password of a given account:
 
-~~~~
-$ safely --passwd google.com
-~~~~
+    $ safely --passwd google.com
 
  * Save password to X clipboard:
 
-~~~~
-$ safely --passwd google.com | xclip -loops 1
-~~~~
+    $ safely --passwd google.com | xclip -loops 1
 
  * Search accounts matching to a string:
 
-~~~~
-$ safely --search google
-~~~~
+    $ safely --search google
 
  * Remove account:
 
-~~~~
-$ safely --remove google.com
-~~~~
+    $ safely --remove google.com
 
 ## SECURITY
 
@@ -64,13 +52,13 @@ safely checks, at startup, that the following conditions are true:
  * Running as non-root
  * Core dumps are disabled
  * Memory is locked (via `mlockall()`)
- * ptrace() is not working
+ * `ptrace()` is disable
  * stdin, stdout, stderr are valid
 
 If any of them fails, safely refuses to work, unless the **SAFELY_NOSECURE**
-env variable is set (see the manpage for more info). Note that the ptrace() and
-memlock checks need to be run as euid 0 (mode 4755). If `make install` is
-executed (with root privileges) everything will be ok.
+variable is set (see the manpage for more info). Note that the ptrace and
+memlock checks need to be run as euid 0 (mode 4755) to pass; if `make 
+install` is executed (with root privileges) everything should be ok.
 
 ## DEPENDENCIES
 
