@@ -3,16 +3,16 @@ Safely
 
 ![status](http://stillmaintained.com/AlexBio/Safely.png)
 
-**safely** is a command-line based, tool to manage password in an extremely
-easy to use and secure way. The passwords database is a simple GnuPG encrypted
-JSON document; this makes manual access and manipulation of the database very
-simple.
+**safely** is a command-line tool to manage passwords in an extremely easy
+to use and secure way. The password database is a simple GnuPG encrypted
+JSON document; this makes manual access and manipulation of the database
+very simple.
 
 Its configuration is entirely handled via environment variables in order
-to avoid yet another dotfile under your $HOME. Every config option is optional,
-and safely provides sane default values for them.
+to avoid yet another dotfile under your $HOME. Every configuration option
+is optional, and safely provides sane default values for them.
 
-safely was implemented with the following "design goals" in mind:
+safely was implemented with the following design goals in mind:
 
  * Simple database format and schema (to ease manual manipulation)
  * Secure, GPG-based encryption which allows manual decryption (see above)
