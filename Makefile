@@ -7,7 +7,7 @@ RMDIR=rmdir
 MKDIR=mkdir
 INSTALL=install
 
-CFLAGS+=-Wall -pedantic -O3
+CFLAGS+=-Wall -pedantic -O3 -fPIE
 LDFLAGS=-ljansson -lgpgme
 
 PREFIX?=/usr/local
