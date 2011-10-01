@@ -64,11 +64,13 @@ void security_check() {
 	score += security_check_ptrace();
 	score += security_check_stdinout();
 
-	if (score < MAX_SCORE)
-		if (pedantic == 1)
+	if (score < MAX_SCORE) {
+		if (pedantic == 1) {
 			fail_printf("%d/%d security tests failed", (MAX_SCORE - score), MAX_SCORE);
-		else
+		} else {
 			err_printf("%d/%d security tests failed", (MAX_SCORE - score), MAX_SCORE);
+		}
+	}
 #endif
 }
 
