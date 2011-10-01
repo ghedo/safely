@@ -175,13 +175,13 @@ char *gpg_encrypt(const char *str, const char *keyfpr) {
 	return return_buf;
 }
 
-char *gpg_decrypt(const char *cipher) {
+char *gpg_decrypt_data(gpgme_data_t in) {
 	char *agent_info;
 	char *return_buf = NULL;
 
 	gpgme_ctx_t ctx;
 	gpgme_error_t err;
-	gpgme_data_t in, out;
+	gpgme_data_t out;
 
 	gpgme_decrypt_result_t decrypt_result;
 	gpgme_verify_result_t verify_result;
@@ -195,9 +195,6 @@ char *gpg_decrypt(const char *cipher) {
 
 	if (!(agent_info && strchr(agent_info, ':')))
 		gpgme_set_passphrase_cb(ctx, passphrase_cb, NULL);
-
-	err = gpgme_data_new_from_mem(&in, cipher, strlen(cipher), 0);
-	if (err) fail_printf("Failed GPG new data from mem: %s", gpgme_strerror(err));
 
 	err = gpgme_data_new(&out);
 	if (err) fail_printf("Failed GPG new data: %s", gpgme_strerror(err));
@@ -227,53 +224,24 @@ char *gpg_decrypt(const char *cipher) {
 	return return_buf;
 }
 
-char *gpg_decrypt_file(const char *path) {
-	char *agent_info;
-	char *return_buf = NULL;
-
-	gpgme_ctx_t ctx;
+char *gpg_decrypt(const char *cipher) {
+	gpgme_data_t in;
 	gpgme_error_t err;
-	gpgme_data_t in, out;
 
-	gpgme_decrypt_result_t decrypt_result;
-	gpgme_verify_result_t verify_result;
+	err = gpgme_data_new_from_mem(&in, cipher, strlen(cipher), 0);
+	if (err) fail_printf("Failed GPG new data from mem: %s", gpgme_strerror(err));
 
-	gpg_init(GPGME_PROTOCOL_OpenPGP);
+	return gpg_decrypt_data(in);
+}
 
-	err = gpgme_new(&ctx);
-	if (err) fail_printf("Failed GPG new: %s", gpgme_strerror(err));
-
-	agent_info = getenv("GPG_AGENT_INFO");
-
-	if (!(agent_info && strchr(agent_info, ':')))
-		gpgme_set_passphrase_cb(ctx, passphrase_cb, NULL);
+char *gpg_decrypt_file(const char *path) {
+	gpgme_data_t in;
+	gpgme_error_t err;
 
 	err = gpgme_data_new_from_file(&in, path, 1);
 	if (err) fail_printf("Failed GPG new data from file: %s", gpgme_strerror(err));
 
-	err = gpgme_data_new(&out);
-	if (err) fail_printf("Failed GPG new data: %s", gpgme_strerror(err));
-
-	err = gpgme_op_decrypt_verify(ctx, in, out);
-	if(err) fail_printf("Failed GPG decrypt/verify: %s", gpgme_strerror(err));
-	decrypt_result = gpgme_op_decrypt_result (ctx);
-
-	if (decrypt_result -> unsupported_algorithm)
-		fail_printf("Unsupported GPG algorithm: %s\n", decrypt_result -> unsupported_algorithm);
-
-	return_buf = gpg_data_to_char(out);
-
-	verify_result = gpgme_op_verify_result(ctx);
-
-	if (gpg_err_code(verify_result -> signatures -> validity_reason) != GPG_ERR_NO_ERROR)
-		fail_printf("Unexpected validity reason: %i", verify_result -> signatures -> validity_reason);
-
-	gpgme_data_release(in);
-	gpgme_data_release(out);
-
-	gpgme_release(ctx);
-
-	return return_buf;
+	return gpg_decrypt_data(in);
 }
 
 char *gpg_get_keyfpr_first() {
