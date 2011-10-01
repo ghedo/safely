@@ -194,7 +194,7 @@ static inline void cmd_search(const char *arg) {
 
 	db_unload(db);
 
-	ok_printf("%d items match", count);
+	ok_printf((count == 1 ? "%d item matches" : "%d items match"), count);
 }
 
 static inline void cmd_dump(){
