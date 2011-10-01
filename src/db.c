@@ -52,7 +52,8 @@
 #define DB_FILE ".safely.db"
 
 static char *db_get_path() {
-	char *db_file_name = getenv("SAFELY_DB") != NULL ? strdup(getenv("SAFELY_DB")) : NULL;
+	char *db_file_name = getenv("SAFELY_DB") != NULL ?
+			     strdup(getenv("SAFELY_DB")) : NULL;
 
 	if (db_file_name == NULL) {
 		char *home = getenv("HOME");
@@ -202,7 +203,8 @@ int db_search(db_t *db, const char *pattern) {
 
 	void *iter;
 	const char *key;
-	json_t *root = (json_t *) db, *accounts = json_object_get(root, "accounts");
+	json_t *root = (json_t *) db,
+	       *accounts = json_object_get(root, "accounts");
 
 	iter = json_object_iter(accounts);
 

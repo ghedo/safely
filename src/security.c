@@ -55,8 +55,8 @@ static inline int security_check_stdinout();
 
 void security_check() {
 #ifndef DEBUG
-	int score = 0;
-	int pedantic = getenv("SAFELY_NOSECURE") != NULL ? 0 : 1;
+	unsigned int pedantic = getenv("SAFELY_NOSECURE") != NULL ? 0 : 1,
+		     score = 0;
 
 	score += security_check_root();
 	score += security_check_core_dump();
@@ -123,7 +123,7 @@ static inline int security_check_memlock() {
 }
 
 static inline int security_check_ptrace() {
-	int check = 0;
+	unsigned int check = 0;
 	const char *msg = "Protection from ptrace()";
 
 	if (!geteuid()) {
@@ -147,7 +147,7 @@ static inline int security_check_ptrace() {
 }
 
 static inline int security_check_stdinout() {
-	int check;
+	unsigned int check;
 	const char *msg = "Valid stdin, stdout, stderr";
 
 	check = dup(0);

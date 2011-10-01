@@ -57,11 +57,10 @@ static void gpg_init(gpgme_protocol_t proto) {
 }
 
 static gpgme_error_t passphrase_cb(void *opaque, const char *uid_hint,
-	const char *passphrase_info, int last_was_bad, int fd) {
+			const char *passphrase_info, int last_was_bad, int fd) {
 
-	int c, i = 0;
 	char pass[INPUT_MAX_SIZE];
-	int res, off = 0, passlen;
+	int c, i = 0, res, off = 0, passlen;
 
 	security_echo_off();
 	fprintf(stderr, "Enter password for GPG key: ");
@@ -116,9 +115,9 @@ char *gpg_encrypt(const char *str, const char *keyfpr) {
 	char *agent_info;
 	char *return_buf = NULL;
 
-	gpgme_ctx_t ctx;
-	gpgme_error_t err;
-	gpgme_data_t in, out;
+	gpgme_ctx_t	ctx;
+	gpgme_error_t	err;
+	gpgme_data_t	in, out;
 
 	gpgme_key_t key[2] = { NULL, NULL };
 
@@ -179,9 +178,9 @@ char *gpg_decrypt_data(gpgme_data_t in) {
 	char *agent_info;
 	char *return_buf = NULL;
 
-	gpgme_ctx_t ctx;
-	gpgme_error_t err;
-	gpgme_data_t out;
+	gpgme_ctx_t	ctx;
+	gpgme_error_t	err;
+	gpgme_data_t	out;
 
 	gpgme_decrypt_result_t decrypt_result;
 	gpgme_verify_result_t verify_result;
