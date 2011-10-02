@@ -64,7 +64,7 @@ safely checks, at startup, that the following conditions are true:
  * Running as non-root
  * Core dumps are disabled
  * Memory is locked (via `mlockall()`)
- * `ptrace()` is disable
+ * `ptrace()` is disabled
  * stdin, stdout, stderr are valid
 
 If any of them fails, safely refuses to work, unless the **SAFELY_NOSECURE**
