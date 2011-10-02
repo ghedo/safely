@@ -101,7 +101,9 @@ void db_make_backup() {
 
 	buf = malloc(db_size);
 
-	fread(buf, db_size, 1, f1);
+	if (fread(buf, db_size, 1, f1) <= 0)
+		fail_printf("Error reading db file");
+
 	fwrite(buf, db_size, 1, f2);
 
 	fclose(f1);

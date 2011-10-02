@@ -7,7 +7,9 @@ RMDIR=rmdir
 MKDIR=mkdir
 INSTALL=install
 
-CFLAGS+=-Wall -pedantic -O3 -fPIE
+CFLAGS+=-Wall -pedantic -O3 -fPIE -fstack-protector		\
+	--param=ssp-buffer-size=4 -D_FORTIFY_SOURCE=2		\
+	-Wformat -Wformat-security -Werror=format-security
 LDFLAGS=-ljansson -lgpgme
 
 PREFIX?=/usr/local
