@@ -128,11 +128,17 @@ static inline void cmd_add(const char *arg) {
 	printf("Enter user name  [%s]: ", arg);
 	get_input(usr);
 
+	if (!strncmp("", usr, 1))
+		fail_printf("Empty user field");
+
 	security_echo_off();
 	printf("Enter password   [%s]: ", arg);
 	get_input(pwd);
 	security_echo_on();
 	putchar('\n');
+
+	if (!strncmp("", pwd, 1))
+		fail_printf("Empty password field");
 
 	item_add(db, arg, usr, pwd);
 
