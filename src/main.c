@@ -51,6 +51,7 @@ static inline void cmd_create();
 static inline void cmd_add(const char *arg);
 static inline void cmd_passwd(const char *arg);
 static inline void cmd_user(const char *arg);
+static inline void cmd_edit(const char *arg);
 static inline void cmd_remove(const char *arg);
 static inline void cmd_search(const char *arg);
 static inline void cmd_dump();
@@ -63,6 +64,7 @@ static struct option long_options[] = {
 	{"add",		required_argument,	0, 'a'},
 	{"passwd",	required_argument,	0, 'p'},
 	{"user",	required_argument,	0, 'u'},
+	{"edit",	required_argument,	0, 'e'},
 	{"remove",	required_argument,	0, 'r'},
 	{"search",	required_argument,	0, 's'},
 	{"dump",	no_argument,		0, 'd'},
@@ -75,13 +77,14 @@ int main(int argc, char *argv[]) {
 
 	signal(SIGINT, leave);
 
-	opts = getopt_long(argc, argv, "ca:p:u:r:s:dh", long_options, &i);
+	opts = getopt_long(argc, argv, "ca:p:u:e:r:s:dh", long_options, &i);
 
 	switch (opts) {
 		case 'c': { cmd_create();	break; }
 		case 'a': { cmd_add(optarg);	break; }
 		case 'p': { cmd_passwd(optarg);	break; }
 		case 'u': { cmd_user(optarg);	break; }
+		case 'e': { cmd_edit(optarg);	break; }
 		case 'r': { cmd_remove(optarg);	break; }
 		case 's': { cmd_search(optarg);	break; }
 		case 'd': { cmd_dump();		break; }
@@ -167,6 +170,45 @@ static inline void cmd_user(const char *arg) {
 	db_unload(db);
 }
 
+static inline void cmd_edit(const char *arg) {
+	db_t *db;
+	const char *old_usr, *old_pwd;
+	char new_usr[INPUT_MAX_SIZE], new_pwd[INPUT_MAX_SIZE];
+
+	security_check();
+	db_make_backup();
+
+	db	= db_load();
+
+	old_usr	= item_get_usr(db, arg);
+	old_pwd	= item_get_pwd(db, arg);
+
+	printf("Enter user name  [%s] (default: %s): ", arg, old_usr);
+	get_input(new_usr);
+
+	security_echo_off();
+	printf("Enter password   [%s] (default: %s): ", arg, old_pwd);
+	get_input(new_pwd);
+	security_echo_on();
+	putchar('\n');
+
+	item_add(
+		db, arg,
+		!strncmp("", new_usr, 1) ? old_usr : new_usr,
+		!strncmp("", new_pwd, 1) ? old_pwd : new_pwd
+	);
+
+	memset(new_usr, 0, INPUT_MAX_SIZE);
+	memset(new_pwd, 0, INPUT_MAX_SIZE);
+
+	db_sync(db);
+	db_unload(db);
+
+	ok_printf("Modified item");
+
+	db_unload(db);
+}
+
 static inline void cmd_remove(const char *arg) {
 	db_t *db;
 
@@ -222,6 +264,7 @@ static inline void cmd_help() {
 	CMD_HELP("--add", "-a",		"Add a new account");
 	CMD_HELP("--passwd", "-p",	"Show given account's password");
 	CMD_HELP("--user", "-u",	"Show given account's username");
+	CMD_HELP("--edit", "-e",	"Edit the given account");
 	CMD_HELP("--remove", "-r",	"Remove given account");
 	CMD_HELP("--search", "-s",	"Search the given pattern");
 	CMD_HELP("--dump", "-d",	"Dump JSON database");

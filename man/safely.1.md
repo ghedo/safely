@@ -30,6 +30,9 @@ and safely provides sane default values for them.
 `--user, -u`
 &nbsp;&nbsp;&nbsp;Show given account's username.
 
+`--edit, -e`
+&nbsp;&nbsp;&nbsp;Edit the given account.
+
 `--remove, -r`
 &nbsp;&nbsp;&nbsp;Remove given account.
 
