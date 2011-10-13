@@ -103,7 +103,7 @@ static char *gpg_data_to_char(gpgme_data_t dh) {
 	if (data_size <= 0) fail_printf("Failed GPG data seek");
 
 	data = calloc(data_size + 1, 1);
-	if (data == NULL) fail_printf("Failed malloc");
+	if (data == NULL) fail_printf("No more memory");
 
 	ret = gpgme_data_read(dh, data, data_size);
 	if (ret < 0) fail_printf("Failed GPG data read");

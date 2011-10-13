@@ -59,6 +59,8 @@ static char *db_get_path() {
 		char *home = getenv("HOME");
 
 		db_file_name = malloc(strlen(home) + strlen(DB_FILE) + 2);
+		if (db_file_name == NULL) fail_printf("No more memory");
+
 		sprintf(db_file_name, "%s/%s", home, DB_FILE);
 	}
 
@@ -69,7 +71,9 @@ static char *db_lock_get_path() {
 	char *db_file_name, *lock_file_name;
 
 	db_file_name = db_get_path();
+
 	lock_file_name = malloc(strlen(db_file_name) + 5 + 1);
+	if (lock_file_name == NULL) fail_printf("No more memory");
 
 	sprintf(lock_file_name, "%s.lock", db_file_name);
 
@@ -88,7 +92,9 @@ void db_make_backup() {
 		return;
 
 	db_file_name = db_get_path();
+
 	bk_file_name = malloc(strlen(db_file_name) + 2);
+	if (bk_file_name == NULL) fail_printf("No more memory");
 
 	sprintf(bk_file_name, "%s~", db_file_name);
 
@@ -100,6 +106,7 @@ void db_make_backup() {
 	fseek(f1, 0, SEEK_SET);
 
 	buf = malloc(db_size);
+	if (buf == NULL) fail_printf("No more memory");
 
 	if (fread(buf, db_size, 1, f1) <= 0)
 		fail_printf("Error reading db file");
@@ -244,7 +251,7 @@ void db_sync(db_t *db) {
 	fprintf(f, "%s", cipher);
 	fclose(f);
 
-	free((void *) dump);
+	free(dump);
 	free(db_path);
 	free(key_fpr);
 	free(cipher);

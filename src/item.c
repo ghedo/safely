@@ -46,7 +46,7 @@
 #define ITEM_DAT_FIELD "date"
 
 void item_add(db_t *db, const char *item, const char *usr, const char *pwd) {
-	char *date = malloc(22);
+	char date[22];
 	json_t *new, *root = (json_t *) db,
 	       *accounts = json_object_get(root, "accounts");
 
@@ -65,7 +65,6 @@ void item_add(db_t *db, const char *item, const char *usr, const char *pwd) {
 	json_object_set(accounts, item, new);
 
 	json_decref(new);
-	free(date);
 }
 
 const char *item_get_fld(db_t *db, const char *item, const char *field) {
