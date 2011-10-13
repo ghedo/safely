@@ -122,6 +122,9 @@ static inline void cmd_add(const char *arg) {
 
 	db = db_load();
 
+	if (item_exist(db, arg) == 0)
+		fail_printf("Item '%s' already exists", arg);
+
 	printf("Enter user name  [%s]: ", arg);
 	get_input(usr);
 
@@ -149,6 +152,10 @@ static inline void cmd_passwd(const char *arg) {
 	security_check();
 
 	db	= db_load();
+
+	if (item_exist(db, arg) != 0)
+		fail_printf("Item '%s' does not exist", arg);
+
 	pwd	= item_get_pwd(db, arg);
 
 	puts(pwd);
@@ -163,6 +170,10 @@ static inline void cmd_user(const char *arg) {
 	security_check();
 
 	db	= db_load();
+
+	if (item_exist(db, arg) != 0)
+		fail_printf("Item '%s' does not exist", arg);
+
 	usr	= item_get_usr(db, arg);
 
 	puts(usr);
@@ -179,6 +190,9 @@ static inline void cmd_edit(const char *arg) {
 	db_make_backup();
 
 	db	= db_load();
+
+	if (item_exist(db, arg) != 0)
+		fail_printf("Item '%s' does not exist", arg);
 
 	old_usr	= item_get_usr(db, arg);
 	old_pwd	= item_get_pwd(db, arg);
@@ -216,6 +230,9 @@ static inline void cmd_remove(const char *arg) {
 	db_make_backup();
 
 	db = db_load();
+
+	if (item_exist(db, arg) != 0)
+		fail_printf("Item '%s' does not exist", arg);
 
 	item_remove(db, arg);
 

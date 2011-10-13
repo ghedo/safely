@@ -67,6 +67,23 @@ void item_add(db_t *db, const char *item, const char *usr, const char *pwd) {
 	json_decref(new);
 }
 
+int item_exist(db_t *db, const char *item) {
+	int check = 1;
+
+	json_t *item_obj;
+	json_t *root = (json_t *) db,
+	       *accounts = json_object_get(root, "accounts");
+
+	item_obj = json_object_get(accounts, item);
+
+	if (!json_is_object(item_obj))
+		check = -1;
+	else
+		check = 0;
+
+	return check;
+}
+
 const char *item_get_fld(db_t *db, const char *item, const char *field) {
 	json_t *item_obj, *field_obj;
 	json_t *root = (json_t *) db,
