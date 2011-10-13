@@ -139,7 +139,7 @@ static inline void cmd_add(const char *arg) {
 	db_sync(db);
 	db_unload(db);
 
-	ok_printf("Added new item");
+	ok_printf("Added item '%s'", arg);
 }
 
 static inline void cmd_passwd(const char *arg) {
@@ -204,7 +204,7 @@ static inline void cmd_edit(const char *arg) {
 	db_sync(db);
 	db_unload(db);
 
-	ok_printf("Modified item");
+	ok_printf("Modified item '%s'", arg);
 
 	db_unload(db);
 }
@@ -222,7 +222,7 @@ static inline void cmd_remove(const char *arg) {
 	db_sync(db);
 	db_unload(db);
 
-	ok_printf("Removed item");
+	ok_printf("Removed item '%s'", arg);
 }
 
 static inline void cmd_search(const char *arg) {
