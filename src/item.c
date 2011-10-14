@@ -45,8 +45,9 @@
 #define ITEM_PWD_FIELD "pass"
 #define ITEM_DAT_FIELD "date"
 
-void item_add(db_t *db, const char *item, const char *usr, const char *pwd) {
+void item_add(void *db, const char *item, const char *usr, const char *pwd) {
 	char date[22];
+
 	json_t *new, *root = (json_t *) db,
 	       *accounts = json_object_get(root, "accounts");
 
@@ -67,11 +68,11 @@ void item_add(db_t *db, const char *item, const char *usr, const char *pwd) {
 	json_decref(new);
 }
 
-int item_exist(db_t *db, const char *item) {
+int item_exist(void *db, const char *item) {
 	int check = 1;
 
-	json_t *item_obj;
-	json_t *root = (json_t *) db,
+	json_t *item_obj,
+	       *root = (json_t *) db,
 	       *accounts = json_object_get(root, "accounts");
 
 	item_obj = json_object_get(accounts, item);
@@ -84,9 +85,9 @@ int item_exist(db_t *db, const char *item) {
 	return check;
 }
 
-const char *item_get_fld(db_t *db, const char *item, const char *field) {
-	json_t *item_obj, *field_obj;
-	json_t *root = (json_t *) db,
+const char *item_get_fld(void *db, const char *item, const char *field) {
+	json_t *item_obj, *field_obj,
+	       *root = (json_t *) db,
 	       *accounts = json_object_get(root, "accounts");
 
 	item_obj = json_object_get(accounts, item);
@@ -98,15 +99,15 @@ const char *item_get_fld(db_t *db, const char *item, const char *field) {
 	return json_string_value(field_obj);
 }
 
-const char *item_get_usr(db_t *db, const char *item) {
+const char *item_get_usr(void *db, const char *item) {
 	return item_get_fld(db, item, ITEM_USR_FIELD);
 }
 
-const char *item_get_pwd(db_t *db, const char *item) {
+const char *item_get_pwd(void *db, const char *item) {
 	return item_get_fld(db, item, ITEM_PWD_FIELD);
 }
 
-void item_remove(db_t *db, const char *item) {
+void item_remove(void *db, const char *item) {
 	json_t *root = (json_t *) db,
 	       *accounts = json_object_get(root, "accounts");
 

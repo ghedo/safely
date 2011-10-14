@@ -33,12 +33,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extern void item_add(db_t *db, const char *item, const char *usr, const char *pwd);
+extern void item_add(void *db, const char *item, const char *usr, const char *pwd);
 
-extern int item_exist(db_t *db, const char *item);
+extern int item_exist(void *db, const char *item);
 
-extern const char *item_get_fld(db_t *db, const char *item, const char *field);
-extern const char *item_get_usr(db_t *db, const char *item);
-extern const char *item_get_pwd(db_t *db, const char *item);
+extern const char *item_get_fld(void *db, const char *item, const char *field);
+extern const char *item_get_usr(void *db, const char *item);
+extern const char *item_get_pwd(void *db, const char *item);
 
-extern void item_remove(db_t *db, const char *item);
+extern void item_remove(void *db, const char *item);

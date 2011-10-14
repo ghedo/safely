@@ -256,6 +256,7 @@ char *gpg_get_keyfpr_first() {
 	if (err) fail_printf("Failed GPG new: %s", gpgme_strerror(err));
 
 	err = gpgme_op_keylist_start(ctx, NULL, 1);
+	if (err) fail_printf("Failed GPG keylist start: %s", gpgme_strerror(err));
 
 	while ((gpgme_op_keylist_next(ctx, &key) != GPG_ERR_EOF) && key) {
 		if (
@@ -271,6 +272,8 @@ char *gpg_get_keyfpr_first() {
 	}
 
 	err = gpgme_op_keylist_end(ctx);
+	if (err) fail_printf("Failed GPG keylist end: %s", gpgme_strerror(err));
+
 	gpgme_release(ctx);
 
 	return return_buf;

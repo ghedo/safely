@@ -101,7 +101,7 @@ static void leave(int signal) {
 }
 
 static inline void cmd_create() {
-	db_t *db;
+	void *db;
 
 	security_check();
 
@@ -114,8 +114,9 @@ static inline void cmd_create() {
 }
 
 static inline void cmd_add(const char *arg) {
-	db_t *db;
-	char usr[INPUT_MAX_SIZE], pwd[INPUT_MAX_SIZE];
+	void *db;
+	char usr[INPUT_MAX_SIZE],
+	     pwd[INPUT_MAX_SIZE];
 
 	security_check();
 	db_make_backup();
@@ -142,9 +143,6 @@ static inline void cmd_add(const char *arg) {
 
 	item_add(db, arg, usr, pwd);
 
-	memset(usr, 0, INPUT_MAX_SIZE);
-	memset(pwd, 0, INPUT_MAX_SIZE);
-
 	db_sync(db);
 	db_unload(db);
 
@@ -152,17 +150,17 @@ static inline void cmd_add(const char *arg) {
 }
 
 static inline void cmd_passwd(const char *arg) {
-	db_t *db;
+	void *db;
 	const char *pwd;
 
 	security_check();
 
-	db	= db_load();
+	db = db_load();
 
 	if (item_exist(db, arg) != 0)
 		fail_printf("Item '%s' does not exist", arg);
 
-	pwd	= item_get_pwd(db, arg);
+	pwd = item_get_pwd(db, arg);
 
 	puts(pwd);
 
@@ -170,17 +168,17 @@ static inline void cmd_passwd(const char *arg) {
 }
 
 static inline void cmd_user(const char *arg) {
-	db_t *db;
+	void *db;
 	const char *usr;
 
 	security_check();
 
-	db	= db_load();
+	db = db_load();
 
 	if (item_exist(db, arg) != 0)
 		fail_printf("Item '%s' does not exist", arg);
 
-	usr	= item_get_usr(db, arg);
+	usr = item_get_usr(db, arg);
 
 	puts(usr);
 
@@ -188,14 +186,15 @@ static inline void cmd_user(const char *arg) {
 }
 
 static inline void cmd_edit(const char *arg) {
-	db_t *db;
+	void *db;
 	const char *old_usr, *old_pwd;
-	char new_usr[INPUT_MAX_SIZE], new_pwd[INPUT_MAX_SIZE];
+	char new_usr[INPUT_MAX_SIZE],
+	     new_pwd[INPUT_MAX_SIZE];
 
 	security_check();
 	db_make_backup();
 
-	db	= db_load();
+	db = db_load();
 
 	if (item_exist(db, arg) != 0)
 		fail_printf("Item '%s' does not exist", arg);
@@ -218,19 +217,14 @@ static inline void cmd_edit(const char *arg) {
 		!strncmp("", new_pwd, 1) ? old_pwd : new_pwd
 	);
 
-	memset(new_usr, 0, INPUT_MAX_SIZE);
-	memset(new_pwd, 0, INPUT_MAX_SIZE);
-
 	db_sync(db);
 	db_unload(db);
 
 	ok_printf("Modified item '%s'", arg);
-
-	db_unload(db);
 }
 
 static inline void cmd_remove(const char *arg) {
-	db_t *db;
+	void *db;
 
 	security_check();
 	db_make_backup();
@@ -249,7 +243,7 @@ static inline void cmd_remove(const char *arg) {
 }
 
 static inline void cmd_search(const char *arg) {
-	db_t *db;
+	void *db;
 	unsigned int count = 0;
 
 	security_check();
@@ -263,7 +257,7 @@ static inline void cmd_search(const char *arg) {
 }
 
 static inline void cmd_dump(){
-	db_t *db;
+	void *db;
 	char *dump;
 
 	security_check();
@@ -283,13 +277,13 @@ static inline void cmd_help() {
 	printf("  Usage:\n\tsafely [COMMAND] args...\n\n");
 	printf("  Commands:\n");
 
-	CMD_HELP("--create", "-c",	"Create a new password db");
-	CMD_HELP("--add", "-a",		"Add a new account");
-	CMD_HELP("--passwd", "-p",	"Show given account's password");
-	CMD_HELP("--user", "-u",	"Show given account's username");
-	CMD_HELP("--edit", "-e",	"Edit the given account");
-	CMD_HELP("--remove", "-r",	"Remove given account");
-	CMD_HELP("--search", "-s",	"Search the given pattern");
-	CMD_HELP("--dump", "-d",	"Dump JSON database");
-	CMD_HELP("--help", "-h",	"Show this help");
+	CMD_HELP("--create",	"-c",	"Create a new password db");
+	CMD_HELP("--add",	"-a",	"Add a new account");
+	CMD_HELP("--passwd",	"-p",	"Show given account's password");
+	CMD_HELP("--user",	"-u",	"Show given account's username");
+	CMD_HELP("--edit",	"-e",	"Edit the given account");
+	CMD_HELP("--remove",	"-r",	"Remove given account");
+	CMD_HELP("--search",	"-s",	"Search the given pattern");
+	CMD_HELP("--dump",	"-d",	"Dump JSON database");
+	CMD_HELP("--help",	"-h",	"Show this help");
 }

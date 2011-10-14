@@ -99,7 +99,18 @@ void db_make_backup() {
 	sprintf(bk_file_name, "%s~", db_file_name);
 
 	f1 = fopen(db_file_name, "rb");
+	if (f1 == NULL)
+		fail_printf(
+			"Cannot open file '%s': %s",
+			db_file_name, strerror(errno)
+		);
+
 	f2 = fopen(bk_file_name, "wb");
+	if (f2 == NULL)
+		fail_printf(
+			"Cannot open file '%s': %s",
+			bk_file_name, strerror(errno)
+		);
 
 	fseek(f1, 0, SEEK_END);
 	db_size = ftell(f1);
@@ -109,9 +120,10 @@ void db_make_backup() {
 	if (buf == NULL) fail_printf("No more memory");
 
 	if (fread(buf, db_size, 1, f1) <= 0)
-		fail_printf("Error reading db file");
+		fail_printf("Error reading db file: %s", strerror(errno));
 
-	fwrite(buf, db_size, 1, f2);
+	if (fwrite(buf, db_size, 1, f2) <= 0)
+		fail_printf("Error writing to backup file: %s", strerror(errno));
 
 	fclose(f1);
 	fclose(f2);
@@ -146,8 +158,7 @@ ret:
 	free(lock_file_name);
 }
 
-db_t *db_create() {
-	db_t *db;
+void *db_create() {
 	FILE *f;
 	char *db_path;
 
@@ -171,42 +182,37 @@ db_t *db_create() {
 	if (f == NULL) fail_printf("Cannot open file '%s'", db_path);
 	fclose(f);
 
-	db = (void *) root;
-
-	return db;
+	return (void *) root;
 }
 
-db_t *db_load() {
-	db_t *db;
+void *db_load() {
 	char *json, *db_file_name;
 
 	json_t *root;
-	json_error_t error;
+	json_error_t err;
 
 	db_acquire_lock();
 
 	db_file_name	= db_get_path();
 	json		= gpg_decrypt_file(db_file_name);
-	root		= json_loads(json, 0, &error);
+	root		= json_loads(json, 0, &err);
 
 	free(db_file_name);
 	free(json);
 
-	if (!root) fail_printf("JSON error on line %d: %s", error.line, error.text);
+	if (!root) fail_printf("JSON error on line %d: %s", err.line, err.text);
 
-	db = (void *) root;
-
-	return db;
+	return (void *) root;
 }
 
-char *db_dump(db_t *db) {
+char *db_dump(void *db) {
 	json_t *root = (json_t *) db;
 	char *dump = json_dumps(root, JSON_PRESERVE_ORDER | JSON_INDENT(4) | JSON_SORT_KEYS);
 
 	return dump;
 }
 
-int db_search(db_t *db, const char *pattern) {
+int db_search(void *db, const char *pattern) {
 	regex_t regex;
 	int status, count = 0;
 
@@ -234,7 +240,7 @@ int db_search(db_t *db, const char *pattern) {
 	return count;
 }
 
-void db_sync(db_t *db) {
+void db_sync(void *db) {
 	FILE *f;
 	json_t *root = (json_t *) db;
 	char *db_path, *key_fpr, *cipher, *dump;
@@ -257,7 +263,7 @@ void db_sync(db_t *db) {
 	free(cipher);
 }
 
-void db_unload(db_t *db) {
+void db_unload(void *db) {
 	json_t *root = (json_t *) db;
 
 	json_decref(root);
