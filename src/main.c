@@ -68,6 +68,7 @@ static struct option long_options[] = {
 	{"remove",	required_argument,	0, 'r'},
 	{"search",	required_argument,	0, 's'},
 	{"dump",	no_argument,		0, 'd'},
+	{"tests",	no_argument,		0, 't'},
 	{"help",	no_argument,		0, 'h'},
 	{0, 0, 0, 0}
 };
@@ -77,7 +78,7 @@ int main(int argc, char *argv[]) {
 
 	signal(SIGINT, leave);
 
-	opts = getopt_long(argc, argv, "ca:p:u:e:r:s:dh", long_options, &i);
+	opts = getopt_long(argc, argv, "ca:p:u:e:r:s:dth", long_options, &i);
 
 	switch (opts) {
 		case 'c': { cmd_create();	break; }
@@ -88,6 +89,7 @@ int main(int argc, char *argv[]) {
 		case 'r': { cmd_remove(optarg);	break; }
 		case 's': { cmd_search(optarg);	break; }
 		case 'd': { cmd_dump();		break; }
+		case 't': { security_check();	break; }
 		default:
 		case 'h': { cmd_help();		break; }
 	}
@@ -285,6 +287,7 @@ static inline void cmd_help() {
 	CMD_HELP("--remove",	"-r",	"Remove the given account");
 	CMD_HELP("--search",	"-s",	"Search for the given pattern");
 	CMD_HELP("--dump",	"-d",	"Dump JSON database");
+	CMD_HELP("--tests",	"-t",	"Run the security tests only");
 	CMD_HELP("--help",	"-h",	"Show this help");
 
 	puts("");

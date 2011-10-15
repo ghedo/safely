@@ -54,6 +54,11 @@ Remove the given account.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Dump JSON database.
 
+`-t, --tests`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Run the security tests only.
+
 `-h, --help`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
