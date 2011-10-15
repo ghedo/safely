@@ -7,57 +7,85 @@
 \fBsafely\fR \- secure and simple command\-line password store
 .
 .SH "SYNOPSIS"
-\fBsafely [COMMAND] args\.\.\.\fR
+\fBsafely COMMAND [ACCOUNT]\fR
 .
 .SH "DESCRIPTION"
 \fBsafely\fR is a command\-line based, tool to manage password in an extremely easy to use and secure way\. The passwords database is a simple GnuPG encrypted JSON document; this makes manual access and manipulation of the database very simple\.
 .
-.P
-safely\'s configuration is entirely handled via environment variables in order to avoid yet another dotfile under your $HOME\. Every config option is optional, and safely provides sane default values for them\.
-.
 .SH "COMMANDS"
-\fB\-\-create, \-c\fR \~\~\~Create a new password db\.
+\fB\-c, \-\-create\fR
 .
 .P
-\fB\-\-add, \-a\fR \~\~\~Add a new account\.
+\~\~\~\~\~\~ Create a new password db\.
 .
 .P
-\fB\-\-passwd, \-p\fR \~\~\~Show given account\'s password\.
+\fB\-a, \-\-add\fR
 .
 .P
-\fB\-\-user, \-u\fR \~\~\~Show given account\'s username\.
+\~\~\~\~\~\~ Add a new account\.
 .
 .P
-\fB\-\-edit, \-e\fR \~\~\~Edit the given account\.
+\fB\-p, \-\-passwd\fR
 .
 .P
-\fB\-\-remove, \-r\fR \~\~\~Remove given account\.
+\~\~\~\~\~\~ Show given account\'s password\.
 .
 .P
-\fB\-\-search, \-s\fR \~\~\~Remove given account\.
+\fB\-u, \-\-user\fR
 .
 .P
-\fB\-\-dump, \-d\fR \~\~\~Dump JSON database\.
+\~\~\~\~\~\~ Show given account\'s username\.
 .
 .P
-\fB\-\-help, \-h\fR \~\~\~Show the help\.
+\fB\-e, \-\-edit\fR
+.
+.P
+\~\~\~\~\~\~ Edit the given account\.
+.
+.P
+\fB\-\-remove, \-r\fR
+.
+.P
+\~\~\~\~\~\~ Remove given account\.
+.
+.P
+\fB\-s, \-\-search\fR
+.
+.P
+\~\~\~\~\~\~ Remove the given account\.
+.
+.P
+\fB\-d, \-\-dump\fR
+.
+.P
+\~\~\~\~\~\~ Dump JSON database\.
+.
+.P
+\fB\-h, \-\-help\fR
+.
+.P
+\~\~\~\~\~\~ Show the help\.
 .
 .SH "ENVIRONMENT"
 The following environment variables affect safely behaviour:
 .
-.IP "\(bu" 4
-\fBSAFELY_DB\fR Specifies the path to the password database to be used by safely (default \fB~/\.safely\.db\fR)\.
+.P
+\fBSAFELY_DB\fR
 .
-.IP "\(bu" 4
-\fBSAFELY_NOBACKUP\fR If set, safely will not create a backup of the db\.
+.P
+\~\~\~\~\~\~ Specifies a custom path to the password database\.
 .
-.IP "\(bu" 4
-\fBSAFELY_NOSECURE\fR If set, safely will still work if any of the security tests fails (use with caution)\.
+.P
+\fBSAFELY_NOBACKUP\fR
 .
-.IP "" 0
+.P
+\~\~\~\~\~\~ If set, a backup of the db is not created\.
 .
-.SH "BUGS"
-Please report any bugs or feature requests to GitHub issues tracker at \fB<http://github\.com/AlexBio/Safely/issues>\fR\.
+.P
+\fBSAFELY_NOSECURE\fR
+.
+.P
+\~\~\~\~\~\~ If set, any security test failure is ignored\.
 .
 .SH "AUTHOR"
 Alessandro Ghedini \fIal3xbio@gmail\.com\fR
@@ -66,4 +94,4 @@ Alessandro Ghedini \fIal3xbio@gmail\.com\fR
 Copyright (C) 2011 Alessandro Ghedini \fIal3xbio@gmail\.com\fR
 .
 .P
-This program is released under the BSD license (see \fBCOPYING\fR)\.
+This program is released under the 3 clause BSD license\.
