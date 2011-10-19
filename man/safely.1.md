@@ -39,7 +39,7 @@ Show given account's username.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Edit the given account.
 
-`--remove, -r`
+`-r, --remove`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Remove given account.
