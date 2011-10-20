@@ -164,7 +164,8 @@ static inline void cmd_passwd(const char *arg) {
 
 	pwd = item_get_pwd(db, arg);
 
-	puts(pwd);
+	printf("%s", pwd);
+	fputc('\n', stderr);
 
 	db_unload(db);
 }
@@ -182,7 +183,8 @@ static inline void cmd_user(const char *arg) {
 
 	usr = item_get_usr(db, arg);
 
-	puts(usr);
+	printf("%s", usr);
+	fputc('\n', stderr);
 
 	db_unload(db);
 }
