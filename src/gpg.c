@@ -259,12 +259,8 @@ char *gpg_get_keyfpr_first() {
 	if (err) fail_printf("Failed GPG keylist start: %s", gpgme_strerror(err));
 
 	while ((gpgme_op_keylist_next(ctx, &key) != GPG_ERR_EOF) && key) {
-		if (
-		   !key -> disabled	&&
-		   !key -> expired	&&
-		   !key -> invalid	&&
-		   !key -> revoked
-		) {
+		if (!key -> disabled && !key -> expired
+		 && !key -> invalid  && !key -> revoked) {
 			return_buf = strdup(key -> subkeys -> fpr);
 		}
 
