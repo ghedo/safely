@@ -27,7 +27,7 @@ safely: $(OBJS)
 
 install: all
 	mkdir -p $(BINDIR) $(MANDIR)
-	$(INSTALL) -m 4755 -o 0 -g 0 safely $(BINDIR)/safely
+	$(INSTALL) -m 0755 -o 0 -g 0 safely $(BINDIR)/safely
 	gzip -9 --stdout < man/safely.1 > man/safely.1.gz
 	$(INSTALL) -m 0644 -o 0 -g 0 man/safely.1.gz $(MANDIR)/safely.1.gz
 
