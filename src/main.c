@@ -38,6 +38,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include <pwd.h>
+#include <unistd.h>
+#include <sys/types.h>
+
 #include <regex.h>
 #include <getopt.h>
 #include <signal.h>
@@ -59,7 +63,25 @@ static inline void cmd_help();
 
 static void leave(int signal);
 
-static struct option long_options[] = {
+enum cmd_t {
+	CREATE,
+	ADD,
+	PASSWD,
+	USER,
+	EDIT,
+	REMOVE,
+	SEARCH,
+	DUMP,
+	TESTS,
+	HELP
+};
+
+static struct option long_opts[] = {
+	/* options */
+	{"db",	required_argument,		0, 'D'},
+	{"nosecure",	no_argument,		0, 'S'},
+	{"nobackup",	no_argument,		0, 'B'},
+	/* commands */
 	{"create",	no_argument,		0, 'c'},
 	{"add",		required_argument,	0, 'a'},
 	{"passwd",	required_argument,	0, 'p'},
@@ -75,23 +97,57 @@ static struct option long_options[] = {
 
 int main(int argc, char *argv[]) {
 	int opts, i = 0;
+	enum cmd_t command;
+	const char *arg = NULL, *gpg_agent_info;
+
+	struct passwd *user;
+
+	/* FIXME: check valid GPG_AGENT_INFO */
+	gpg_agent_info	= getenv("GPG_AGENT_INFO");
+
+	/* clear environment */
+	if (clearenv()) fail_printf("Cleaning environment failed");
+
+	user		= getpwuid(getuid());
+
+	setenv("HOME", user -> pw_dir, 1);
+	setenv("GPG_AGENT_INFO", gpg_agent_info, 1);
 
 	signal(SIGINT, leave);
 
-	opts = getopt_long(argc, argv, "ca:p:u:e:r:s:dth", long_options, &i);
+	while ((opts = getopt_long(argc, argv, "nfca:p:u:e:r:s:dth", long_opts, &i)) != -1) {
+		arg = optarg;
 
-	switch (opts) {
-		case 'c': { cmd_create();	break; }
-		case 'a': { cmd_add(optarg);	break; }
-		case 'p': { cmd_passwd(optarg);	break; }
-		case 'u': { cmd_user(optarg);	break; }
-		case 'e': { cmd_edit(optarg);	break; }
-		case 'r': { cmd_remove(optarg);	break; }
-		case 's': { cmd_search(optarg);	break; }
-		case 'd': { cmd_dump();		break; }
-		case 't': { security_check();	break; }
-		default:
-		case 'h': { cmd_help();		break; }
+		switch (opts) {
+			case 'D': { setenv("SAFELY_DB", optarg, 1);	break; }
+			case 'S': { setenv("SAFELY_NOSECURE", "y", 1);	break; }
+			case 'B': { setenv("SAFELY_NOBACKUP", "y", 1);	break; }
+
+			case 'c': { command = CREATE;	break; }
+			case 'a': { command = ADD;	break; }
+			case 'p': { command = PASSWD;	break; }
+			case 'u': { command = USER;	break; }
+			case 'e': { command = EDIT;	break; }
+			case 'r': { command = REMOVE;	break; }
+			case 's': { command = SEARCH;	break; }
+			case 'd': { command = DUMP;	break; }
+			case 't': { command = TESTS;	break; }
+			default:
+			case 'h': { command = CREATE;	break; }
+		}
+	}
+
+	switch (command) {
+		case CREATE:	{ cmd_create();		break; }
+		case ADD:	{ cmd_add(arg);		break; }
+		case PASSWD:	{ cmd_passwd(arg);	break; }
+		case USER:	{ cmd_user(arg);	break; }
+		case EDIT:	{ cmd_edit(arg);	break; }
+		case REMOVE:	{ cmd_remove(arg);	break; }
+		case SEARCH:	{ cmd_search(arg);	break; }
+		case DUMP:	{ cmd_dump();		break; }
+		case TESTS:	{ security_check();	break; }
+		case HELP:	{ cmd_help();		break; }
 	}
 
 	return 0;

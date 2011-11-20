@@ -1,13 +1,13 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "SAFELY" "1" "October 2011" "" ""
+.TH "SAFELY" "1" "November 2011" "" ""
 .
 .SH "NAME"
 \fBsafely\fR \- secure and simple command\-line password store
 .
 .SH "SYNOPSIS"
-\fBsafely COMMAND [ACCOUNT]\fR
+\fBsafely [OPTIONS] COMMAND [ACCOUNT]\fR
 .
 .SH "DESCRIPTION"
 \fBsafely\fR is a command\-line based, tool to manage password in an extremely easy to use and secure way\. The passwords database is a simple GnuPG encrypted JSON document; this makes manual access and manipulation of the database very simple\.
@@ -72,26 +72,23 @@
 .P
 \~\~\~\~\~\~ Show the help\.
 .
-.SH "ENVIRONMENT"
-The following environment variables affect safely behaviour:
-.
-.P
-\fBSAFELY_DB\fR
+.SH "OPTIONS"
+\fB\-D, \-\-db\fR
 .
 .P
 \~\~\~\~\~\~ Specifies a custom path to the password database\.
 .
 .P
-\fBSAFELY_NOBACKUP\fR
+\fB\-S, \-\-nosecure\fR
 .
 .P
-\~\~\~\~\~\~ If set, a backup of the db is not created\.
+\~\~\~\~\~\~ Ignore any security test failure\.
 .
 .P
-\fBSAFELY_NOSECURE\fR
+\fB\-B, \-\-nobackup\fR
 .
 .P
-\~\~\~\~\~\~ If set, any security test failure is ignored\.
+\~\~\~\~\~\~ Do not create db file backups\.
 .
 .SH "AUTHOR"
 Alessandro Ghedini \fIal3xbio@gmail\.com\fR

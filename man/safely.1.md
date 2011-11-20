@@ -3,7 +3,7 @@ safely(1) -- secure and simple command-line password store
 
 ## SYNOPSIS
 
-`safely COMMAND [ACCOUNT]`
+`safely [OPTIONS] COMMAND [ACCOUNT]`
 
 ## DESCRIPTION
 
@@ -64,24 +64,22 @@ Run the security tests only.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Show the help.
 
-## ENVIRONMENT ##
+## OPTIONS ##
 
-The following environment variables affect safely behaviour:
-
-**SAFELY_DB**
+`-D, --db`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Specifies a custom path to the password database.
 
-**SAFELY_NOBACKUP**
+`-S, --nosecure`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-If set, a backup of the db is not created.
+Ignore any security test failure.
 
-**SAFELY_NOSECURE**
+`-B, --nobackup`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-If set, any security test failure is ignored.
+Do not create db file backups.
 
 ## AUTHOR ##
 
