@@ -8,10 +8,6 @@ to use and secure way. The password database is a simple GnuPG encrypted
 JSON document; this makes manual access and manipulation of the database
 very simple.
 
-Its configuration is entirely handled via environment variables in order
-to avoid yet another dotfile under your $HOME. Every configuration option
-is optional, and safely provides sane default values for them.
-
 safely was implemented with the following design goals in mind:
 
  * Simple database format and schema (to ease manual manipulation)
