@@ -63,10 +63,10 @@ safely checks, at startup, that the following conditions are true:
  * `ptrace()` is disabled
  * stdin, stdout, stderr are valid
 
-If any of them fails, safely refuses to work, unless the **SAFELY_NOSECURE**
-variable is set (see the manpage for more info). Note that the ptrace and
-memlock checks need to be run as euid 0 (mode 4755) to pass; if `make 
-install` is executed (with root privileges) everything should be ok.
+If any of them fails, safely refuses to work, unless the **--nosecure** option
+is used (see the manpage for more info). Note that the ptrace and memlock checks
+need to be run as suid (mode 4755) to pass; if `make install` is executed (with
+root privileges) everything should be ok.
 
 ## DEPENDENCIES
 
