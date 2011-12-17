@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
 			case 'd': { command = DUMP;	break; }
 			case 't': { command = TESTS;	break; }
 			default:
-			case 'h': { command = CREATE;	break; }
+			case 'h': { command = HELP;	break; }
 		}
 	}
 
