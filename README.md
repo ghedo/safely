@@ -79,6 +79,7 @@ Safely is distributed as source code. Install with:
 
 ~~~~
 $ git clone git://github.com/AlexBio/Safely.git && cd Safely
+$ cmake .
 $ make
 # make install
 ~~~~
