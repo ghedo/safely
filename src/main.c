@@ -132,7 +132,6 @@ int main(int argc, char *argv[]) {
 			case 's': { command = SEARCH;	break; }
 			case 'd': { command = DUMP;	break; }
 			case 't': { command = TESTS;	break; }
-			default:
 			case 'h': { command = HELP;	break; }
 		}
 	}
@@ -147,6 +146,7 @@ int main(int argc, char *argv[]) {
 		case SEARCH:	{ cmd_search(arg);	break; }
 		case DUMP:	{ cmd_dump();		break; }
 		case TESTS:	{ security_check();	break; }
+		default:
 		case HELP:	{ cmd_help();		break; }
 	}
 
