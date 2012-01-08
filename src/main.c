@@ -97,7 +97,7 @@ static struct option long_opts[] = {
 
 int main(int argc, char *argv[]) {
 	int opts, i = 0;
-	enum cmd_t command;
+	enum cmd_t command = HELP;
 	const char *arg = NULL, *gpg_agent_info;
 
 	struct passwd *user;
