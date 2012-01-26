@@ -1,8 +1,6 @@
 Safely
 ======
 
-![status](http://stillmaintained.com/AlexBio/Safely.png)
-
 **Safely** is a command-line tool to manage passwords in an extremely easy
 to use and secure way. The password database is a simple GnuPG encrypted
 JSON document; this makes manual access and manipulation of the database
