@@ -81,6 +81,7 @@ static struct option long_opts[] = {
 	{"db",	required_argument,		0, 'D'},
 	{"nosecure",	no_argument,		0, 'S'},
 	{"nobackup",	no_argument,		0, 'B'},
+	{"noagent",	no_argument,		0, 'A'},
 	/* commands */
 	{"create",	no_argument,		0, 'c'},
 	{"add",		required_argument,	0, 'a'},
@@ -115,13 +116,14 @@ int main(int argc, char *argv[]) {
 
 	signal(SIGINT, leave);
 
-	while ((opts = getopt_long(argc, argv, "D:SBca:p:u:e:r:s:dth", long_opts, &i)) != -1) {
+	while ((opts = getopt_long(argc, argv, "D:SBAca:p:u:e:r:s:dth", long_opts, &i)) != -1) {
 		arg = optarg;
 
 		switch (opts) {
 			case 'D': { setenv("SAFELY_DB", optarg, 1);	break; }
 			case 'S': { setenv("SAFELY_NOSECURE", "y", 1);	break; }
 			case 'B': { setenv("SAFELY_NOBACKUP", "y", 1);	break; }
+			case 'A': { unsetenv("GPG_AGENT_INFO");		break; }
 
 			case 'c': { command = CREATE;	break; }
 			case 'a': { command = ADD;	break; }

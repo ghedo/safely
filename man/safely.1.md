@@ -81,6 +81,11 @@ Ignore any security test failure.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Do not create db file backups.
 
+`-A, --noagent`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Use the internal dumb password agent, not the default gpg agent.
+
 ## AUTHOR ##
 
 Alessandro Ghedini <al3xbio@gmail.com>

@@ -192,7 +192,7 @@ char *gpg_decrypt_data(gpgme_data_t in) {
 
 	agent_info = getenv("GPG_AGENT_INFO");
 
-	if (!(agent_info && strchr(agent_info, ':')))
+	if (!agent_info)
 		gpgme_set_passphrase_cb(ctx, passphrase_cb, NULL);
 
 	err = gpgme_data_new(&out);
