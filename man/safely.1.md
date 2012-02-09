@@ -86,6 +86,29 @@ Do not create db file backups.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Use the internal dumb password agent, not the default gpg agent.
 
+## ENVIRONMENT ##
+
+`GPG_AGENT_INFO`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Used to locate the gpg-agent. This is only used when `--noagent` is not set. The
+value consists of 3 colon delimited fields: the path to the Unix Domain Socket,
+the PID of the gpg-agent and the protocol version which should be set to 1.
+
+## FILES ##
+
+`~/.safely.db`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+The default password database file. The option `--db` can be used to override it.
+
+`~/.safely.db~`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+The default password database file backup. If the `--db` option is set, this
+will change accordingly. If the `--nobackup` option is used, this file is not
+created/modified.
+
 ## AUTHOR ##
 
 Alessandro Ghedini <al3xbio@gmail.com>
