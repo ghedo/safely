@@ -1,7 +1,7 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "SAFELY" "1" "November 2011" "" ""
+.TH "SAFELY" "1" "February 2012" "" ""
 .
 .SH "NAME"
 \fBsafely\fR \- secure and simple command\-line password store
@@ -89,6 +89,30 @@
 .
 .P
 \~\~\~\~\~\~ Do not create db file backups\.
+.
+.P
+\fB\-A, \-\-noagent\fR
+.
+.P
+\~\~\~\~\~\~ Use the internal dumb password agent, not the default gpg agent\.
+.
+.SH "ENVIRONMENT"
+\fBGPG_AGENT_INFO\fR
+.
+.P
+\~\~\~\~\~\~ Used to locate the gpg\-agent\. This is only used when \fB\-\-noagent\fR is not set\. The value consists of 3 colon delimited fields: the path to the Unix Domain Socket, the PID of the gpg\-agent and the protocol version which should be set to 1\.
+.
+.SH "FILES"
+\fB~/\.safely\.db\fR
+.
+.P
+\~\~\~\~\~\~ The default password database file\. The option \fB\-\-db\fR can be used to override it\.
+.
+.P
+\fB~/\.safely\.db~\fR
+.
+.P
+\~\~\~\~\~\~ The default password database file backup\. If the \fB\-\-db\fR option is set, this will change accordingly\. If the \fB\-\-nobackup\fR option is used, this file is not created/modified\.
 .
 .SH "AUTHOR"
 Alessandro Ghedini \fIal3xbio@gmail\.com\fR
