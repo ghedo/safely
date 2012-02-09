@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
 
 	signal(SIGINT, leave);
 
-	while ((opts = getopt_long(argc, argv, "nfca:p:u:e:r:s:dth", long_opts, &i)) != -1) {
+	while ((opts = getopt_long(argc, argv, "D:SBca:p:u:e:r:s:dth", long_opts, &i)) != -1) {
 		arg = optarg;
 
 		switch (opts) {
