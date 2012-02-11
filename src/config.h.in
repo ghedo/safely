@@ -1,0 +1,1 @@
+#cmakedefine HAVE_LOCKFILE_H 1

@@ -33,6 +33,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #include <time.h>
 #include <errno.h>
 #include <regex.h>
@@ -43,6 +45,10 @@
 #include <sys/stat.h>
 
 #include <jansson.h>
+
+#ifdef HAVE_LOCKFILE_H
+# include <lockfile.h>
+#endif
 
 #include "db.h"
 #include "gpg.h"
@@ -133,28 +139,55 @@ void db_make_backup() {
 	free(buf);
 }
 
-void db_acquire_lock() {
-	FILE *lock_file;
+int db_check_lock() {
+	int result = 0;
 	char *lock_file_name = db_lock_get_path();
 
+#ifdef HAVE_LOCKFILE_H
+	if (!lockfile_check(lock_file_name, 0))
+		result = 1;
+#else
 	if (access(lock_file_name, F_OK) == 0)
-		fail_printf("Database locked: %s", strerror(errno));
+		result = 1;
+#endif
+
+	return result;
+}
+
+void db_acquire_lock() {
+	char *lock_file_name = db_lock_get_path();
+
+	if (db_check_lock())
+		fail_printf("Database locked");
+
+#ifdef HAVE_LOCKFILE_H
+	lockfile_create(lock_file_name, 0, 0);
+#else
+	FILE *lock_file;
 
 	lock_file = fopen(lock_file_name, "w");
 	fclose(lock_file);
+#endif
+
+	setenv("SAFELY_LOCKED", "y", 0);
+
 	free(lock_file_name);
 }
 
 void db_release_lock() {
 	char *lock_file_name = db_lock_get_path();
 
-	if (access(lock_file_name, F_OK)) {
+	if (!getenv("SAFELY_LOCKED")) {
 		free(lock_file_name);
 		return;
 	}
 
+#ifdef HAVE_LOCKFILE_H
+	lockfile_remove(lock_file_name);
+#else
 	if (unlink(lock_file_name) < 0)
 		err_printf("Can't remove lock %s: %s", lock_file_name, strerror(errno));
+#endif
 
 	free(lock_file_name);
 }

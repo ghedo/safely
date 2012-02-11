@@ -70,6 +70,7 @@ root privileges) everything should be ok.
 
  * `gpgme`
  * `jansson`
+ * `liblockfile` (optional)
 
 ## BUILDING
 
