@@ -40,11 +40,6 @@
 #include "db.h"
 #include "interface.h"
 
-#define COLOR_GREEN      "[1;32m"
-#define COLOR_YELLOW     "[1;33m"
-#define COLOR_RED        "[1;31m"
-#define COLOR_OFF        "[0m"
-
 inline void get_input(char str[]) {
 	int c, i = 0;
 

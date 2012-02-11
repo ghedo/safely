@@ -350,10 +350,12 @@ static inline void cmd_version() {
 }
 
 static inline void cmd_help() {
-	#define CMD_HELP(CMDL, CMDS, MSG) printf("  %s, %s      \t%s.\n", CMDS, CMDL, MSG);
+	#define CMD_HELP(CMDL, CMDS, MSG) printf("  %s, %s      \t%s.\n", COLOR_YELLOW CMDS, CMDL COLOR_OFF, MSG);
 
-	puts("Usage: safely [OPTIONS] COMMAND [ACCOUNT]\n");
-	puts(" Commands:");
+	printf(COLOR_RED "Usage: " COLOR_OFF);
+	printf(COLOR_GREEN "safely " COLOR_OFF);
+	puts("[OPTIONS] COMMAND [ACCOUNT]\n");
+	puts(COLOR_RED " Commands:" COLOR_OFF);
 
 	CMD_HELP("--create",	"-c",	"Create a new password db");
 	CMD_HELP("--add",	"-a",	"Add the given account");
@@ -368,7 +370,7 @@ static inline void cmd_help() {
 	CMD_HELP("--help",	"-h",	"Show this help");
 
 	puts("");
-	puts(" Options:");
+	puts(COLOR_RED " Options:" COLOR_OFF);
 
 	CMD_HELP("--db",	"-D",	"Specifies a custom path to the password database");
 	CMD_HELP("--quiet",	"-Q",	"Output errors only (i.e. no \"[ok]\" messages)");
