@@ -62,12 +62,12 @@ Run the security tests only.
 `-v, --version`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Print Safely's version.
+Show program's version and exit.
 
 `-h, --help`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Show the help.
+Show program's help and exit.
 
 ## OPTIONS ##
 

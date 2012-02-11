@@ -366,8 +366,8 @@ static inline void cmd_help() {
 	CMD_HELP("--search",	"-s",	"Search for the given pattern");
 	CMD_HELP("--dump",	"-d",	"Dump JSON database");
 	CMD_HELP("--tests",	"-t",	"Run the security tests only");
-	CMD_HELP("--version",	"-v",	"Print Safely's version");
-	CMD_HELP("--help",	"-h",	"Show this help");
+	CMD_HELP("--version",	"-v",	"Show program's version and exit");
+	CMD_HELP("--help",	"-h",	"Show this help and exit");
 
 	puts("");
 	puts(COLOR_RED " Options:" COLOR_OFF);
