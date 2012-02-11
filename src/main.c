@@ -350,9 +350,9 @@ static inline void cmd_version() {
 }
 
 static inline void cmd_help() {
-	#define CMD_HELP(CMDL, CMDS, MSG) printf("  %s, %s\t%s.\n", CMDS, CMDL, MSG);
+	#define CMD_HELP(CMDL, CMDS, MSG) printf("  %s, %s      \t%s.\n", CMDS, CMDL, MSG);
 
-	puts("Usage: safely COMMAND [ACCOUNT]\n");
+	puts("Usage: safely [OPTIONS] COMMAND [ACCOUNT]\n");
 	puts(" Commands:");
 
 	CMD_HELP("--create",	"-c",	"Create a new password db");
@@ -364,7 +364,17 @@ static inline void cmd_help() {
 	CMD_HELP("--search",	"-s",	"Search for the given pattern");
 	CMD_HELP("--dump",	"-d",	"Dump JSON database");
 	CMD_HELP("--tests",	"-t",	"Run the security tests only");
+	CMD_HELP("--version",	"-v",	"Print Safely's version");
 	CMD_HELP("--help",	"-h",	"Show this help");
+
+	puts("");
+	puts(" Options:");
+
+	CMD_HELP("--db",	"-D",	"Specifies a custom path to the password database");
+	CMD_HELP("--quiet",	"-Q",	"Output errors only (i.e. no \"[ok]\" messages)");
+	CMD_HELP("--nosecure",	"-S",	"Ignore any security test failure");
+	CMD_HELP("--nobackup",	"-B",	"Do not create db file backups");
+	CMD_HELP("--noagent",	"-A",	"Do not use the default gpg agent");
 
 	puts("");
 }
