@@ -71,6 +71,11 @@ Show the help.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Specifies a custom path to the password database.
 
+`-Q, --quiet`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Output errors only (i.e. no "[ok]" messages).
+
 `-S, --nosecure`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

@@ -58,11 +58,13 @@ inline void get_input(char str[]) {
 void ok_printf(const char *fmt, ...) {
 	va_list args;
 
-	va_start(args, fmt);
-	fprintf(stderr, "[" COLOR_GREEN "ok" COLOR_OFF "] ");
-	vfprintf(stderr, fmt, args);
-	va_end(args);
-	fprintf(stderr, "\n");
+	if (!getenv("SAFELY_QUIET")) {
+		va_start(args, fmt);
+		fprintf(stderr, "[" COLOR_GREEN "ok" COLOR_OFF "] ");
+		vfprintf(stderr, fmt, args);
+		va_end(args);
+		fprintf(stderr, "\n");
+	}
 }
 
 void debug_printf(const char *fmt, ...) {

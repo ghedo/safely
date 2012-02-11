@@ -79,6 +79,7 @@ enum cmd_t {
 static struct option long_opts[] = {
 	/* options */
 	{ "db",		required_argument,	0, 'D' },
+	{ "quiet",	no_argument,		0, 'Q' },
 	{ "nosecure",	no_argument,		0, 'S' },
 	{ "nobackup",	no_argument,		0, 'B' },
 	{ "noagent",	no_argument,		0, 'A' },
@@ -117,11 +118,12 @@ int main(int argc, char *argv[]) {
 
 	signal(SIGINT, leave);
 
-	while ((opts = getopt_long(argc, argv, "D:SBAca:p:u:e:r:s:dth", long_opts, &i)) != -1) {
+	while ((opts = getopt_long(argc, argv, "D:QSBAca:p:u:e:r:s:dth", long_opts, &i)) != -1) {
 		arg = optarg;
 
 		switch (opts) {
 			case 'D': { setenv("SAFELY_DB", optarg, 1);	break; }
+			case 'Q': { setenv("SAFELY_QUIET", "y", 1);	break; }
 			case 'S': { setenv("SAFELY_NOSECURE", "y", 1);	break; }
 			case 'B': { setenv("SAFELY_NOBACKUP", "y", 1);	break; }
 			case 'A': { unsetenv("GPG_AGENT_INFO");		break; }
