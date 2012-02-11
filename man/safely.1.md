@@ -115,9 +115,15 @@ The default password database file. The option `--db` can be used to override it
 `~/.safely.db~`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-The default password database file backup. If the `--db` option is set, this
+The default password database backup file. If the `--db` option is set, this
 will change accordingly. If the `--nobackup` option is used, this file is not
 created/modified.
+
+`~/.safely.db.lock`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+The default password database lock file. If the `--db` option is set, this
+will change accordingly.
 
 ## AUTHOR ##
 
