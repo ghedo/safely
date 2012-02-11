@@ -78,22 +78,23 @@ enum cmd_t {
 
 static struct option long_opts[] = {
 	/* options */
-	{"db",	required_argument,		0, 'D'},
-	{"nosecure",	no_argument,		0, 'S'},
-	{"nobackup",	no_argument,		0, 'B'},
-	{"noagent",	no_argument,		0, 'A'},
+	{ "db",		required_argument,	0, 'D' },
+	{ "nosecure",	no_argument,		0, 'S' },
+	{ "nobackup",	no_argument,		0, 'B' },
+	{ "noagent",	no_argument,		0, 'A' },
+
 	/* commands */
-	{"create",	no_argument,		0, 'c'},
-	{"add",		required_argument,	0, 'a'},
-	{"passwd",	required_argument,	0, 'p'},
-	{"user",	required_argument,	0, 'u'},
-	{"edit",	required_argument,	0, 'e'},
-	{"remove",	required_argument,	0, 'r'},
-	{"search",	required_argument,	0, 's'},
-	{"dump",	no_argument,		0, 'd'},
-	{"tests",	no_argument,		0, 't'},
-	{"help",	no_argument,		0, 'h'},
-	{0, 0, 0, 0}
+	{ "create",	no_argument,		0, 'c' },
+	{ "add",	required_argument,	0, 'a' },
+	{ "passwd",	required_argument,	0, 'p' },
+	{ "user",	required_argument,	0, 'u' },
+	{ "edit",	required_argument,	0, 'e' },
+	{ "remove",	required_argument,	0, 'r' },
+	{ "search",	required_argument,	0, 's' },
+	{ "dump",	no_argument,		0, 'd' },
+	{ "tests",	no_argument,		0, 't' },
+	{ "help",	no_argument,		0, 'h' },
+	{ 0, 0, 0, 0 }
 };
 
 int main(int argc, char *argv[]) {
