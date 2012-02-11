@@ -142,9 +142,6 @@ char *gpg_encrypt(const char *str, const char *keyfpr) {
 	err = gpgme_data_new(&out);
 	if (err) fail_printf("Failed GPG new data: %s", gpgme_strerror(err));
 
-	err = gpgme_get_key(ctx, keyfpr, &key[0], 0);
-	if(err) fail_printf("Failed GPG get key: %s");
-
 	err = gpgme_op_encrypt_sign(ctx, key, GPGME_ENCRYPT_ALWAYS_TRUST, in, out);
 	if (err) fail_printf("Failed GPG encrypt/sign: %s", gpgme_strerror(err));
 
@@ -200,20 +197,16 @@ char *gpg_decrypt_data(gpgme_data_t in) {
 
 	err = gpgme_op_decrypt_verify (ctx, in, out);
 	if(err) fail_printf("Failed GPG decrypt/verify: %s", gpgme_strerror(err));
+
 	decrypt_result = gpgme_op_decrypt_result (ctx);
-
-	if (decrypt_result -> unsupported_algorithm)
-		fail_printf("Unsupported algorithm");
-
 	if (decrypt_result -> unsupported_algorithm)
 		fail_printf("Unsupported GPG algorithm: %s\n", decrypt_result -> unsupported_algorithm);
 
-	return_buf = gpg_data_to_char(out);
-
 	verify_result = gpgme_op_verify_result(ctx);
-
 	if (gpg_err_code(verify_result -> signatures -> validity_reason) != GPG_ERR_NO_ERROR)
 		fail_printf("Unexpected validity reason: %i", verify_result -> signatures -> validity_reason);
+
+	return_buf = gpg_data_to_char(out);
 
 	gpgme_data_release(in);
 	gpgme_data_release(out);
@@ -241,36 +234,4 @@ char *gpg_decrypt_file(const char *path) {
 	if (err) fail_printf("Failed GPG new data from file: %s", gpgme_strerror(err));
 
 	return gpg_decrypt_data(in);
-}
-
-char *gpg_get_keyfpr_first() {
-	char *return_buf = NULL;
-
-	gpgme_ctx_t ctx;
-	gpgme_key_t key;
-	gpgme_error_t err;
-
-	gpg_init(GPGME_PROTOCOL_OpenPGP);
-
-	err = gpgme_new(&ctx);
-	if (err) fail_printf("Failed GPG new: %s", gpgme_strerror(err));
-
-	err = gpgme_op_keylist_start(ctx, NULL, 1);
-	if (err) fail_printf("Failed GPG keylist start: %s", gpgme_strerror(err));
-
-	while ((gpgme_op_keylist_next(ctx, &key) != GPG_ERR_EOF) && key) {
-		if (!key -> disabled && !key -> expired
-		 && !key -> invalid  && !key -> revoked) {
-			return_buf = strdup(key -> subkeys -> fpr);
-		}
-
-		gpgme_key_unref(key);
-	}
-
-	err = gpgme_op_keylist_end(ctx);
-	if (err) fail_printf("Failed GPG keylist end: %s", gpgme_strerror(err));
-
-	gpgme_release(ctx);
-
-	return return_buf;
 }

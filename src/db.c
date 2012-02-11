@@ -285,12 +285,11 @@ int db_search(void *db, const char *pattern) {
 void db_sync(void *db) {
 	FILE *f;
 	json_t *root = (json_t *) db;
-	char *db_path, *key_fpr, *cipher, *dump;
+	char *db_path, *cipher, *dump;
 
 	dump = json_dumps(root, JSON_COMPACT);
 
-	key_fpr = gpg_get_keyfpr_first();
-	cipher  = gpg_encrypt(dump, key_fpr);
+	cipher  = gpg_encrypt(dump, NULL);
 
 	db_path = db_get_path();
 
@@ -305,7 +304,6 @@ void db_sync(void *db) {
 
 	free(dump);
 	free(db_path);
-	free(key_fpr);
 	free(cipher);
 }
 
