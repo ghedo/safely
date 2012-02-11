@@ -33,6 +33,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -59,6 +61,7 @@ static inline void cmd_edit(const char *arg);
 static inline void cmd_remove(const char *arg);
 static inline void cmd_search(const char *arg);
 static inline void cmd_dump();
+static inline void cmd_version();
 static inline void cmd_help();
 
 static void leave(int signal);
@@ -73,6 +76,7 @@ enum cmd_t {
 	SEARCH,
 	DUMP,
 	TESTS,
+	VERSION,
 	HELP
 };
 
@@ -94,6 +98,7 @@ static struct option long_opts[] = {
 	{ "search",	required_argument,	0, 's' },
 	{ "dump",	no_argument,		0, 'd' },
 	{ "tests",	no_argument,		0, 't' },
+	{ "version",	no_argument,		0, 'v' },
 	{ "help",	no_argument,		0, 'h' },
 	{ 0, 0, 0, 0 }
 };
@@ -118,7 +123,7 @@ int main(int argc, char *argv[]) {
 
 	signal(SIGINT, leave);
 
-	while ((opts = getopt_long(argc, argv, "D:QSBAca:p:u:e:r:s:dth", long_opts, &i)) != -1) {
+	while ((opts = getopt_long(argc, argv, "D:QSBAca:p:u:e:r:s:dtvh", long_opts, &i)) != -1) {
 		arg = optarg;
 
 		switch (opts) {
@@ -137,6 +142,7 @@ int main(int argc, char *argv[]) {
 			case 's': { command = SEARCH;	break; }
 			case 'd': { command = DUMP;	break; }
 			case 't': { command = TESTS;	break; }
+			case 'v': { command = VERSION;	break; }
 			case 'h': { command = HELP;	break; }
 		}
 	}
@@ -151,6 +157,7 @@ int main(int argc, char *argv[]) {
 		case SEARCH:	{ cmd_search(arg);	break; }
 		case DUMP:	{ cmd_dump();		break; }
 		case TESTS:	{ security_check();	break; }
+		case VERSION:	{ cmd_version();	break; }
 		default:
 		case HELP:	{ cmd_help();		break; }
 	}
@@ -336,6 +343,10 @@ static inline void cmd_dump(){
 	free(dump);
 
 	db_unload(db);
+}
+
+static inline void cmd_version() {
+	printf("Safely v%s\n", SAFELY_VERSION);
 }
 
 static inline void cmd_help() {

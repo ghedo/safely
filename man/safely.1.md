@@ -59,6 +59,11 @@ Dump JSON database.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Run the security tests only.
 
+`-v, --version`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Print Safely's version.
+
 `-h, --help`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
