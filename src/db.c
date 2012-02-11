@@ -104,15 +104,13 @@ void db_make_backup() {
 
 	sprintf(bk_file_name, "%s~", db_file_name);
 
-	f1 = fopen(db_file_name, "rb");
-	if (f1 == NULL)
+	if (!(f1 = fopen(db_file_name, "rb")))
 		fail_printf(
 			"Cannot open file '%s': %s",
 			db_file_name, strerror(errno)
 		);
 
-	f2 = fopen(bk_file_name, "wb");
-	if (f2 == NULL)
+	if (!(f2 = fopen(bk_file_name, "wb")))
 		fail_printf(
 			"Cannot open file '%s': %s",
 			bk_file_name, strerror(errno)
@@ -155,22 +153,28 @@ int db_check_lock() {
 }
 
 void db_acquire_lock() {
+#ifndef HAVE_LOCKFILE_H
+	FILE *lock_file;
+#endif
 	char *lock_file_name = db_lock_get_path();
 
 	if (db_check_lock())
 		fail_printf("Database locked");
 
 #ifdef HAVE_LOCKFILE_H
-	lockfile_create(lock_file_name, 0, 0);
+	if (!lockfile_create(lock_file_name, 0, 0))
+		fail_printf("Error creating lock file");
 #else
-	FILE *lock_file;
+	if (!(lock_file = fopen(lock_file_name, "w")))
+		fail_printf(
+			"Cannot create lock file '%s': 5s",
+			lock_file_name, strerror(errno)
+		);
 
-	lock_file = fopen(lock_file_name, "w");
 	fclose(lock_file);
 #endif
 
 	setenv("SAFELY_LOCKED", "y", 0);
-
 	free(lock_file_name);
 }
 
@@ -183,7 +187,8 @@ void db_release_lock() {
 	}
 
 #ifdef HAVE_LOCKFILE_H
-	lockfile_remove(lock_file_name);
+	if (lockfile_remove(lock_file_name) < 0)
+		err_printf("Can't remove lock %s: %s", lock_file_name, strerror(errno));
 #else
 	if (unlink(lock_file_name) < 0)
 		err_printf("Can't remove lock %s: %s", lock_file_name, strerror(errno));
@@ -211,9 +216,12 @@ void *db_create() {
 		fail_printf("DB file '%s' already exists", db_path);
 	}
 
-	f = fopen(db_path, "w");
+	if (!(f = fopen(db_path, "w")))
+		fail_printf(
+			"Cannot open file '%s': 5s",
+			db_path, strerror(errno)
+		);
 
-	if (f == NULL) fail_printf("Cannot open file '%s'", db_path);
 	fclose(f);
 
 	return (void *) root;
@@ -285,8 +293,12 @@ void db_sync(void *db) {
 	cipher  = gpg_encrypt(dump, key_fpr);
 
 	db_path = db_get_path();
-	f = fopen(db_path, "w");
-	if (f == NULL) fail_printf("Cannot open file '%s'", db_path);
+
+	if (!(f = fopen(db_path, "w")))
+		fail_printf(
+			"Cannot open file '%s': %s",
+			db_path, strerror(errno)
+		);
 
 	fprintf(f, "%s", cipher);
 	fclose(f);
