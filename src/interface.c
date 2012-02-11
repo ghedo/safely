@@ -1,5 +1,5 @@
 /*
- * Secure and simple command-line password store.
+ * Lightweight command-line password manager.
  *
  * Copyright (c) 2011, Alessandro Ghedini
  * All rights reserved.

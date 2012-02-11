@@ -1,16 +1,16 @@
 Safely
 ======
 
-**Safely** is a command-line tool to manage passwords in an extremely easy
-to use and secure way. The password database is a simple GnuPG encrypted
-JSON document; this makes manual access and manipulation of the database
-very simple.
+**Safely** is a command-line tool to manage passwords. It stores all your login
+information (usernames and passwords) in simple, JSON-formatted file, encrypted
+and signed using your OpenPGP key: this makes it pretty secure and allows manual
+decryption of the database when needed.
 
 safely was implemented with the following design goals in mind:
 
  * Simple database format and schema (to ease manual manipulation)
  * Secure, GPG-based encryption which allows manual decryption (see above)
- * Simple, command-line based and non interactive interface
+ * Fool-proof command-line based and non interactive interface
  * Featureless ("do one thing, do it well")
 
 ## GETTING STARTED
