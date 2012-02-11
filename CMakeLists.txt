@@ -1,5 +1,5 @@
 # Safely CMakeLists.txt
-# Copyright (C) 2011 Alessandro Ghedini <al3xbio@gmail.com>
+# Copyright (C) 2011-2012 Alessandro Ghedini <al3xbio@gmail.com>
 # This file is released under the 3 clause BSD license, see COPYING
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)

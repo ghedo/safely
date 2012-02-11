@@ -125,6 +125,6 @@ Alessandro Ghedini <al3xbio@gmail.com>
 
 ## COPYRIGHT ##
 
-Copyright (C) 2011 Alessandro Ghedini <al3xbio@gmail.com>
+Copyright (C) 2011-2012 Alessandro Ghedini <al3xbio@gmail.com>
 
 This program is released under the 3 clause BSD license.

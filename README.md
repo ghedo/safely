@@ -85,6 +85,6 @@ $ make
 
 ## COPYRIGHT
 
-Copyright (C) 2011 Alessandro Ghedini <al3xbio@gmail.com>
+Copyright (C) 2011-2012 Alessandro Ghedini <al3xbio@gmail.com>
 
 See COPYING for the license.

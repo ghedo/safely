@@ -1,7 +1,7 @@
 /*
  * Lightweight command-line password manager.
  *
- * Copyright (c) 2011, Alessandro Ghedini
+ * Copyright (c) 2011-2012, Alessandro Ghedini
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
