@@ -165,7 +165,7 @@ void db_acquire_lock() {
 		);
 
 #ifdef HAVE_LOCKFILE_H
-	if (!lockfile_create(lock_file_name, 0, 0))
+	if (lockfile_create(lock_file_name, 0, 0))
 		fail_printf(
 			"Cannot create lock file '%s': %s",
 			lock_file_name, strerror(errno)
