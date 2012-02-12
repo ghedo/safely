@@ -53,7 +53,7 @@ static void gpg_init(gpgme_protocol_t proto) {
 	gpgme_set_locale(NULL, LC_CTYPE, setlocale(LC_CTYPE, NULL));
 
 	err = gpgme_engine_check_version(proto);
-	if (err) fail_printf("Failed GPG version check: %s", gpgme_strerror(err));
+	if (err) fail_printf("Cannot check GPG version: %s", gpgme_strerror(err));
 }
 
 static gpgme_error_t passphrase_cb(void *opaque, const char *uid_hint,
@@ -100,13 +100,13 @@ static char *gpg_data_to_char(gpgme_data_t dh) {
 	data_size = gpgme_data_seek(dh, 0, SEEK_END);
 	gpgme_data_seek(dh, 0, SEEK_SET);
 
-	if (data_size <= 0) fail_printf("Failed GPG data seek");
+	if (data_size <= 0) fail_printf("Cannot seek GPG data");
 
 	data = calloc(data_size + 1, 1);
-	if (data == NULL) fail_printf("No more memory");
+	if (data == NULL) fail_printf("Cannot allocate more memory");
 
 	ret = gpgme_data_read(dh, data, data_size);
-	if (ret < 0) fail_printf("Failed GPG data read");
+	if (ret < 0) fail_printf("Cannot read GPG data");
 
 	return data;
 }
@@ -127,7 +127,7 @@ char *gpg_encrypt(const char *str, const char *keyfpr) {
 	gpg_init(GPGME_PROTOCOL_OpenPGP);
 
 	err = gpgme_new(&ctx);
-	if (err) fail_printf("Failed GPG new: %s", gpgme_strerror(err));
+	if (err) fail_printf("Cannot initialize GPG context: %s", gpgme_strerror(err));
 
 	gpgme_set_textmode(ctx, 1);
 	gpgme_set_armor(ctx, 1);
@@ -137,13 +137,13 @@ char *gpg_encrypt(const char *str, const char *keyfpr) {
 		gpgme_set_passphrase_cb(ctx, passphrase_cb, NULL);
 
 	err = gpgme_data_new_from_mem(&in, str, strlen(str), 0);
-	if (err) fail_printf("Failed GPG new data from mem: %s", gpgme_strerror(err));
+	if (err) fail_printf("Cannot load GPG data from memory: %s", gpgme_strerror(err));
 
 	err = gpgme_data_new(&out);
-	if (err) fail_printf("Failed GPG new data: %s", gpgme_strerror(err));
+	if (err) fail_printf("Cannot load GPG data: %s", gpgme_strerror(err));
 
 	err = gpgme_op_encrypt_sign(ctx, key, GPGME_ENCRYPT_ALWAYS_TRUST, in, out);
-	if (err) fail_printf("Failed GPG encrypt/sign: %s", gpgme_strerror(err));
+	if (err) fail_printf("Cannot GPG encrypt/sign: %s", gpgme_strerror(err));
 
 	crypt_result = gpgme_op_encrypt_result(ctx);
 
@@ -185,7 +185,7 @@ char *gpg_decrypt_data(gpgme_data_t in) {
 	gpg_init(GPGME_PROTOCOL_OpenPGP);
 
 	err = gpgme_new(&ctx);
-	if (err) fail_printf("Failed GPG new: %s", gpgme_strerror(err));
+	if (err) fail_printf("Cannot initialize GPG context: %s", gpgme_strerror(err));
 
 	agent_info = getenv("GPG_AGENT_INFO");
 
@@ -193,10 +193,10 @@ char *gpg_decrypt_data(gpgme_data_t in) {
 		gpgme_set_passphrase_cb(ctx, passphrase_cb, NULL);
 
 	err = gpgme_data_new(&out);
-	if (err) fail_printf("Failed GPG new data: %s", gpgme_strerror(err));
+	if (err) fail_printf("Cannot load GPG data: %s", gpgme_strerror(err));
 
 	err = gpgme_op_decrypt_verify (ctx, in, out);
-	if(err) fail_printf("Failed GPG decrypt/verify: %s", gpgme_strerror(err));
+	if(err) fail_printf("Cannot GPG decrypt/verify: %s", gpgme_strerror(err));
 
 	decrypt_result = gpgme_op_decrypt_result (ctx);
 	if (decrypt_result -> unsupported_algorithm)
@@ -221,7 +221,7 @@ char *gpg_decrypt(const char *cipher) {
 	gpgme_error_t err;
 
 	err = gpgme_data_new_from_mem(&in, cipher, strlen(cipher), 0);
-	if (err) fail_printf("Failed GPG new data from mem: %s", gpgme_strerror(err));
+	if (err) fail_printf("Cannot load GPG data from memory: %s", gpgme_strerror(err));
 
 	return gpg_decrypt_data(in);
 }
@@ -231,7 +231,7 @@ char *gpg_decrypt_file(const char *path) {
 	gpgme_error_t err;
 
 	err = gpgme_data_new_from_file(&in, path, 1);
-	if (err) fail_printf("Failed GPG new data from file: %s", gpgme_strerror(err));
+	if (err) fail_printf("Cannot load GPG data from file: %s", gpgme_strerror(err));
 
 	return gpg_decrypt_data(in);
 }

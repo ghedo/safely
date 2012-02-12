@@ -65,7 +65,7 @@ static char *db_get_path() {
 		char *home = getenv("HOME");
 
 		db_file_name = malloc(strlen(home) + strlen(DB_FILE) + 2);
-		if (db_file_name == NULL) fail_printf("No more memory");
+		if (db_file_name == NULL) fail_printf("Cannot allocate more memory");
 
 		sprintf(db_file_name, "%s/%s", home, DB_FILE);
 	}
@@ -79,7 +79,7 @@ static char *db_lock_get_path() {
 	db_file_name = db_get_path();
 
 	lock_file_name = malloc(strlen(db_file_name) + 5 + 1);
-	if (lock_file_name == NULL) fail_printf("No more memory");
+	if (lock_file_name == NULL) fail_printf("Cannot allocate more memory");
 
 	sprintf(lock_file_name, "%s.lock", db_file_name);
 
@@ -100,7 +100,7 @@ void db_make_backup() {
 	db_file_name = db_get_path();
 
 	bk_file_name = malloc(strlen(db_file_name) + 2);
-	if (bk_file_name == NULL) fail_printf("No more memory");
+	if (bk_file_name == NULL) fail_printf("Cannot allocate more memory");
 
 	sprintf(bk_file_name, "%s~", db_file_name);
 
@@ -121,13 +121,13 @@ void db_make_backup() {
 	fseek(f1, 0, SEEK_SET);
 
 	buf = malloc(db_size);
-	if (buf == NULL) fail_printf("No more memory");
+	if (buf == NULL) fail_printf("Cannot allocate more memory");
 
 	if (fread(buf, db_size, 1, f1) <= 0)
-		fail_printf("Error reading db file: %s", strerror(errno));
+		fail_printf("Cannot read db file: %s", strerror(errno));
 
 	if (fwrite(buf, db_size, 1, f2) <= 0)
-		fail_printf("Error writing to backup file: %s", strerror(errno));
+		fail_printf("Cannot write to backup file: %s", strerror(errno));
 
 	fclose(f1);
 	fclose(f2);
@@ -159,15 +159,21 @@ void db_acquire_lock() {
 	char *lock_file_name = db_lock_get_path();
 
 	if (db_check_lock())
-		fail_printf("Database locked");
+		fail_printf(
+			"Cannot create lock file '%s': Database already locked",
+			lock_file_name
+		);
 
 #ifdef HAVE_LOCKFILE_H
 	if (!lockfile_create(lock_file_name, 0, 0))
-		fail_printf("Error creating lock file");
+		fail_printf(
+			"Cannot create lock file '%s': %s",
+			lock_file_name, strerror(errno)
+		);
 #else
 	if (!(lock_file = fopen(lock_file_name, "w")))
 		fail_printf(
-			"Cannot create lock file '%s': 5s",
+			"Cannot create lock file '%s': %s",
 			lock_file_name, strerror(errno)
 		);
 
@@ -188,10 +194,10 @@ void db_release_lock() {
 
 #ifdef HAVE_LOCKFILE_H
 	if (lockfile_remove(lock_file_name) < 0)
-		err_printf("Can't remove lock %s: %s", lock_file_name, strerror(errno));
+		err_printf("Cannot remove lock %s: %s", lock_file_name, strerror(errno));
 #else
 	if (unlink(lock_file_name) < 0)
-		err_printf("Can't remove lock %s: %s", lock_file_name, strerror(errno));
+		err_printf("Cannot remove lock %s: %s", lock_file_name, strerror(errno));
 #endif
 
 	free(lock_file_name);
@@ -213,7 +219,7 @@ void *db_create() {
 	umask(066);
 
 	if (access(db_path, F_OK | W_OK) != -1) {
-		fail_printf("DB file '%s' already exists", db_path);
+		fail_printf("Cannot create DB file '%s': Already exists", db_path);
 	}
 
 	if (!(f = fopen(db_path, "w")))
