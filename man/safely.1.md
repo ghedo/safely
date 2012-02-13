@@ -1,5 +1,5 @@
-safely(1) -- lightweight command-line password manager
-======================================================
+safely(1) -- pretty command-line password manager
+=================================================
 
 ## SYNOPSIS
 

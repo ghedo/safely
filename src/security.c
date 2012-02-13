@@ -1,5 +1,5 @@
 /*
- * Lightweight command-line password manager.
+ * Pretty command-line password manager.
  *
  * Copyright (c) 2011-2012, Alessandro Ghedini
  * All rights reserved.
