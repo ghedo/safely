@@ -47,7 +47,7 @@ Remove given account.
 `-s, --search`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Remove the given account.
+Search for the given pattern.
 
 `-d, --dump`
 
