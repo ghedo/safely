@@ -124,8 +124,6 @@ int main(int argc, char *argv[]) {
 	signal(SIGINT, leave);
 
 	while ((opts = getopt_long(argc, argv, "D:QSBAca:p:u:e:r:s:dtvh", long_opts, &i)) != -1) {
-		arg = optarg;
-
 		switch (opts) {
 			case 'D': { setenv("SAFELY_DB", optarg, 1);	break; }
 			case 'Q': { setenv("SAFELY_QUIET", "y", 1);	break; }
@@ -134,12 +132,43 @@ int main(int argc, char *argv[]) {
 			case 'A': { unsetenv("GPG_AGENT_INFO");		break; }
 
 			case 'c': { command = CREATE;	break; }
-			case 'a': { command = ADD;	break; }
-			case 'p': { command = PASSWD;	break; }
-			case 'u': { command = USER;	break; }
-			case 'e': { command = EDIT;	break; }
-			case 'r': { command = REMOVE;	break; }
-			case 's': { command = SEARCH;	break; }
+
+			case 'a': {
+				command = ADD;
+				arg = optarg;
+				break;
+			}
+
+			case 'p': {
+				command = PASSWD;
+				arg = optarg;
+				break;
+			}
+
+			case 'u': {
+				command = USER;
+				arg = optarg;
+				break;
+			}
+
+			case 'e': {
+				command = EDIT;
+				arg = optarg;
+				break;
+			}
+
+			case 'r': {
+				command = REMOVE;
+				arg = optarg;
+				break;
+			}
+
+			case 's': {
+				command = SEARCH;
+				arg = optarg;
+				break;
+			}
+
 			case 'd': { command = DUMP;	break; }
 			case 't': { command = TESTS;	break; }
 			case 'v': { command = VERSION;	break; }
