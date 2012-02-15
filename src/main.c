@@ -386,7 +386,7 @@ static inline void cmd_help() {
 	puts("[OPTIONS] COMMAND [ACCOUNT]\n");
 	puts(COLOR_RED " Commands:" COLOR_OFF);
 
-	CMD_HELP("--create",	"-c",	"Create a new password db");
+	CMD_HELP("--create",	"-c",	"Create a new password database");
 	CMD_HELP("--add",	"-a",	"Add the given account");
 	CMD_HELP("--passwd",	"-p",	"Show the given account's password");
 	CMD_HELP("--user",	"-u",	"Show the given account's username");
@@ -404,7 +404,7 @@ static inline void cmd_help() {
 	CMD_HELP("--db",	"-D",	"Specifies a custom path to the password database");
 	CMD_HELP("--quiet",	"-Q",	"Output errors only (i.e. no \"[ok]\" messages)");
 	CMD_HELP("--nosecure",	"-S",	"Ignore any security test failure");
-	CMD_HELP("--nobackup",	"-B",	"Do not create db file backups");
+	CMD_HELP("--nobackup",	"-B",	"Do not create database file backups");
 	CMD_HELP("--noagent",	"-A",	"Do not use the default gpg agent");
 
 	puts("");

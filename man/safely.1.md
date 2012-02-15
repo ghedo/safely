@@ -17,22 +17,22 @@ decryption of the database when needed.
 `-c, --create`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Create a new password db.
+Create a new password database.
 
 `-a, --add`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Add a new account.
+Add the given account.
 
 `-p, --passwd`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Show given account's password.
+Show the given account's password.
 
 `-u, --user`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Show given account's username.
+Show the given account's username.
 
 `-e, --edit`
 
@@ -42,7 +42,7 @@ Edit the given account.
 `-r, --remove`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Remove given account.
+Remove the given account.
 
 `-s, --search`
 
@@ -89,7 +89,7 @@ Ignore any security test failure.
 `-B, --nobackup`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Do not create db file backups.
+Do not create database file backups.
 
 `-A, --noagent`
 
