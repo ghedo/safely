@@ -77,8 +77,8 @@ root privileges) everything should be ok.
 Safely is distributed as source code. Install with:
 
 ~~~~
-$ git clone git://github.com/AlexBio/Safely.git && cd Safely
-$ cmake .
+$ mkdir build && cd build
+$ cmake ..
 $ make
 # make install
 ~~~~
