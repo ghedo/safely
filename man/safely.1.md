@@ -7,10 +7,10 @@ safely(1) -- pretty command-line password manager
 
 ## DESCRIPTION
 
-**Safely** is a command-line tool to manage passwords. It stores all your login
-information (usernames and passwords) in a simple, JSON-formatted file, encrypted
-and signed using your OpenPGP key: this makes it pretty secure and allows manual
-decryption of the database when needed.
+**Safely** is a command-line tool to manage passwords. It stores all your
+login information (usernames and passwords) in a simple, JSON-formatted 
+file, encrypted and signed using your OpenPGP key: this makes it pretty 
+secure and allows manual decryption of the database when needed.
 
 ## COMMANDS ##
 
@@ -101,23 +101,22 @@ Do not use the default gpg agent.
 `GPG_AGENT_INFO`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Used to locate the gpg-agent. This is only used when `--noagent` is not set. The
-value consists of 3 colon delimited fields: the path to the Unix Domain Socket,
-the PID of the gpg-agent and the protocol version which should be set to 1.
+Used to locate the gpg-agent. This is only used when `--noagent` is not set.
 
 ## FILES ##
 
 `~/.safely.db`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-The default password database file. The option `--db` can be used to override it.
+The default password database file. The option `--db` can be used to 
+override it.
 
 `~/.safely.db~`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 The default password database backup file. If the `--db` option is set, this
-will change accordingly. If the `--nobackup` option is used, this file is not
-created/modified.
+will change accordingly. If the `--nobackup` option is used, this file is 
+not created/modified.
 
 `~/.safely.db.lock`
 
