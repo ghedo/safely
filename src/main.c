@@ -119,7 +119,9 @@ int main(int argc, char *argv[]) {
 	user		= getpwuid(getuid());
 
 	setenv("HOME", user -> pw_dir, 1);
-	setenv("GPG_AGENT_INFO", gpg_agent_info, 1);
+
+	if (gpg_agent_info)
+		setenv("GPG_AGENT_INFO", gpg_agent_info, 1);
 
 	signal(SIGINT, leave);
 
