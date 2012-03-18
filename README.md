@@ -1,10 +1,10 @@
 Safely
 ======
 
-**Safely** is a command-line tool to manage passwords. It stores all your login
-information (usernames and passwords) in a simple, JSON-formatted file, encrypted
-and signed using your OpenPGP key: this makes it pretty secure and allows manual
-decryption of the database when needed.
+**Safely** is a command-line tool to manage passwords. It stores all your
+login information (usernames and passwords) in a simple, JSON-formatted
+file, encrypted and signed using your OpenPGP key: this makes it pretty
+secure and allows manual decryption of the database when needed.
 
 safely was implemented with the following design goals in mind:
 
@@ -51,6 +51,8 @@ $ safely --search google
 $ safely --remove google.com
 ~~~~
 
+See the [man page](http://alexbio.github.com/Safely/safely.1.html) for more information.
+
 ## SECURITY
 
 safely checks, at startup, that the following conditions are true:
@@ -61,10 +63,10 @@ safely checks, at startup, that the following conditions are true:
  * `ptrace()` is disabled
  * stdin, stdout, stderr are valid
 
-If any of them fails, safely refuses to work, unless the **--nosecure** option
-is used (see the manpage for more info). Note that the ptrace and memlock checks
-need to be run as suid (mode 4755) to pass; if `make install` is executed (with
-root privileges) everything should be ok.
+If any of them fails, safely refuses to work, unless the **--nosecure**
+option is used (see the man page for more info). Note that the ptrace and
+memlock checks need to be run as suid (mode 4755) to pass; if `make install`
+is executed (with root privileges) everything should be ok.
 
 ## DEPENDENCIES
 
