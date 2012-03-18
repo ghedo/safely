@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv='content-type' value='text/html;charset=utf8'>
+  <meta name='generator' value='Ronn/v0.7.3 (http://github.com/rtomayko/ronn/tree/0.7.3)'>
+  <title>safely(1) - pretty command-line password manager</title>
+  <style type='text/css' media='all'>
+  /* style: man */
+  body#manpage {margin:0}
+  .mp {max-width:100ex;padding:0 9ex 1ex 4ex}
+  .mp p,.mp pre,.mp ul,.mp ol,.mp dl {margin:0 0 20px 0}
+  .mp h2 {margin:10px 0 0 0}
+  .mp > p,.mp > pre,.mp > ul,.mp > ol,.mp > dl {margin-left:8ex}
+  .mp h3 {margin:0 0 0 4ex}
+  .mp dt {margin:0;clear:left}
+  .mp dt.flush {float:left;width:8ex}
+  .mp dd {margin:0 0 0 9ex}
+  .mp h1,.mp h2,.mp h3,.mp h4 {clear:left}
+  .mp pre {margin-bottom:20px}
+  .mp pre+h2,.mp pre+h3 {margin-top:22px}
+  .mp h2+pre,.mp h3+pre {margin-top:5px}
+  .mp img {display:block;margin:auto}
+  .mp h1.man-title {display:none}
+  .mp,.mp code,.mp pre,.mp tt,.mp kbd,.mp samp,.mp h3,.mp h4 {font-family:monospace;font-size:14px;line-height:1.42857142857143}
+  .mp h2 {font-size:16px;line-height:1.25}
+  .mp h1 {font-size:20px;line-height:2}
+  .mp {text-align:justify;background:#fff}
+  .mp,.mp code,.mp pre,.mp pre code,.mp tt,.mp kbd,.mp samp {color:#131211}
+  .mp h1,.mp h2,.mp h3,.mp h4 {color:#030201}
+  .mp u {text-decoration:underline}
+  .mp code,.mp strong,.mp b {font-weight:bold;color:#131211}
+  .mp em,.mp var {font-style:italic;color:#232221;text-decoration:none}
+  .mp a,.mp a:link,.mp a:hover,.mp a code,.mp a pre,.mp a tt,.mp a kbd,.mp a samp {color:#0000ff}
+  .mp b.man-ref {font-weight:normal;color:#434241}
+  .mp pre {padding:0 4ex}
+  .mp pre code {font-weight:normal;color:#434241}
+  .mp h2+pre,h3+pre {padding-left:0}
+  ol.man-decor,ol.man-decor li {margin:3px 0 10px 0;padding:0;float:left;width:33%;list-style-type:none;text-transform:uppercase;color:#999;letter-spacing:1px}
+  ol.man-decor {width:100%}
+  ol.man-decor li.tl {text-align:left}
+  ol.man-decor li.tc {text-align:center;letter-spacing:4px}
+  ol.man-decor li.tr {text-align:right;float:right}
+  </style>
+</head>
+<!--
+  The following styles are deprecated and will be removed at some point:
+  div#man, div#man ol.man, div#man ol.head, div#man ol.man.
+
+  The .man-page, .man-decor, .man-head, .man-foot, .man-title, and
+  .man-navigation should be used instead.
+-->
+<body id='manpage'>
+  <div class='mp' id='man'>
+
+  <div class='man-navigation' style='display:none'>
+    <a href="#NAME">NAME</a>
+    <a href="#SYNOPSIS">SYNOPSIS</a>
+    <a href="#DESCRIPTION">DESCRIPTION</a>
+    <a href="#COMMANDS">COMMANDS</a>
+    <a href="#OPTIONS">OPTIONS</a>
+    <a href="#ENVIRONMENT">ENVIRONMENT</a>
+    <a href="#FILES">FILES</a>
+    <a href="#AUTHOR">AUTHOR</a>
+    <a href="#COPYRIGHT">COPYRIGHT</a>
+  </div>
+
+  <ol class='man-decor man-head man head'>
+    <li class='tl'>safely(1)</li>
+    <li class='tc'></li>
+    <li class='tr'>safely(1)</li>
+  </ol>
+
+  <h2 id="NAME">NAME</h2>
+<p class="man-name">
+  <code>safely</code> - <span class="man-whatis">pretty command-line password manager</span>
+</p>
+
+<h2 id="SYNOPSIS">SYNOPSIS</h2>
+
+<p><code>safely [OPTIONS] COMMAND [ACCOUNT]</code></p>
+
+<h2 id="DESCRIPTION">DESCRIPTION</h2>
+
+<p><strong>Safely</strong> is a command-line tool to manage passwords. It stores all your
+login information (usernames and passwords) in a simple, JSON-formatted
+file, encrypted and signed using your OpenPGP key: this makes it pretty
+secure and allows manual decryption of the database when needed.</p>
+
+<h2 id="COMMANDS">COMMANDS</h2>
+
+<p><code>-c, --create</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Create a new password database.</p>
+
+<p><code>-a, --add</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Add the given account.</p>
+
+<p><code>-p, --passwd</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Show the given account's password.</p>
+
+<p><code>-u, --user</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Show the given account's username.</p>
+
+<p><code>-e, --edit</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Edit the given account.</p>
+
+<p><code>-r, --remove</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Remove the given account.</p>
+
+<p><code>-s, --search</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Search for the given pattern.</p>
+
+<p><code>-d, --dump</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Dump JSON database.</p>
+
+<p><code>-t, --tests</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Run the security tests only.</p>
+
+<p><code>-v, --version</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Show program's version and exit.</p>
+
+<p><code>-h, --help</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Show program's help and exit.</p>
+
+<h2 id="OPTIONS">OPTIONS</h2>
+
+<p><code>-D, --db</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Specifies a custom path to the password database.</p>
+
+<p><code>-Q, --quiet</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Output errors only (i.e. no "[ok]" messages).</p>
+
+<p><code>-S, --nosecure</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Ignore any security test failure.</p>
+
+<p><code>-B, --nobackup</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Do not create database file backups.</p>
+
+<p><code>-A, --noagent</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Do not use the default gpg agent.</p>
+
+<h2 id="ENVIRONMENT">ENVIRONMENT</h2>
+
+<p><code>GPG_AGENT_INFO</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Used to locate the gpg-agent. This is only used when <code>--noagent</code> is not set.</p>
+
+<h2 id="FILES">FILES</h2>
+
+<p><code>~/.safely.db</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+The default password database file. The option <code>--db</code> can be used to
+override it.</p>
+
+<p><code>~/.safely.db~</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+The default password database backup file. If the <code>--db</code> option is set, this
+will change accordingly. If the <code>--nobackup</code> option is used, this file is
+not created/modified.</p>
+
+<p><code>~/.safely.db.lock</code></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+The default password database lock file. If the <code>--db</code> option is set, this
+will change accordingly.</p>
+
+<h2 id="AUTHOR">AUTHOR</h2>
+
+<p>Alessandro Ghedini <a href="&#109;&#97;&#x69;&#108;&#x74;&#111;&#x3a;&#x61;&#x6c;&#51;&#120;&#98;&#105;&#111;&#64;&#103;&#x6d;&#x61;&#105;&#x6c;&#x2e;&#99;&#111;&#109;" data-bare-link="true">&#x61;&#x6c;&#51;&#120;&#98;&#105;&#111;&#64;&#103;&#x6d;&#97;&#x69;&#108;&#x2e;&#x63;&#x6f;&#x6d;</a></p>
+
+<h2 id="COPYRIGHT">COPYRIGHT</h2>
+
+<p>Copyright (C) 2011-2012 Alessandro Ghedini <a href="&#x6d;&#97;&#105;&#x6c;&#116;&#111;&#58;&#x61;&#108;&#x33;&#x78;&#98;&#x69;&#x6f;&#64;&#x67;&#x6d;&#97;&#x69;&#108;&#46;&#x63;&#111;&#109;" data-bare-link="true">&#x61;&#108;&#51;&#120;&#x62;&#x69;&#111;&#64;&#x67;&#109;&#x61;&#x69;&#108;&#x2e;&#x63;&#111;&#x6d;</a></p>
+
+<p>This program is released under the 3 clause BSD license.</p>
+
+
+  <ol class='man-decor man-foot man foot'>
+    <li class='tl'></li>
+    <li class='tc'>March 2012</li>
+    <li class='tr'>safely(1)</li>
+  </ol>
+
+  </div>
+</body>
+</html>
