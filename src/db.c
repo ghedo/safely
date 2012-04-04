@@ -273,7 +273,8 @@ json_t *db_search(void *db, const char *pattern) {
 
 	iter = json_object_iter(accounts);
 
-	regcomp(&regex, pattern, REG_EXTENDED);
+	if (regcomp(&regex, pattern, REG_EXTENDED))
+		fail_printf("Invalid regex '%s'", pattern);
 
 	while (iter) {
 		key = json_object_iter_key(iter);
@@ -302,6 +303,9 @@ json_t *db_search_first(void *db, const char *pattern) {
 	iter = json_object_iter(accounts);
 
 	regcomp(&regex, pattern, REG_EXTENDED);
+
+	if (regcomp(&regex, pattern, REG_EXTENDED))
+		fail_printf("Invalid regex '%s'", pattern);
 
 	while (iter) {
 		key = json_object_iter_key(iter);
