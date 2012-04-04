@@ -60,13 +60,10 @@ safely checks, at startup, that the following conditions are true:
  * Running as non-root
  * Core dumps are disabled
  * Memory is locked (via `mlockall()`)
- * `ptrace()` is disabled
  * stdin, stdout, stderr are valid
 
 If any of them fails, safely refuses to work, unless the **--nosecure**
-option is used (see the man page for more info). Note that the ptrace and
-memlock checks need to be run as suid (mode 4755) to pass; if `make install`
-is executed (with root privileges) everything should be ok.
+option is used (see the man page for more info).
 
 ## DEPENDENCIES
 
