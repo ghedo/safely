@@ -44,6 +44,7 @@ extern void *db_load();
 extern char *db_dump(void *db);
 
 extern int db_search(void *db, const char *pattern);
+extern json_t *db_search_fuzzy(void *db, const char *pattern);
 
 extern void db_sync(void *db);
 extern void db_unload(void *db);

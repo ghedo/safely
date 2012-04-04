@@ -86,12 +86,22 @@ int item_exist(void *db, const char *item) {
 }
 
 const char *item_get_fld(void *db, const char *item, const char *field) {
-	json_t *item_obj, *field_obj,
-	       *root = (json_t *) db,
+	json_t *root = (json_t *) db,
+	       *item_obj, *field_obj,
 	       *accounts = json_object_get(root, "accounts");
+	
+	if (getenv("SAFELY_FUZZY")) {
+		item_obj = db_search_fuzzy(db, item);
 
-	item_obj = json_object_get(accounts, item);
-	if (!json_is_object(item_obj)) fail_printf("Invalid object");
+		if (!item_obj)
+			fail_printf("Item '%s' does not exist", item);
+	} else {
+		if (item_exist(db, item) != 0)
+			fail_printf("Item '%s' does not exist", item);
+
+		item_obj = json_object_get(accounts, item);
+		if (!json_is_object(item_obj)) fail_printf("Invalid object");
+	}
 
 	field_obj = json_object_get(item_obj, field);
 	if (!json_is_string(field_obj)) fail_printf("Invalid string");

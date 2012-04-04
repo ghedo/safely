@@ -48,6 +48,8 @@
 #include <getopt.h>
 #include <signal.h>
 
+#include <jansson.h>
+
 #include "db.h"
 #include "item.h"
 #include "interface.h"
@@ -125,10 +127,11 @@ int main(int argc, char *argv[]) {
 
 	signal(SIGINT, leave);
 
-	while ((opts = getopt_long(argc, argv, "D:QSBAca:p:u:e:r:s:dtvh", long_opts, &i)) != -1) {
+	while ((opts = getopt_long(argc, argv, "D:QFSBAca:p:u:e:r:s:dtvh", long_opts, &i)) != -1) {
 		switch (opts) {
 			case 'D': { setenv("SAFELY_DB", optarg, 1);	break; }
 			case 'Q': { setenv("SAFELY_QUIET", "y", 1);	break; }
+			case 'F': { setenv("SAFELY_FUZZY", "y", 1);	break; }
 			case 'S': { setenv("SAFELY_NOSECURE", "y", 1);	break; }
 			case 'B': { setenv("SAFELY_NOBACKUP", "y", 1);	break; }
 			case 'A': { unsetenv("GPG_AGENT_INFO");		break; }
@@ -258,9 +261,6 @@ static inline void cmd_passwd(const char *arg) {
 
 	db = db_load();
 
-	if (item_exist(db, arg) != 0)
-		fail_printf("Item '%s' does not exist", arg);
-
 	pwd = item_get_pwd(db, arg);
 
 	printf("%s", pwd);
@@ -277,9 +277,6 @@ static inline void cmd_user(const char *arg) {
 	security_check();
 
 	db = db_load();
-
-	if (item_exist(db, arg) != 0)
-		fail_printf("Item '%s' does not exist", arg);
 
 	usr = item_get_usr(db, arg);
 

@@ -288,6 +288,32 @@ int db_search(void *db, const char *pattern) {
 	return count;
 }
 
+json_t *db_search_fuzzy(void *db, const char *pattern) {
+	int status;
+	regex_t regex;
+
+	void *iter;
+	const char *key;
+	json_t *root = (json_t *) db,
+	       *accounts = json_object_get(root, "accounts");
+
+	iter = json_object_iter(accounts);
+
+	regcomp(&regex, pattern, REG_EXTENDED);
+
+	while (iter) {
+		key = json_object_iter_key(iter);
+		status = regexec(&regex, key, 0, NULL, 0);
+
+		if (status == 0)
+			return json_object_iter_value(iter);
+
+		iter = json_object_iter_next(accounts, iter);
+	}
+
+	return NULL;
+}
+
 void db_sync(void *db) {
 	FILE *f;
 	json_t *root = (json_t *) db;

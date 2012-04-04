@@ -81,6 +81,11 @@ Specifies a custom path to the password database.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Output errors only (i.e. no "[ok]" messages).
 
+`-F, --fuzzy`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Search for non-exact (fuzzy) mastches with `--passwd` and `--user`.
+
 `-S, --nosecure`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

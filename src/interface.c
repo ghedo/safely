@@ -37,6 +37,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
+#include <jansson.h>
+
 #include "db.h"
 #include "interface.h"
 
