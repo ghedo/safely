@@ -89,7 +89,7 @@ const char *item_get_fld(void *db, const char *item, const char *field) {
 	json_t *root = (json_t *) db,
 	       *item_obj, *field_obj,
 	       *accounts = json_object_get(root, "accounts");
-	
+
 	if (getenv("SAFELY_FUZZY")) {
 		item_obj = db_search_first(db, item);
 

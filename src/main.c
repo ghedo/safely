@@ -355,7 +355,7 @@ static inline void cmd_search(const char *arg) {
 	matches	= db_search(db, arg);
 
 	iter = json_object_iter(matches);
-	
+
 	while (iter) {
 		const char *key = json_object_iter_key(iter);
 
