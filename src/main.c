@@ -345,13 +345,25 @@ static inline void cmd_remove(const char *arg) {
 }
 
 static inline void cmd_search(const char *arg) {
-	void *db;
+	void *db, *iter;
+	json_t *matches;
 	unsigned int count = 0;
 
 	security_check();
 
 	db	= db_load();
-	count	= db_search(db, arg);
+	matches	= db_search(db, arg);
+
+	iter = json_object_iter(matches);
+	
+	while (iter) {
+		const char *key = json_object_iter_key(iter);
+
+		printf("%s\n", key);
+		count++;
+
+		iter = json_object_iter_next(matches, iter);
+	}
 
 	db_unload(db);
 

@@ -260,9 +260,11 @@ char *db_dump(void *db) {
 	return dump;
 }
 
-int db_search(void *db, const char *pattern) {
+json_t *db_search(void *db, const char *pattern) {
+	int status;
 	regex_t regex;
-	int status, count = 0;
+
+	json_t *matches = json_object();
 
 	void *iter;
 	const char *key;
@@ -278,17 +280,17 @@ int db_search(void *db, const char *pattern) {
 		status = regexec(&regex, key, 0, NULL, 0);
 
 		if (status == 0) {
-			printf("%s\n", key);
-			count++;
+			json_t *obj = json_object_iter_value(iter);
+			json_object_set_new(matches, key, obj);
 		}
 
 		iter = json_object_iter_next(accounts, iter);
 	}
 
-	return count;
+	return matches;
 }
 
-json_t *db_search_fuzzy(void *db, const char *pattern) {
+json_t *db_search_first(void *db, const char *pattern) {
 	int status;
 	regex_t regex;
 

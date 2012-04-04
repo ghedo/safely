@@ -91,7 +91,7 @@ const char *item_get_fld(void *db, const char *item, const char *field) {
 	       *accounts = json_object_get(root, "accounts");
 	
 	if (getenv("SAFELY_FUZZY")) {
-		item_obj = db_search_fuzzy(db, item);
+		item_obj = db_search_first(db, item);
 
 		if (!item_obj)
 			fail_printf("Item '%s' does not exist", item);
