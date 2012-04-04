@@ -147,13 +147,19 @@ static inline int security_check_ptrace() {
 }
 
 static inline int security_check_stdinout() {
-	unsigned int check;
+	unsigned int checkin, checkout, checkerr;
 	const char *msg = "Valid stdin, stdout, stderr";
 
-	check = dup(0);
-	close(check);
+	checkin = dup(0);
+	close(checkin);
 
-	if (check == 3) {
+	checkout = dup(1);
+	close(checkout);
+
+	checkerr = dup(2);
+	close(checkerr);
+
+	if ((checkin == 3) && (checkout == 3) && (checkerr == 3)) {
 		ok_printf(msg);
 		return 1;
 	} else {
