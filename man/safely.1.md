@@ -84,7 +84,7 @@ Output errors only (i.e. no "[ok]" messages).
 `-F, --fuzzy`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Search for non-exact (fuzzy) mastches with `--passwd` and `--user`.
+Search for non-exact (fuzzy) matches with `--passwd` and `--user`.
 
 `-S, --nosecure`
 
