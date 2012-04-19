@@ -1,0 +1,17 @@
+language: perl
+
+install:
+ - sudo apt-get install cmake libjansson-dev libgpgme11-dev liblockfile-dev
+
+before_script:
+ - cmake .
+
+script:
+ - make
+
+notifications:
+  recipient:
+   - al3xbio@gmail.com
+  email:
+    on_success: change
+    on_failure: always
