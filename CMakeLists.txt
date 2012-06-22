@@ -75,7 +75,7 @@ INSTALL(TARGETS safely
 )
 
 INSTALL(FILES
-	${PROJECT_SOURCE_DIR}/man/safely.1
+	${PROJECT_SOURCE_DIR}/docs/safely.1
 	DESTINATION ${CMAKE_INSTALL_PREFIX}/share/man/man1
 )
 
