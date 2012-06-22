@@ -19,39 +19,39 @@ safely was implemented with the following design goals in mind:
 
  * Create a new database:
 
-~~~~
+```
 $ safely --create
-~~~~
+```
 
  * Add a new account:
 
-~~~~
+```
 $ safely --add google.com
-~~~~
+```
 
  * Show password of a given account:
 
-~~~~
+```
 $ safely --passwd google.com
-~~~~
+```
 
  * Save password to X clipboard:
 
-~~~~
+```
 $ safely --passwd google.com | xclip -loops 1
-~~~~
+```
 
  * Search accounts matching to a string:
 
-~~~~
+```
 $ safely --search google
-~~~~
+```
 
  * Remove account:
 
-~~~~
+```
 $ safely --remove google.com
-~~~~
+```
 
 See the [man page](http://alexbio.github.com/Safely/safely.1.html) for more information.
 
@@ -77,12 +77,12 @@ option is used (see the man page for more info).
 
 Safely is distributed as source code. Install with:
 
-~~~~
+```
 $ mkdir build && cd build
 $ cmake ..
 $ make
 # make install
-~~~~
+```
 
 ## COPYRIGHT
 
