@@ -33,7 +33,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extern char *gpg_get_keyfpr_first();
 extern char *gpg_encrypt(const char *str, const char *keyfpr);
 extern char *gpg_decrypt(const char *cipher);
 extern char *gpg_decrypt_file(const char *path);
