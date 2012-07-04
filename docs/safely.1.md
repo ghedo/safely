@@ -76,6 +76,11 @@ Show program's help and exit.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Specifies a custom path to the password database.
 
+`-H, --hide`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Print the password in red on red background to avoid shoulder surfing.
+
 `-Q, --quiet`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

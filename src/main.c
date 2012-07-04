@@ -85,6 +85,7 @@ enum cmd_t {
 static struct option long_opts[] = {
 	/* options */
 	{ "db",		required_argument,	0, 'D' },
+	{ "hide",	no_argument,		0, 'H' },
 	{ "quiet",	no_argument,		0, 'Q' },
 	{ "nosecure",	no_argument,		0, 'S' },
 	{ "nobackup",	no_argument,		0, 'B' },
@@ -127,9 +128,10 @@ int main(int argc, char *argv[]) {
 
 	signal(SIGINT, leave);
 
-	while ((opts = getopt_long(argc, argv, "D:QFSBAca:p:u:e:r:s:dtvh", long_opts, &i)) != -1) {
+	while ((opts = getopt_long(argc, argv, "D:HQFSBAca:p:u:e:r:s:dtvh", long_opts, &i)) != -1) {
 		switch (opts) {
 			case 'D': { setenv("SAFELY_DB", optarg, 1);	break; }
+			case 'H': { setenv("SAFELY_HIDE", "y", 1);	break; }
 			case 'Q': { setenv("SAFELY_QUIET", "y", 1);	break; }
 			case 'F': { setenv("SAFELY_FUZZY", "y", 1);	break; }
 			case 'S': { setenv("SAFELY_NOSECURE", "y", 1);	break; }
@@ -256,6 +258,7 @@ static inline void cmd_add(const char *arg) {
 static inline void cmd_passwd(const char *arg) {
 	void *db;
 	const char *pwd;
+	unsigned int hide = getenv("SAFELY_HIDE") != NULL ? 1 : 0;
 
 	security_check();
 
@@ -263,7 +266,11 @@ static inline void cmd_passwd(const char *arg) {
 
 	pwd = item_get_pwd(db, arg);
 
-	printf("%s", pwd);
+	if (hide)
+		printf(COLOR_BGRED COLOR_RED "%s" COLOR_OFF, pwd);
+	else
+		printf("%s", pwd);
+
 	fflush(stdout);
 	fputc('\n', stderr);
 
@@ -413,6 +420,7 @@ static inline void cmd_help() {
 	puts(COLOR_RED " Options:" COLOR_OFF);
 
 	CMD_HELP("--db",	"-D",	"Specifies a custom path to the password database");
+	CMD_HELP("--hide",	"-H",	"Print the password in red on red background to avoid shoulder surfing");
 	CMD_HELP("--quiet",	"-Q",	"Output errors only (i.e. no \"[ok]\" messages)");
 	CMD_HELP("--fuzzy",	"-F",	"Search for non-exact (fuzzy) matches with --passwd and --user");
 	CMD_HELP("--nosecure",	"-S",	"Ignore any security test failure");
