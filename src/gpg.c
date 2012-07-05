@@ -33,8 +33,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <ctype.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <locale.h>
@@ -111,7 +111,60 @@ static char *gpg_data_to_char(gpgme_data_t dh) {
 	return data;
 }
 
+static gpgme_key_t *gpg_parse_keys(gpgme_ctx_t ctx, int *c) {
+	int keysc = 1, i;
+	gpgme_key_t *keys;
+	char *save, *tmp, *keyss = getenv("SAFELY_KEYS");
+
+	if (keyss == NULL) {
+		keys = malloc(sizeof(gpgme_key_t) * 2);
+		keys[0] = NULL;
+		goto exit;
+	}
+
+	for (tmp = keyss; *tmp != '\0'; tmp++)
+		if (isspace(*tmp)) keysc++;
+
+	keys = malloc(sizeof(gpgme_key_t) * (keysc + 1));
+
+	for (i = 0, tmp = keyss; i < keysc; i++) {
+		char *tok;
+		gpgme_key_t key;
+		gpgme_error_t err;
+
+		if (keysc == 1)
+			tok = tmp;
+		else
+			tok = strtok_r(tmp, " ", &save);
+
+		if (tmp)
+			tmp = NULL;
+
+		if (tok == NULL)
+			break;
+
+		err = gpgme_get_key(ctx, tok, &key, 1);
+
+		if (err) fail_printf("Invalid key '%s': %s",
+					tok, gpgme_strerror(err));
+
+		keys[i] = key;
+
+		err = gpgme_signers_add(ctx, key);
+		if (err) fail_printf("%s",
+				tok, gpgme_strerror(err));
+	}
+
+exit:
+	keys[keysc] = NULL;
+
+	*c = keysc;
+
+	return keys;
+}
+
 char *gpg_encrypt(const char *str, const char *keyfpr) {
+	int i, keysc;
 	char *agent_info;
 	char *return_buf = NULL;
 
@@ -119,7 +172,7 @@ char *gpg_encrypt(const char *str, const char *keyfpr) {
 	gpgme_error_t	err;
 	gpgme_data_t	in, out;
 
-	gpgme_key_t key[2] = { NULL, NULL };
+	gpgme_key_t *keys;
 
 	gpgme_encrypt_result_t crypt_result;
 	gpgme_sign_result_t sign_result;
@@ -132,6 +185,8 @@ char *gpg_encrypt(const char *str, const char *keyfpr) {
 	gpgme_set_textmode(ctx, 1);
 	gpgme_set_armor(ctx, 1);
 
+	keys = gpg_parse_keys(ctx, &keysc);
+
 	agent_info = getenv("GPG_AGENT_INFO");
 	if (!(agent_info && strchr(agent_info, ':')))
 		gpgme_set_passphrase_cb(ctx, passphrase_cb, NULL);
@@ -142,7 +197,7 @@ char *gpg_encrypt(const char *str, const char *keyfpr) {
 	err = gpgme_data_new(&out);
 	if (err) fail_printf("Cannot load GPG data: %s", gpgme_strerror(err));
 
-	err = gpgme_op_encrypt_sign(ctx, key, GPGME_ENCRYPT_ALWAYS_TRUST, in, out);
+	err = gpgme_op_encrypt_sign(ctx, keys, GPGME_ENCRYPT_ALWAYS_TRUST, in, out);
 	if (err) fail_printf("Cannot GPG encrypt/sign: %s", gpgme_strerror(err));
 
 	crypt_result = gpgme_op_encrypt_result(ctx);
@@ -155,13 +210,14 @@ char *gpg_encrypt(const char *str, const char *keyfpr) {
 	if (sign_result -> invalid_signers)
 		fail_printf("Invalid signers: %s", sign_result -> invalid_signers -> fpr);
 
-	if (!sign_result -> signatures || sign_result -> signatures -> next)
-		fail_printf("Unexpected number of signatures created");
-
 	return_buf = gpg_data_to_char(out);
 
-	gpgme_key_unref(key[0]);
-	gpgme_key_unref(key[1]);
+	gpgme_signers_clear(ctx);
+
+	for (i = 0; i < keysc; i++)
+		gpgme_key_unref(keys[i]);
+
+	free(keys);
 
 	gpgme_data_release(in);
 	gpgme_data_release(out);
@@ -195,10 +251,10 @@ char *gpg_decrypt_data(gpgme_data_t in) {
 	err = gpgme_data_new(&out);
 	if (err) fail_printf("Cannot load GPG data: %s", gpgme_strerror(err));
 
-	err = gpgme_op_decrypt_verify (ctx, in, out);
+	err = gpgme_op_decrypt_verify(ctx, in, out);
 	if(err) fail_printf("Cannot GPG decrypt/verify: %s", gpgme_strerror(err));
 
-	decrypt_result = gpgme_op_decrypt_result (ctx);
+	decrypt_result = gpgme_op_decrypt_result(ctx);
 	if (decrypt_result -> unsupported_algorithm)
 		fail_printf("Unsupported GPG algorithm: %s\n", decrypt_result -> unsupported_algorithm);
 

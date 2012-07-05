@@ -86,6 +86,7 @@ static struct option long_opts[] = {
 	/* options */
 	{ "db",		required_argument,	0, 'D' },
 	{ "hide",	no_argument,		0, 'H' },
+	{ "keys",	required_argument,	0, 'K' },
 	{ "quiet",	no_argument,		0, 'Q' },
 	{ "nosecure",	no_argument,		0, 'S' },
 	{ "nobackup",	no_argument,		0, 'B' },
@@ -128,10 +129,11 @@ int main(int argc, char *argv[]) {
 
 	signal(SIGINT, leave);
 
-	while ((opts = getopt_long(argc, argv, "D:HQFSBAca:p:u:e:r:s:dtvh", long_opts, &i)) != -1) {
+	while ((opts = getopt_long(argc, argv, "D:HK:QFSBAca:p:u:e:r:s:dtvh", long_opts, &i)) != -1) {
 		switch (opts) {
 			case 'D': { setenv("SAFELY_DB", optarg, 1);	break; }
 			case 'H': { setenv("SAFELY_HIDE", "y", 1);	break; }
+			case 'K': { setenv("SAFELY_KEYS", optarg, 1);	break; }
 			case 'Q': { setenv("SAFELY_QUIET", "y", 1);	break; }
 			case 'F': { setenv("SAFELY_FUZZY", "y", 1);	break; }
 			case 'S': { setenv("SAFELY_NOSECURE", "y", 1);	break; }
