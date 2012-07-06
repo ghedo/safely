@@ -76,6 +76,11 @@ Show program's help and exit.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Specifies a custom path to the password database.
 
+`-K, --keys`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Space-separated list of keys to be used.
+
 `-H, --hide`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
