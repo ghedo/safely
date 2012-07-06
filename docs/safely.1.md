@@ -84,7 +84,7 @@ Space-separated list of keys to be used.
 `-H, --hide`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Print the password in red on red background to avoid shoulder surfing.
+Print the passwords in red on red to avoid shoulder surfing.
 
 `-Q, --quiet`
 
@@ -94,7 +94,7 @@ Output errors only (i.e. no "[ok]" messages).
 `-F, --fuzzy`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Search for non-exact (fuzzy) matches with `--passwd` and `--user`.
+Search for non-exact (fuzzy) matches.
 
 `-S, --nosecure`
 

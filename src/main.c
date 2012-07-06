@@ -423,9 +423,9 @@ static inline void cmd_help() {
 
 	CMD_HELP("--db",	"-D",	"Specifies a custom path to the password database");
 	CMD_HELP("--keys",	"-K",	"Space-separated list of keys to be used");
-	CMD_HELP("--hide",	"-H",	"Print the password in red on red background to avoid shoulder surfing");
+	CMD_HELP("--hide",	"-H",	"Print the passwords in red on red to avoid shoulder surfing");
 	CMD_HELP("--quiet",	"-Q",	"Output errors only (i.e. no \"[ok]\" messages)");
-	CMD_HELP("--fuzzy",	"-F",	"Search for non-exact (fuzzy) matches with --passwd and --user");
+	CMD_HELP("--fuzzy",	"-F",	"Search for non-exact (fuzzy) matches");
 	CMD_HELP("--nosecure",	"-S",	"Ignore any security test failure");
 	CMD_HELP("--nobackup",	"-B",	"Do not create database file backups");
 	CMD_HELP("--noagent",	"-A",	"Do not use the default gpg agent");
