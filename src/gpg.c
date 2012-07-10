@@ -50,7 +50,8 @@ static void gpg_init(gpgme_protocol_t proto) {
 	err = gpgme_engine_check_version(proto);
 	if (err)
 		throw_error(
-			2, "Cannot check GPG version: %s", gpgme_strerror(err)
+			2, "Cannot check GPG version: %s (%s)",
+			gpgme_strerror(err), gpgme_strsource(err)
 		);
 }
 
@@ -100,15 +101,15 @@ static char *gpg_data_to_char(gpgme_data_t dh) {
 	gpgme_data_seek(dh, 0, SEEK_SET);
 
 	if (data_size <= 0)
-		throw_error(1, "Cannot seek GPG data");
+		throw_error(2, "Cannot seek GPG data");
 
 	data = calloc(data_size + 1, 1);
 	if (data == NULL)
-		throw_error(1, "Cannot allocate more memory");
+		throw_error(2, "Cannot allocate more memory");
 
 	ret = gpgme_data_read(dh, data, data_size);
 	if (ret < 0)
-		throw_error(1, "Cannot read GPG data");
+		throw_error(2, "Cannot read GPG data");
 
 	return data;
 }
@@ -149,15 +150,18 @@ static gpgme_key_t *gpg_parse_keys(gpgme_ctx_t ctx, int *c) {
 
 		if (err)
 			throw_error(
-				2, "Invalid key '%s': %s",
-				tok, gpgme_strerror(err)
+				2, "Invalid key '%s': %s (%s)",
+				tok, gpgme_strerror(err), gpgme_strsource(err)
 			);
 
 		keys[i] = key;
 
 		err = gpgme_signers_add(ctx, key);
 		if (err)
-			throw_error(2, "%s", tok, gpgme_strerror(err));
+			throw_error(
+				2, "%s (%s)",
+				tok, gpgme_strerror(err), gpgme_strsource(err)
+			);
 	}
 
 exit:
@@ -187,8 +191,8 @@ char *gpg_encrypt(const char *str, const char *keyfpr) {
 	err = gpgme_new(&ctx);
 	if (err)
 		throw_error(
-			2, "Cannot initialize GPG context: %s",
-			gpgme_strerror(err)
+			2, "Cannot initialize GPG context: %s (%s)",
+			gpgme_strerror(err), gpgme_strsource(err)
 		);
 
 	gpgme_set_textmode(ctx, 1);
@@ -203,20 +207,22 @@ char *gpg_encrypt(const char *str, const char *keyfpr) {
 	err = gpgme_data_new_from_mem(&in, str, strlen(str), 0);
 	if (err)
 		throw_error(
-			2, "Cannot load GPG data from memory: %s",
-			gpgme_strerror(err)
+			2, "Cannot load GPG data from memory: %s (%s)",
+			gpgme_strerror(err), gpgme_strsource(err)
 		);
 
 	err = gpgme_data_new(&out);
 	if (err)
 		throw_error(
-			2, "Cannot load GPG data: %s", gpgme_strerror(err)
+			2, "Cannot load GPG data: %s (%s)",
+			gpgme_strerror(err), gpgme_strsource(err)
 		);
 
 	err = gpgme_op_encrypt_sign(ctx, keys, GPGME_ENCRYPT_ALWAYS_TRUST, in, out);
 	if (err)
 		throw_error(
-			2, "Cannot GPG encrypt/sign: %s", gpgme_strerror(err)
+			2, "Cannot GPG encrypt/sign: %s (%s)",
+			gpgme_strerror(err), gpgme_strsource(err)
 		);
 
 	crypt_result = gpgme_op_encrypt_result(ctx);
@@ -268,8 +274,8 @@ char *gpg_decrypt_data(gpgme_data_t in) {
 	err = gpgme_new(&ctx);
 	if (err)
 		throw_error(
-			1, "Cannot initialize GPG context: %s",
-			gpgme_strerror(err)
+			1, "Cannot initialize GPG context: %s (%s)",
+			gpgme_strerror(err), gpgme_strsource(err)
 		);
 
 	agent_info = getenv("GPG_AGENT_INFO");
@@ -279,13 +285,15 @@ char *gpg_decrypt_data(gpgme_data_t in) {
 
 	err = gpgme_data_new(&out);
 	if (err)
-		throw_error(1, "Cannot load GPG data: %s", gpgme_strerror(err));
+		throw_error(1, "Cannot load GPG data: %s (%s)",
+			gpgme_strerror(err), gpgme_strsource(err)
+		);
 
 	err = gpgme_op_decrypt_verify(ctx, in, out);
 	if(err)
 		throw_error(
-			1, "Cannot GPG decrypt/verify: %s",
-			gpgme_strerror(err)
+			1, "Cannot GPG decrypt/verify: %s (%s)",
+			gpgme_strerror(err), gpgme_strsource(err)
 		);
 
 	decrypt_result = gpgme_op_decrypt_result(ctx);
@@ -319,8 +327,8 @@ char *gpg_decrypt(const char *cipher) {
 	err = gpgme_data_new_from_mem(&in, cipher, strlen(cipher), 0);
 	if (err)
 		throw_error(
-			1, "Cannot load GPG data from memory: %s",
-			gpgme_strerror(err)
+			1, "Cannot load GPG data from memory: %s (%s)",
+			gpgme_strerror(err), gpgme_strsource(err)
 		);
 
 	return gpg_decrypt_data(in);
@@ -333,8 +341,8 @@ char *gpg_decrypt_file(const char *path) {
 	err = gpgme_data_new_from_file(&in, path, 1);
 	if (err)
 		throw_error(
-			1, "Cannot load GPG data from file: %s",
-			gpgme_strerror(err)
+			1, "Cannot load GPG data from file: %s (%s)",
+			gpgme_strerror(err), gpgme_strsource(err)
 		);
 
 	return gpg_decrypt_data(in);
