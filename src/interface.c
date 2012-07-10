@@ -31,11 +31,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <unistd.h>
+#include <setjmp.h>
 
 #include <jansson.h>
 
 #include "db.h"
 #include "interface.h"
+
+__thread char *error_str;
+__thread jmp_buf error_jmp;
 
 inline void get_input(char str[]) {
 	int c, i = 0;
@@ -94,4 +99,18 @@ void fail_printf(const char *fmt, ...) {
 	db_release_lock();
 
 	exit(-1);
+}
+
+void throw_error(int err, const char *fmt, ...) {
+	va_list args;
+
+	char *buffer;
+
+	va_start(args, fmt);
+	vasprintf(&buffer, fmt, args);
+	va_end(args);
+
+	error_str = buffer;
+
+	longjmp(error_jmp, err);
 }

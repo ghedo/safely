@@ -103,7 +103,7 @@ static struct option long_opts[] = {
 };
 
 int main(int argc, char *argv[]) {
-	int opts, i = 0;
+	int err, opts, i = 0;
 	enum cmd_t command = HELP;
 	const char *arg = NULL, *gpg_agent_info;
 
@@ -180,8 +180,22 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+	err = try_error;
+	if (err) fail_printf(error_str);
+
 	switch (command) {
-		case CREATE:	{ cmd_create();		break; }
+		case CREATE: {
+			err = try_error;
+
+			switch (err) {
+				case 0: cmd_create(); break;
+				case 2: db_delete();
+				case 1: fail_printf(error_str); break;
+			}
+
+			break;
+		}
+
 		case ADD:	{ cmd_add(arg);		break; }
 		case PASSWD:	{ cmd_passwd(arg);	break; }
 		case USER:	{ cmd_user(arg);	break; }

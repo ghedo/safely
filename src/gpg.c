@@ -48,7 +48,10 @@ static void gpg_init(gpgme_protocol_t proto) {
 	gpgme_set_locale(NULL, LC_CTYPE, setlocale(LC_CTYPE, NULL));
 
 	err = gpgme_engine_check_version(proto);
-	if (err) fail_printf("Cannot check GPG version: %s", gpgme_strerror(err));
+	if (err)
+		throw_error(
+			2, "Cannot check GPG version: %s", gpgme_strerror(err)
+		);
 }
 
 static gpgme_error_t passphrase_cb(void *opaque, const char *uid_hint,
@@ -72,7 +75,8 @@ static gpgme_error_t passphrase_cb(void *opaque, const char *uid_hint,
 	security_echo_on();
 	fprintf(stderr, "\n");
 
-	if (pass == NULL) fail_printf("NULL password");
+	if (pass == NULL)
+		throw_error(2, "NULL password");
 
 	passlen = strlen(pass);
 
@@ -95,13 +99,16 @@ static char *gpg_data_to_char(gpgme_data_t dh) {
 	data_size = gpgme_data_seek(dh, 0, SEEK_END);
 	gpgme_data_seek(dh, 0, SEEK_SET);
 
-	if (data_size <= 0) fail_printf("Cannot seek GPG data");
+	if (data_size <= 0)
+		throw_error(1, "Cannot seek GPG data");
 
 	data = calloc(data_size + 1, 1);
-	if (data == NULL) fail_printf("Cannot allocate more memory");
+	if (data == NULL)
+		throw_error(1, "Cannot allocate more memory");
 
 	ret = gpgme_data_read(dh, data, data_size);
-	if (ret < 0) fail_printf("Cannot read GPG data");
+	if (ret < 0)
+		throw_error(1, "Cannot read GPG data");
 
 	return data;
 }
@@ -140,14 +147,17 @@ static gpgme_key_t *gpg_parse_keys(gpgme_ctx_t ctx, int *c) {
 
 		err = gpgme_get_key(ctx, tok, &key, 1);
 
-		if (err) fail_printf("Invalid key '%s': %s",
-					tok, gpgme_strerror(err));
+		if (err)
+			throw_error(
+				2, "Invalid key '%s': %s",
+				tok, gpgme_strerror(err)
+			);
 
 		keys[i] = key;
 
 		err = gpgme_signers_add(ctx, key);
-		if (err) fail_printf("%s",
-				tok, gpgme_strerror(err));
+		if (err)
+			throw_error(2, "%s", tok, gpgme_strerror(err));
 	}
 
 exit:
@@ -175,7 +185,11 @@ char *gpg_encrypt(const char *str, const char *keyfpr) {
 	gpg_init(GPGME_PROTOCOL_OpenPGP);
 
 	err = gpgme_new(&ctx);
-	if (err) fail_printf("Cannot initialize GPG context: %s", gpgme_strerror(err));
+	if (err)
+		throw_error(
+			2, "Cannot initialize GPG context: %s",
+			gpgme_strerror(err)
+		);
 
 	gpgme_set_textmode(ctx, 1);
 	gpgme_set_armor(ctx, 1);
@@ -187,23 +201,39 @@ char *gpg_encrypt(const char *str, const char *keyfpr) {
 		gpgme_set_passphrase_cb(ctx, passphrase_cb, NULL);
 
 	err = gpgme_data_new_from_mem(&in, str, strlen(str), 0);
-	if (err) fail_printf("Cannot load GPG data from memory: %s", gpgme_strerror(err));
+	if (err)
+		throw_error(
+			2, "Cannot load GPG data from memory: %s",
+			gpgme_strerror(err)
+		);
 
 	err = gpgme_data_new(&out);
-	if (err) fail_printf("Cannot load GPG data: %s", gpgme_strerror(err));
+	if (err)
+		throw_error(
+			2, "Cannot load GPG data: %s", gpgme_strerror(err)
+		);
 
 	err = gpgme_op_encrypt_sign(ctx, keys, GPGME_ENCRYPT_ALWAYS_TRUST, in, out);
-	if (err) fail_printf("Cannot GPG encrypt/sign: %s", gpgme_strerror(err));
+	if (err)
+		throw_error(
+			2, "Cannot GPG encrypt/sign: %s", gpgme_strerror(err)
+		);
 
 	crypt_result = gpgme_op_encrypt_result(ctx);
 
 	if (crypt_result -> invalid_recipients)
-		fail_printf("Invalid GPG recipient: %s\n", crypt_result -> invalid_recipients -> fpr);
+		throw_error(
+			2, "Invalid GPG recipient: %s\n",
+			crypt_result -> invalid_recipients -> fpr
+		);
 
 	sign_result = gpgme_op_sign_result(ctx);
 
 	if (sign_result -> invalid_signers)
-		fail_printf("Invalid signers: %s", sign_result -> invalid_signers -> fpr);
+		throw_error(
+			2, "Invalid signers: %s",
+			sign_result -> invalid_signers -> fpr
+		);
 
 	return_buf = gpg_data_to_char(out);
 
@@ -236,7 +266,11 @@ char *gpg_decrypt_data(gpgme_data_t in) {
 	gpg_init(GPGME_PROTOCOL_OpenPGP);
 
 	err = gpgme_new(&ctx);
-	if (err) fail_printf("Cannot initialize GPG context: %s", gpgme_strerror(err));
+	if (err)
+		throw_error(
+			1, "Cannot initialize GPG context: %s",
+			gpgme_strerror(err)
+		);
 
 	agent_info = getenv("GPG_AGENT_INFO");
 
@@ -244,18 +278,29 @@ char *gpg_decrypt_data(gpgme_data_t in) {
 		gpgme_set_passphrase_cb(ctx, passphrase_cb, NULL);
 
 	err = gpgme_data_new(&out);
-	if (err) fail_printf("Cannot load GPG data: %s", gpgme_strerror(err));
+	if (err)
+		throw_error(1, "Cannot load GPG data: %s", gpgme_strerror(err));
 
 	err = gpgme_op_decrypt_verify(ctx, in, out);
-	if(err) fail_printf("Cannot GPG decrypt/verify: %s", gpgme_strerror(err));
+	if(err)
+		throw_error(
+			1, "Cannot GPG decrypt/verify: %s",
+			gpgme_strerror(err)
+		);
 
 	decrypt_result = gpgme_op_decrypt_result(ctx);
 	if (decrypt_result -> unsupported_algorithm)
-		fail_printf("Unsupported GPG algorithm: %s\n", decrypt_result -> unsupported_algorithm);
+		throw_error(
+			1, "Unsupported GPG algorithm: %s\n",
+			decrypt_result -> unsupported_algorithm
+		);
 
 	verify_result = gpgme_op_verify_result(ctx);
 	if (gpg_err_code(verify_result -> signatures -> validity_reason) != GPG_ERR_NO_ERROR)
-		fail_printf("Unexpected validity reason: %i", verify_result -> signatures -> validity_reason);
+		throw_error(
+			1, "Unexpected validity reason: %i",
+			verify_result -> signatures -> validity_reason
+		);
 
 	return_buf = gpg_data_to_char(out);
 
@@ -272,7 +317,11 @@ char *gpg_decrypt(const char *cipher) {
 	gpgme_error_t err;
 
 	err = gpgme_data_new_from_mem(&in, cipher, strlen(cipher), 0);
-	if (err) fail_printf("Cannot load GPG data from memory: %s", gpgme_strerror(err));
+	if (err)
+		throw_error(
+			1, "Cannot load GPG data from memory: %s",
+			gpgme_strerror(err)
+		);
 
 	return gpg_decrypt_data(in);
 }
@@ -282,7 +331,11 @@ char *gpg_decrypt_file(const char *path) {
 	gpgme_error_t err;
 
 	err = gpgme_data_new_from_file(&in, path, 1);
-	if (err) fail_printf("Cannot load GPG data from file: %s", gpgme_strerror(err));
+	if (err)
+		throw_error(
+			1, "Cannot load GPG data from file: %s",
+			gpgme_strerror(err)
+		);
 
 	return gpg_decrypt_data(in);
 }

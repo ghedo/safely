@@ -28,6 +28,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <setjmp.h>
+
 #define INPUT_MAX_SIZE	256
 
 #define COLOR_GREEN	"[1;32m"
@@ -36,9 +38,15 @@
 #define COLOR_BGRED	"[1;41m"
 #define COLOR_OFF	"[0m"
 
+extern __thread char *error_str;
+extern __thread jmp_buf error_jmp;
+
 extern void get_input(char str[]);
 
 extern void ok_printf(const char *fmt, ...);
 extern void debug_printf(const char *fmt, ...);
 extern void err_printf(const char *fmt, ...);
 extern void fail_printf(const char *fmt, ...);
+
+#define try_error setjmp(error_jmp)
+extern void throw_error(int err, const char *fmt, ...);

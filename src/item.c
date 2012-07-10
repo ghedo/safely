@@ -89,17 +89,19 @@ const char *item_get_fld(void *db, const char *item, const char *field) {
 		item_obj = db_search_first(db, item);
 
 		if (!item_obj)
-			fail_printf("Item '%s' does not exist", item);
+			throw_error(1, "Item '%s' does not exist", item);
 	} else {
 		if (item_exist(db, item) != 0)
-			fail_printf("Item '%s' does not exist", item);
+			throw_error(1, "Item '%s' does not exist", item);
 
 		item_obj = json_object_get(accounts, item);
-		if (!json_is_object(item_obj)) fail_printf("Invalid object");
+		if (!json_is_object(item_obj))
+			throw_error(1, "Invalid object");
 	}
 
 	field_obj = json_object_get(item_obj, field);
-	if (!json_is_string(field_obj)) fail_printf("Invalid string");
+	if (!json_is_string(field_obj))
+		throw_error(1, "Invalid string");
 
 	return json_string_value(field_obj);
 }
@@ -116,5 +118,6 @@ void item_remove(void *db, const char *item) {
 	json_t *root = (json_t *) db,
 	       *accounts = json_object_get(root, "accounts");
 
-	if (json_object_del(accounts, item)) fail_printf("Invalid object");
+	if (json_object_del(accounts, item))
+		throw_error(1, "Invalid object");
 }

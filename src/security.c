@@ -61,7 +61,10 @@ void security_check() {
 
 	if (score < MAX_SCORE) {
 		if (pedantic == 1) {
-			fail_printf("%d/%d security tests failed", (MAX_SCORE - score), MAX_SCORE);
+			throw_error(
+				1, "%d/%d security tests failed",
+				(MAX_SCORE - score), MAX_SCORE
+			);
 		} else {
 			err_printf("%d/%d security tests failed", (MAX_SCORE - score), MAX_SCORE);
 		}
@@ -86,7 +89,7 @@ static inline int security_check_core_dump() {
 	const char *msg = "Disabled core dumps";
 
 	if (getrlimit(RLIMIT_CORE, &rl) < 0)
-		fail_printf("Can't get RLIMIT_CORE info");
+		throw_error(1, "Can't get RLIMIT_CORE info");
 
 	if (rl.rlim_cur == 0) {
 		ok_printf(msg);

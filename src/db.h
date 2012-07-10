@@ -34,6 +34,7 @@ extern void db_release_lock();
 extern void db_make_backup();
 
 extern void *db_create();
+extern void db_delete();
 extern void *db_load();
 
 extern char *db_dump(void *db);

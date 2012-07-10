@@ -60,7 +60,8 @@ static char *db_get_path() {
 		char *home = getenv("HOME");
 
 		db_file_name = malloc(strlen(home) + strlen(DB_FILE) + 2);
-		if (db_file_name == NULL) fail_printf("Cannot allocate more memory");
+		if (db_file_name == NULL)
+			throw_error(1, "Cannot allocate more memory");
 
 		sprintf(db_file_name, "%s/%s", home, DB_FILE);
 	}
@@ -74,7 +75,8 @@ static char *db_lock_get_path() {
 	db_file_name = db_get_path();
 
 	lock_file_name = malloc(strlen(db_file_name) + 5 + 1);
-	if (lock_file_name == NULL) fail_printf("Cannot allocate more memory");
+	if (lock_file_name == NULL)
+		throw_error(1, "Cannot allocate more memory");
 
 	sprintf(lock_file_name, "%s.lock", db_file_name);
 
@@ -95,18 +97,19 @@ void db_make_backup() {
 	db_file_name = db_get_path();
 
 	bk_file_name = malloc(strlen(db_file_name) + 2);
-	if (bk_file_name == NULL) fail_printf("Cannot allocate more memory");
+	if (bk_file_name == NULL)
+		throw_error(1, "Cannot allocate more memory");
 
 	sprintf(bk_file_name, "%s~", db_file_name);
 
 	if (!(f1 = fopen(db_file_name, "rb")))
-		fail_printf(
+		throw_error(1,
 			"Cannot open file '%s': %s",
 			db_file_name, strerror(errno)
 		);
 
 	if (!(f2 = fopen(bk_file_name, "wb")))
-		fail_printf(
+		throw_error(1,
 			"Cannot open file '%s': %s",
 			bk_file_name, strerror(errno)
 		);
@@ -116,13 +119,14 @@ void db_make_backup() {
 	fseek(f1, 0, SEEK_SET);
 
 	buf = malloc(db_size);
-	if (buf == NULL) fail_printf("Cannot allocate more memory");
+	if (buf == NULL)
+		throw_error(1, "Cannot allocate more memory");
 
 	if (fread(buf, db_size, 1, f1) <= 0)
-		fail_printf("Cannot read db file: %s", strerror(errno));
+		throw_error(1, "Cannot read db file: %s", strerror(errno));
 
 	if (fwrite(buf, db_size, 1, f2) <= 0)
-		fail_printf("Cannot write to backup file: %s", strerror(errno));
+		throw_error(1, "Cannot write to backup file: %s", strerror(errno));
 
 	fclose(f1);
 	fclose(f2);
@@ -154,20 +158,20 @@ void db_acquire_lock() {
 	char *lock_file_name = db_lock_get_path();
 
 	if (db_check_lock())
-		fail_printf(
+		throw_error(1,
 			"Cannot create lock file '%s': Database already locked",
 			lock_file_name
 		);
 
 #ifdef HAVE_LOCKFILE_H
 	if (lockfile_create(lock_file_name, 0, 0))
-		fail_printf(
+		throw_error(1,
 			"Cannot create lock file '%s': %s",
 			lock_file_name, strerror(errno)
 		);
 #else
 	if (!(lock_file = fopen(lock_file_name, "w")))
-		fail_printf(
+		throw_error(1,
 			"Cannot create lock file '%s': %s",
 			lock_file_name, strerror(errno)
 		);
@@ -214,11 +218,11 @@ void *db_create() {
 	umask(066);
 
 	if (access(db_path, F_OK | W_OK) != -1) {
-		fail_printf("Cannot create DB file '%s': Already exists", db_path);
+		throw_error(1, "Cannot create DB file '%s': Already exists", db_path);
 	}
 
 	if (!(f = fopen(db_path, "w")))
-		fail_printf(
+		throw_error(1,
 			"Cannot open file '%s': 5s",
 			db_path, strerror(errno)
 		);
@@ -243,7 +247,8 @@ void *db_load() {
 	free(db_file_name);
 	free(json);
 
-	if (!root) fail_printf("JSON error on line %d: %s", err.line, err.text);
+	if (!root)
+		throw_error(1, "JSON error on line %d: %s", err.line, err.text);
 
 	return (void *) root;
 }
@@ -269,7 +274,7 @@ json_t *db_search(void *db, const char *pattern) {
 	iter = json_object_iter(accounts);
 
 	if (regcomp(&regex, pattern, REG_EXTENDED))
-		fail_printf("Invalid regex '%s'", pattern);
+		throw_error(1, "Invalid regex '%s'", pattern);
 
 	while (iter) {
 		key = json_object_iter_key(iter);
@@ -300,7 +305,7 @@ json_t *db_search_first(void *db, const char *pattern) {
 	regcomp(&regex, pattern, REG_EXTENDED);
 
 	if (regcomp(&regex, pattern, REG_EXTENDED))
-		fail_printf("Invalid regex '%s'", pattern);
+		throw_error(1, "Invalid regex '%s'", pattern);
 
 	while (iter) {
 		key = json_object_iter_key(iter);
@@ -327,7 +332,7 @@ void db_sync(void *db) {
 	db_path = db_get_path();
 
 	if (!(f = fopen(db_path, "w")))
-		fail_printf(
+		throw_error(1,
 			"Cannot open file '%s': %s",
 			db_path, strerror(errno)
 		);
@@ -344,5 +349,13 @@ void db_unload(void *db) {
 	json_t *root = (json_t *) db;
 
 	json_decref(root);
+	db_release_lock();
+}
+
+void db_delete() {
+	char *path = db_get_path();
+
+	unlink(path);
+
 	db_release_lock();
 }
