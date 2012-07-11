@@ -243,14 +243,14 @@ static inline void cmd_add(const char *arg) {
 	if (item_exist(db, arg) == 0)
 		fail_printf("Item '%s' already exists", arg);
 
-	printf("Enter user name  [%s]: ", arg);
+	printf("Enter user name for '%s': ", arg);
 	get_input(usr);
 
 	if (!strncmp("", usr, 1))
 		fail_printf("Empty user field");
 
 	security_echo_off();
-	printf("Enter password   [%s]: ", arg);
+	printf("Enter password for '%s': ", arg);
 	get_input(pwd);
 	security_echo_on();
 	putchar('\n');
@@ -322,11 +322,11 @@ static inline void cmd_edit(const char *arg) {
 	old_usr	= item_get_usr(db, arg);
 	old_pwd	= item_get_pwd(db, arg);
 
-	printf("Enter user name  [%s] (default: %s): ", arg, old_usr);
+	printf("Enter user name for '%s' [%s]: ", arg, old_usr);
 	get_input(new_usr);
 
 	security_echo_off();
-	printf("Enter password   [%s] (default: %s): ", arg, old_pwd);
+	printf("Enter password for '%s' [%s]: ", arg, old_pwd);
 	get_input(new_pwd);
 	security_echo_on();
 	putchar('\n');
