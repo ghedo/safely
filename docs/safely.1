@@ -132,6 +132,15 @@
 .P
 \~\~\~\~\~\~ Used to locate the gpg\-agent\. This is only used when \fB\-\-noagent\fR is not set\.
 .
+.SH "GPG CONFIGURATION"
+Before starting, you may want to add the following config to your \fBgpg\.conf\fR:
+.
+.P
+\fBdefault\-key <MYKEY> default\-recipient\-self\fR
+.
+.P
+Where \fB<MYKEY>\fR is the ID of your key\. Otherwise the \fB\-\-keys\fR option must be provided\.
+.
 .SH "FILES"
 \fB~/\.safely\.db\fR
 .
@@ -157,4 +166,4 @@ Alessandro Ghedini \fIal3xbio@gmail\.com\fR
 Copyright (C) 2011\-2012 Alessandro Ghedini \fIal3xbio@gmail\.com\fR
 .
 .P
-This program is released under the 3 clause BSD license\.
+This program is released under the 2 clause BSD license\.

@@ -159,4 +159,4 @@ Alessandro Ghedini <al3xbio@gmail.com>
 
 Copyright (C) 2011-2012 Alessandro Ghedini <al3xbio@gmail.com>
 
-This program is released under the 3 clause BSD license.
+This program is released under the 2 clause BSD license.
