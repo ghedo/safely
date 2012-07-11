@@ -118,6 +118,18 @@ Do not use the default gpg agent.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Used to locate the gpg-agent. This is only used when `--noagent` is not set.
 
+## GPG CONFIGURATION ##
+
+Before starting, you may want to add the following config to your `gpg.conf`:
+
+```
+default-key <MYKEY>
+default-recipient-self
+```
+
+Where `<MYKEY>` is the ID of your key. Otherwise the `--keys` option must be
+provided.
+
 ## FILES ##
 
 `~/.safely.db`
