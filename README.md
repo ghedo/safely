@@ -29,37 +29,37 @@ provided for the following commands.
 
  * Create a new database:
 
-```
+```bash
 $ safely --create
 ```
 
  * Add a new account:
 
-```
+```bash
 $ safely --add google.com
 ```
 
  * Show password of a given account:
 
-```
+```bash
 $ safely --passwd google.com
 ```
 
  * Save password to X clipboard:
 
-```
+```bash
 $ safely --passwd google.com | xclip -loops 1
 ```
 
  * Search accounts matching to a string:
 
-```
+```bash
 $ safely --search google
 ```
 
  * Remove account:
 
-```
+```bash
 $ safely --remove google.com
 ```
 
@@ -87,11 +87,11 @@ option is used (see the man page for more info).
 
 Safely is distributed as source code. Install with:
 
-```
+```bash
 $ mkdir build && cd build
 $ cmake ..
 $ make
-# make install
+$ [sudo] make install
 ```
 
 ## COPYRIGHT
