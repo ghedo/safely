@@ -63,7 +63,7 @@ $ safely --search google
 $ safely --remove google.com
 ```
 
-See the [man page](http://alexbio.github.com/Safely/) for more information.
+See the [man page](http://www.ghedini.me/Safely/) for more information.
 
 ## SECURITY
 
