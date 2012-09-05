@@ -1,9 +1,9 @@
-Safely
+safely
 ======
 
-![Travis CI](https://secure.travis-ci.org/ghedo/Safely.png)
+![Travis CI](https://secure.travis-ci.org/ghedo/safely.png)
 
-**Safely** is a command-line tool to manage passwords. It stores all your
+**safely** is a command-line tool to manage passwords. It stores all your
 login information (usernames and passwords) in a simple, JSON-formatted
 file, encrypted and signed using your OpenPGP key: this makes it pretty
 secure and allows manual decryption of the database when needed.
@@ -63,7 +63,7 @@ $ safely --search google
 $ safely --remove google.com
 ```
 
-See the [man page](http://www.ghedini.me/Safely/) for more information.
+See the [man page](http://www.ghedini.me/safely/) for more information.
 
 ## SECURITY
 
@@ -85,7 +85,7 @@ option is used (see the man page for more info).
 
 ## BUILDING
 
-Safely is distributed as source code. Install with:
+safely is distributed as source code. Install with:
 
 ```bash
 $ mkdir build && cd build
