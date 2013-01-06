@@ -151,10 +151,10 @@ will change accordingly.
 
 ## AUTHOR ##
 
-Alessandro Ghedini <al3xbio@gmail.com>
+Alessandro Ghedini <alessandro@ghedini.me>
 
 ## COPYRIGHT ##
 
-Copyright (C) 2011-2012 Alessandro Ghedini <al3xbio@gmail.com>
+Copyright (C) 2011-2012 Alessandro Ghedini <alessandro@ghedini.me>
 
 This program is released under the 2 clause BSD license.
