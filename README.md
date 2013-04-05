@@ -63,7 +63,7 @@ $ safely --search google
 $ safely --remove google.com
 ```
 
-See the [man page](http://ghedo.github.com/safely/) for more information.
+See the [man page](http://ghedo.github.io/safely/) for more information.
 
 ## SECURITY
 
