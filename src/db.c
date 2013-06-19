@@ -102,6 +102,8 @@ void db_make_backup() {
 
 	sprintf(bk_file_name, "%s~", db_file_name);
 
+	umask(066);
+
 	if (!(f1 = fopen(db_file_name, "rb")))
 		throw_error(1,
 			"Cannot open file '%s': %s",
