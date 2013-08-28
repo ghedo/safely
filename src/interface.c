@@ -57,30 +57,18 @@ void ok_printf(const char *fmt, ...) {
 
 	if (!getenv("SAFELY_QUIET")) {
 		va_start(args, fmt);
-		fprintf(stderr, "[" COLOR_GREEN "ok" COLOR_OFF "] ");
+		fprintf(stderr, "[" COLOR_GREEN "✔" COLOR_OFF "] ");
 		vfprintf(stderr, fmt, args);
 		va_end(args);
 		fprintf(stderr, "\n");
 	}
 }
 
-void debug_printf(const char *fmt, ...) {
-#ifndef DEBUG
-	va_list args;
-
-	va_start(args, fmt);
-	fprintf(stderr,  "[" COLOR_YELLOW "db" COLOR_OFF "] ");
-	vfprintf(stderr, fmt, args);
-	va_end(args);
-	fprintf(stderr, "\n");
-#endif
-}
-
 void err_printf(const char *fmt, ...) {
 	va_list args;
 
 	va_start(args, fmt);
-	fprintf(stderr,  "[" COLOR_RED "no" COLOR_OFF "] ");
+	fprintf(stderr,  "[" COLOR_RED "✘" COLOR_OFF "] ");
 	vfprintf(stderr, fmt, args);
 	va_end(args);
 	fprintf(stderr, "\n");
@@ -90,7 +78,7 @@ void fail_printf(const char *fmt, ...) {
 	va_list args;
 
 	va_start(args, fmt);
-	fprintf(stderr,  "[" COLOR_RED "no" COLOR_OFF "] ");
+	fprintf(stderr,  "[" COLOR_RED "✘" COLOR_OFF "] ");
 	vfprintf(stderr, fmt, args);
 	va_end(args);
 	fprintf(stderr, "\n");
