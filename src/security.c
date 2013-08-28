@@ -46,7 +46,7 @@ static inline int security_check_memlock();
 static inline int security_check_ptrace();
 static inline int security_check_stdinout();
 
-#define MAX_SCORE 4
+#define MAX_SCORE 3
 
 void security_check() {
 #ifndef DEBUG
@@ -57,7 +57,7 @@ void security_check() {
 	score += security_check_core_dump();
 	score += security_check_memlock();
 	/* score += security_check_ptrace(); */
-	score += security_check_stdinout();
+	/* score += security_check_stdinout(); */
 
 	if (score < MAX_SCORE) {
 		if (pedantic == 1) {
