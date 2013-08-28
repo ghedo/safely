@@ -283,7 +283,9 @@ static inline void cmd_passwd(const char *arg) {
 		printf("%s", pwd);
 
 	fflush(stdout);
-	fputc('\n', stderr);
+
+	if (isatty(fileno(stdout)))
+		fputc('\n', stderr);
 
 	db_unload(db);
 }
@@ -300,7 +302,9 @@ static inline void cmd_user(const char *arg) {
 
 	printf("%s", usr);
 	fflush(stdout);
-	fputc('\n', stderr);
+
+	if (isatty(fileno(stdout)))
+		fputc('\n', stderr);
 
 	db_unload(db);
 }
