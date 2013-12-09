@@ -48,7 +48,7 @@
 #include "db.h"
 #include "gpg.h"
 #include "item.h"
-#include "interface.h"
+#include "printf.h"
 
 #define DB_FILE ".safely.db"
 

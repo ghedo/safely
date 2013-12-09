@@ -37,7 +37,7 @@
 #include <jansson.h>
 
 #include "db.h"
-#include "interface.h"
+#include "printf.h"
 
 __thread char *error_str;
 __thread jmp_buf error_jmp;

@@ -37,7 +37,7 @@
 
 #include <gpgme.h>
 
-#include "interface.h"
+#include "printf.h"
 #include "security.h"
 
 static void gpg_init(gpgme_protocol_t proto) {

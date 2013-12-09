@@ -36,7 +36,7 @@
 #include <sys/resource.h>
 
 #include "security.h"
-#include "interface.h"
+#include "printf.h"
 
 static struct termios termset;
 

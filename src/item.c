@@ -34,7 +34,7 @@
 
 #include "db.h"
 #include "item.h"
-#include "interface.h"
+#include "printf.h"
 
 #define ITEM_USR_FIELD "user"
 #define ITEM_PWD_FIELD "pass"

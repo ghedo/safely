@@ -47,7 +47,7 @@
 
 #include "db.h"
 #include "item.h"
-#include "interface.h"
+#include "printf.h"
 #include "security.h"
 
 static inline void cmd_create();
