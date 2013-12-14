@@ -57,9 +57,8 @@ static void gpg_init(gpgme_protocol_t proto) {
 
 static gpgme_error_t passphrase_cb(void *opaque, const char *uid_hint,
 			const char *passphrase_info, int last_was_bad, int fd) {
-
 	char pass[INPUT_MAX_SIZE];
-	int c, i = 0, res, off = 0, passlen;
+	int c, i = 0, rc, off = 0, passlen;
 
 	security_echo_off();
 	fprintf(stderr, "Enter password for GPG key: ");
@@ -82,10 +81,9 @@ static gpgme_error_t passphrase_cb(void *opaque, const char *uid_hint,
 	passlen = strlen(pass);
 
 	do {
-		res = write(fd, &pass[off], passlen - off);
-
-		if (res > 0) off += res;
-	} while (res > 0 && off != passlen);
+		rc = write(fd, &pass[off], passlen - off);
+		if (rc > 0) off += rc;
+	} while (rc > 0 && off != passlen);
 
 	memset(pass, 0, INPUT_MAX_SIZE);
 
@@ -93,23 +91,19 @@ static gpgme_error_t passphrase_cb(void *opaque, const char *uid_hint,
 }
 
 static char *gpg_data_to_char(gpgme_data_t dh) {
-	int ret;
+	int rc;
 	size_t data_size;
 	char *data = NULL;
 
 	data_size = gpgme_data_seek(dh, 0, SEEK_END);
 	gpgme_data_seek(dh, 0, SEEK_SET);
-
-	if (data_size <= 0)
-		throw_error(2, "Cannot seek GPG data");
+	if (data_size <= 0) throw_error(2, "Cannot seek GPG data");
 
 	data = calloc(data_size + 1, 1);
-	if (data == NULL)
-		throw_error(2, "Cannot allocate more memory");
+	if (data == NULL) throw_error(2, "Cannot allocate more memory");
 
-	ret = gpgme_data_read(dh, data, data_size);
-	if (ret < 0)
-		throw_error(2, "Cannot read GPG data");
+	rc = gpgme_data_read(dh, data, data_size);
+	if (rc < 0) throw_error(2, "Cannot read GPG data");
 
 	return data;
 }
@@ -132,6 +126,7 @@ static gpgme_key_t *gpg_parse_keys(gpgme_ctx_t ctx, int *c) {
 
 	for (i = 0, tmp = keyss; i < keysc; i++) {
 		char *tok;
+
 		gpgme_key_t key;
 		gpgme_error_t err;
 
@@ -140,7 +135,7 @@ static gpgme_key_t *gpg_parse_keys(gpgme_ctx_t ctx, int *c) {
 		else
 			tok = strtok_r(tmp, " ", &save);
 
-		if (tmp)
+		if (tmp != NULL)
 			tmp = NULL;
 
 		if (tok == NULL)
@@ -177,9 +172,9 @@ char *gpg_encrypt(const char *str, const char *keyfpr) {
 	char *agent_info;
 	char *return_buf = NULL;
 
-	gpgme_ctx_t	ctx;
-	gpgme_error_t	err;
-	gpgme_data_t	in, out;
+	gpgme_ctx_t   ctx;
+	gpgme_data_t  in, out;
+	gpgme_error_t err;
 
 	gpgme_key_t *keys;
 

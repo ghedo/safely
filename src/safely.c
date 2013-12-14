@@ -189,8 +189,8 @@ int main(int argc, char *argv[]) {
 
 			switch (err) {
 				case 0: cmd_create(); break;
-				case 2: db_delete();
 				case 1: fail_printf(error_str); break;
+				case 2: db_delete();
 			}
 
 			break;

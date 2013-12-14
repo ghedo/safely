@@ -122,7 +122,8 @@ void db_make_backup() {
 		throw_error(1, "Cannot read db file: %s", strerror(errno));
 
 	if (fwrite(buf, db_size, 1, f2) <= 0)
-		throw_error(1, "Cannot write to backup file: %s", strerror(errno));
+		throw_error(1, "Cannot write to backup file: %s",
+							strerror(errno));
 
 	fclose(f1);
 	fclose(f2);
@@ -189,10 +190,12 @@ void db_release_lock() {
 
 #ifdef HAVE_LOCKFILE_H
 	if (lockfile_remove(lock_file_name) < 0)
-		err_printf("Cannot remove lock %s: %s", lock_file_name, strerror(errno));
+		err_printf("Cannot remove lock %s: %s",
+				lock_file_name, strerror(errno));
 #else
 	if (unlink(lock_file_name) < 0)
-		err_printf("Cannot remove lock %s: %s", lock_file_name, strerror(errno));
+		err_printf("Cannot remove lock %s: %s",
+				lock_file_name, strerror(errno));
 #endif
 
 	free(lock_file_name);
@@ -214,7 +217,8 @@ void *db_create() {
 	umask(066);
 
 	if (access(db_path, F_OK | W_OK) != -1) {
-		throw_error(1, "Cannot create DB file '%s': Already exists", db_path);
+		throw_error(1, "Cannot create DB file '%s': Already exists",
+								db_path);
 	}
 
 	if (!(f = fopen(db_path, "w")))
@@ -236,9 +240,10 @@ void *db_load() {
 
 	db_acquire_lock();
 
-	db_file_name	= db_get_path();
-	json		= gpg_decrypt_file(db_file_name);
-	root		= json_loads(json, 0, &err);
+	db_file_name = db_get_path();
+
+	json = gpg_decrypt_file(db_file_name);
+	root = json_loads(json, 0, &err);
 
 	free(db_file_name);
 	free(json);
@@ -251,7 +256,10 @@ void *db_load() {
 
 char *db_dump(void *db) {
 	json_t *root = (json_t *) db;
-	char *dump = json_dumps(root, JSON_PRESERVE_ORDER | JSON_INDENT(4) | JSON_SORT_KEYS);
+	char *dump = json_dumps(root,
+			JSON_PRESERVE_ORDER |
+			JSON_INDENT(4)      |
+			JSON_SORT_KEYS);
 
 	return dump;
 }
@@ -297,8 +305,6 @@ json_t *db_search_first(void *db, const char *pattern) {
 	       *accounts = json_object_get(root, "accounts");
 
 	iter = json_object_iter(accounts);
-
-	regcomp(&regex, pattern, REG_EXTENDED);
 
 	if (regcomp(&regex, pattern, REG_EXTENDED))
 		throw_error(1, "Invalid regex '%s'", pattern);
