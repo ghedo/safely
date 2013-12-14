@@ -219,7 +219,7 @@ void *db_create() {
 
 	if (!(f = fopen(db_path, "w")))
 		throw_error(1,
-			"Cannot open file '%s': 5s",
+			"Cannot open file '%s': %s",
 			db_path, strerror(errno)
 		);
 
