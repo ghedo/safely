@@ -31,6 +31,7 @@
 #include "config.h"
 
 #include <stdio.h>
+#include <errno.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -103,9 +104,11 @@ static struct option long_opts[] = {
 };
 
 int main(int argc, char *argv[]) {
-	int err, opts, i = 0;
+	int rc, err, opts, i = 0;
 	enum cmd_t command = HELP;
 	const char *arg = NULL, *gpg_agent_info;
+
+	struct sigaction action;
 
 	struct passwd *user;
 
@@ -122,7 +125,17 @@ int main(int argc, char *argv[]) {
 	if (gpg_agent_info)
 		setenv("GPG_AGENT_INFO", gpg_agent_info, 1);
 
-	signal(SIGINT, leave);
+	action.sa_handler = leave;
+
+	sigemptyset(&action.sa_mask);
+	sigaddset(&action.sa_mask, SIGINT);
+	sigaddset(&action.sa_mask, SIGTERM);
+
+	rc = sigaction(SIGINT, &action, NULL);
+	if (rc < 0) fail_printf("sigaction(): %s", strerror(errno));
+
+	rc = sigaction(SIGTERM, &action, NULL);
+	if (rc < 0) fail_printf("sigaction(): %s", strerror(errno));
 
 	while ((opts = getopt_long(argc, argv, "D:HK:QFSBAca:p:u:e:r:s:dtvh", long_opts, &i)) != -1) {
 		switch (opts) {
