@@ -53,32 +53,28 @@
 #define DB_FILE ".safely.db"
 
 static char *db_get_path() {
+	int rc;
 	char *db_file_name = getenv("SAFELY_DB") != NULL ?
 			     strdup(getenv("SAFELY_DB")) : NULL;
 
 	if (db_file_name == NULL) {
 		char *home = getenv("HOME");
 
-		db_file_name = malloc(strlen(home) + strlen(DB_FILE) + 2);
-		if (db_file_name == NULL)
-			throw_error(1, "Cannot allocate more memory");
-
-		sprintf(db_file_name, "%s/%s", home, DB_FILE);
+		rc = asprintf(&db_file_name, "%s/%s", home, DB_FILE);
+		if (rc < 0) throw_error(1, "Cannot allocate more memory");
 	}
 
 	return db_file_name;
 }
 
 static char *db_lock_get_path() {
+	int rc;
 	char *db_file_name, *lock_file_name;
 
 	db_file_name = db_get_path();
 
-	lock_file_name = malloc(strlen(db_file_name) + 5 + 1);
-	if (lock_file_name == NULL)
-		throw_error(1, "Cannot allocate more memory");
-
-	sprintf(lock_file_name, "%s.lock", db_file_name);
+	rc = asprintf(&lock_file_name, "%s.lock", db_file_name);
+	if (rc < 0) throw_error(1, "Cannot allocate more memory");
 
 	free(db_file_name);
 
@@ -86,6 +82,7 @@ static char *db_lock_get_path() {
 }
 
 void db_make_backup() {
+	int rc;
 	FILE *f1, *f2;
 	size_t db_size;
 	char *db_file_name, *bk_file_name, *buf;
@@ -96,11 +93,8 @@ void db_make_backup() {
 
 	db_file_name = db_get_path();
 
-	bk_file_name = malloc(strlen(db_file_name) + 2);
-	if (bk_file_name == NULL)
-		throw_error(1, "Cannot allocate more memory");
-
-	sprintf(bk_file_name, "%s~", db_file_name);
+	rc = asprintf(&bk_file_name, "%s~", db_file_name);
+	if (rc < 0) throw_error(1, "Cannot allocate more memory");
 
 	umask(066);
 
