@@ -55,7 +55,7 @@
 static char *db_get_path() {
 	int rc;
 	char *db_file_name = getenv("SAFELY_DB") != NULL ?
-			     strdup(getenv("SAFELY_DB")) : NULL;
+	                     strdup(getenv("SAFELY_DB")) : NULL;
 
 	if (db_file_name == NULL) {
 		char *home = getenv("HOME");

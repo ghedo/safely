@@ -51,7 +51,7 @@ static inline int security_check_stdinout();
 void security_check() {
 #ifndef DEBUG
 	unsigned int pedantic = getenv("SAFELY_NOSECURE") != NULL ? 0 : 1,
-		     score = 0;
+	             score = 0;
 
 	score += security_check_root();
 	score += security_check_core_dump();
