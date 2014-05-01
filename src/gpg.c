@@ -39,6 +39,7 @@
 
 #include "printf.h"
 #include "security.h"
+#include "util.h"
 
 static void gpg_init(gpgme_protocol_t proto) {
 	gpgme_error_t err;
@@ -176,7 +177,7 @@ char *gpg_encrypt(const char *str, const char *keyfpr) {
 	gpgme_data_t  in, out;
 	gpgme_error_t err;
 
-	gpgme_key_t *keys;
+	_free_ gpgme_key_t *keys = NULL;
 
 	gpgme_encrypt_result_t crypt_result;
 	gpgme_sign_result_t sign_result;
@@ -242,8 +243,6 @@ char *gpg_encrypt(const char *str, const char *keyfpr) {
 
 	for (i = 0; i < keysc; i++)
 		gpgme_key_unref(keys[i]);
-
-	free(keys);
 
 	gpgme_data_release(in);
 	gpgme_data_release(out);

@@ -50,6 +50,7 @@
 #include "item.h"
 #include "printf.h"
 #include "security.h"
+#include "util.h"
 
 static inline void cmd_create();
 static inline void cmd_add(const char *arg);
@@ -407,7 +408,7 @@ static inline void cmd_search(const char *arg) {
 
 static inline void cmd_dump(){
 	void *db;
-	char *dump;
+	_free_ char *dump;
 
 	security_check();
 
@@ -415,7 +416,6 @@ static inline void cmd_dump(){
 	dump	= db_dump(db);
 
 	puts(dump);
-	free(dump);
 
 	db_unload(db);
 }

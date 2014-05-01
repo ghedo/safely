@@ -49,6 +49,7 @@
 #include "gpg.h"
 #include "item.h"
 #include "printf.h"
+#include "util.h"
 
 #define DB_FILE ".safely.db"
 
@@ -69,14 +70,14 @@ static char *db_get_path() {
 
 static char *db_lock_get_path() {
 	int rc;
-	char *db_file_name, *lock_file_name;
+
+	char *lock_file_name;
+	_free_ char *db_file_name = NULL;
 
 	db_file_name = db_get_path();
 
 	rc = asprintf(&lock_file_name, "%s.lock", db_file_name);
 	if (rc < 0) throw_error(1, "Cannot allocate more memory");
-
-	free(db_file_name);
 
 	return lock_file_name;
 }
@@ -85,7 +86,9 @@ void db_make_backup() {
 	int rc;
 	FILE *f1, *f2;
 	size_t db_size;
-	char *db_file_name, *bk_file_name, *buf;
+	_free_ char *db_file_name = NULL,
+	            *bk_file_name = NULL,
+	            *buf = NULL;
 	int dobackup = getenv("SAFELY_NOBACKUP") != NULL ? 0 : 1;
 
 	if (dobackup == 0)
@@ -127,10 +130,6 @@ void db_make_backup() {
 
 	fclose(f1);
 	fclose(f2);
-
-	free(db_file_name);
-	free(bk_file_name);
-	free(buf);
 }
 
 int db_check_lock() {
@@ -152,7 +151,7 @@ void db_acquire_lock() {
 #ifndef HAVE_LOCKFILE_H
 	FILE *lock_file;
 #endif
-	char *lock_file_name = db_lock_get_path();
+	_free_ char *lock_file_name = db_lock_get_path();
 
 	if (db_check_lock())
 		throw_error(1,
@@ -177,16 +176,13 @@ void db_acquire_lock() {
 #endif
 
 	setenv("SAFELY_LOCKED", "y", 0);
-	free(lock_file_name);
 }
 
 void db_release_lock() {
-	char *lock_file_name = db_lock_get_path();
+	_free_ char *lock_file_name = db_lock_get_path();
 
-	if (!getenv("SAFELY_LOCKED")) {
-		free(lock_file_name);
+	if (!getenv("SAFELY_LOCKED"))
 		return;
-	}
 
 #ifdef HAVE_LOCKFILE_H
 	if (lockfile_remove(lock_file_name) < 0)
@@ -197,13 +193,11 @@ void db_release_lock() {
 		err_printf("Cannot remove lock %s: %s",
 				lock_file_name, strerror(errno));
 #endif
-
-	free(lock_file_name);
 }
 
 void *db_create() {
 	FILE *f;
-	char *db_path;
+	_free_ char *db_path;
 
 	json_t *root = json_object(),
 	       *accounts = json_object();
@@ -233,7 +227,8 @@ void *db_create() {
 }
 
 void *db_load() {
-	char *json, *db_file_name;
+	_free_ char *json = NULL,
+	            *db_file_name = NULL;
 
 	json_t *root;
 	json_error_t err;
@@ -244,9 +239,6 @@ void *db_load() {
 
 	json = gpg_decrypt_file(db_file_name);
 	root = json_loads(json, 0, &err);
-
-	free(db_file_name);
-	free(json);
 
 	if (!root)
 		throw_error(1, "JSON error on line %d: %s", err.line, err.text);
@@ -325,7 +317,9 @@ json_t *db_search_first(void *db, const char *pattern) {
 void db_sync(void *db) {
 	FILE *f;
 	json_t *root = (json_t *) db;
-	char *db_path, *cipher, *dump;
+	_free_ char *db_path = NULL,
+	            *cipher  = NULL,
+	            *dump    = NULL;
 
 	dump = json_dumps(root, JSON_COMPACT);
 
@@ -341,10 +335,6 @@ void db_sync(void *db) {
 
 	fprintf(f, "%s", cipher);
 	fclose(f);
-
-	free(dump);
-	free(db_path);
-	free(cipher);
 }
 
 void db_unload(void *db) {
@@ -355,7 +345,7 @@ void db_unload(void *db) {
 }
 
 void db_delete() {
-	char *path = db_get_path();
+	_free_ char *path = db_get_path();
 
 	unlink(path);
 
