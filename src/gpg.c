@@ -76,8 +76,8 @@ static gpgme_error_t passphrase_cb(void *opaque, const char *uid_hint,
 	security_echo_on();
 	fprintf(stderr, "\n");
 
-	if (pass == NULL)
-		throw_error(2, "NULL password");
+	if (*pass == '\0')
+		throw_error(2, "empty password");
 
 	passlen = strlen(pass);
 
