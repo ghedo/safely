@@ -127,6 +127,7 @@ int main(int argc, char *argv[]) {
 		setenv("GPG_AGENT_INFO", gpg_agent_info, 1);
 
 	action.sa_handler = leave;
+	action.sa_flags   = 0;
 
 	sigemptyset(&action.sa_mask);
 	sigaddset(&action.sa_mask, SIGINT);
