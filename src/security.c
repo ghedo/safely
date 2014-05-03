@@ -43,7 +43,6 @@ static struct termios termset;
 static inline int security_check_root();
 static inline int security_check_core_dump();
 static inline int security_check_memlock();
-static inline int security_check_stdinout();
 
 #define MAX_SCORE 3
 
@@ -55,7 +54,6 @@ void security_check() {
 	score += security_check_root();
 	score += security_check_core_dump();
 	score += security_check_memlock();
-	/* score += security_check_stdinout(); */
 
 	if (score < MAX_SCORE) {
 		if (pedantic == 1) {
@@ -110,28 +108,6 @@ static inline int security_check_memlock() {
 
 
 	if (rl.rlim_cur == rl.rlim_max) {
-		ok_printf(msg);
-		return 1;
-	} else {
-		err_printf(msg);
-		return 0;
-	}
-}
-
-static inline int security_check_stdinout() {
-	int checkin, checkout, checkerr;
-	const char *msg = "Valid stdin, stdout, stderr";
-
-	checkin = dup(0);
-	close(checkin);
-
-	checkout = dup(1);
-	close(checkout);
-
-	checkerr = dup(2);
-	close(checkerr);
-
-	if ((checkin == 3) && (checkout == 3) && (checkerr == 3)) {
 		ok_printf(msg);
 		return 1;
 	} else {
