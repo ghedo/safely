@@ -42,3 +42,5 @@ static inline void freep(void *p) {
 
 	*(void **)p = NULL;
 }
+
+extern int copy_file(const char *to, const char *from);

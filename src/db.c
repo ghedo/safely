@@ -84,11 +84,11 @@ static char *db_lock_get_path() {
 
 void db_make_backup() {
 	int rc;
-	FILE *f1, *f2;
-	size_t db_size;
+
 	_free_ char *db_file_name = NULL,
 	            *bk_file_name = NULL,
 	            *buf = NULL;
+
 	int dobackup = getenv("SAFELY_NOBACKUP") != NULL ? 0 : 1;
 
 	if (dobackup == 0)
@@ -101,35 +101,9 @@ void db_make_backup() {
 
 	umask(066);
 
-	if (!(f1 = fopen(db_file_name, "rb")))
-		throw_error(1,
-			"Cannot open file '%s': %s",
-			db_file_name, strerror(errno)
-		);
-
-	if (!(f2 = fopen(bk_file_name, "wb")))
-		throw_error(1,
-			"Cannot open file '%s': %s",
-			bk_file_name, strerror(errno)
-		);
-
-	fseek(f1, 0, SEEK_END);
-	db_size = ftell(f1);
-	fseek(f1, 0, SEEK_SET);
-
-	buf = malloc(db_size);
-	if (buf == NULL)
-		throw_error(1, "Cannot allocate more memory");
-
-	if (fread(buf, db_size, 1, f1) <= 0)
-		throw_error(1, "Cannot read db file: %s", strerror(errno));
-
-	if (fwrite(buf, db_size, 1, f2) <= 0)
-		throw_error(1, "Cannot write to backup file: %s",
-							strerror(errno));
-
-	fclose(f1);
-	fclose(f2);
+	rc = copy_file(bk_file_name, db_file_name);
+	if (rc < 0)
+		throw_error(1, "Cannot create backup: %s", strerror(errno));
 }
 
 int db_check_lock() {
