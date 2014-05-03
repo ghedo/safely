@@ -145,7 +145,7 @@ static inline int security_check_ptrace() {
 }
 
 static inline int security_check_stdinout() {
-	unsigned int checkin, checkout, checkerr;
+	int checkin, checkout, checkerr;
 	const char *msg = "Valid stdin, stdout, stderr";
 
 	checkin = dup(0);
