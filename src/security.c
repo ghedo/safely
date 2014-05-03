@@ -43,7 +43,6 @@ static struct termios termset;
 static inline int security_check_root();
 static inline int security_check_core_dump();
 static inline int security_check_memlock();
-static inline int security_check_ptrace();
 static inline int security_check_stdinout();
 
 #define MAX_SCORE 3
@@ -56,7 +55,6 @@ void security_check() {
 	score += security_check_root();
 	score += security_check_core_dump();
 	score += security_check_memlock();
-	/* score += security_check_ptrace(); */
 	/* score += security_check_stdinout(); */
 
 	if (score < MAX_SCORE) {
@@ -112,30 +110,6 @@ static inline int security_check_memlock() {
 
 
 	if (rl.rlim_cur == rl.rlim_max) {
-		ok_printf(msg);
-		return 1;
-	} else {
-		err_printf(msg);
-		return 0;
-	}
-}
-
-static inline int security_check_ptrace() {
-	unsigned int check = 0;
-	const char *msg = "Protection from ptrace()";
-
-	if (!geteuid()) {
-		/* drop root priviledges */
-		setuid(getuid());	setuid(getuid());
-		setgid(getgid());	setgid(getgid());
-
-		check = 1;
-	}
-
-	if (getuid() && !setuid(0))
-		check = 0;
-
-	if (check == 1) {
 		ok_printf(msg);
 		return 1;
 	} else {
