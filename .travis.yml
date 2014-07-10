@@ -1,10 +1,7 @@
-language: c
+language: go
 
 install:
- - sudo apt-get install cmake libjansson-dev libgpgme11-dev liblockfile-dev
-
-before_script:
- - cmake .
+ - sudo apt-get install libgpgme11-dev
 
 script:
  - make

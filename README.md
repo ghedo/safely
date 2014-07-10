@@ -17,41 +17,37 @@ safely was implemented with the following design goals in mind:
 
 ## GETTING STARTED
 
-Before starting, you may want to add the following config to your `gpg.conf`:
+Before starting, note that a running gpg-agent is required for secret key
+operations, which is generally a good thing since, this way, safely doesn't
+need to know your GPG key's passphrase.
 
-```
-default-key <MYKEY>
-default-recipient-self
-```
-
-Where `<MYKEY>` is the ID of your key. Otherwise the `--keys` option must be
-provided for the following commands.
+Here are a few usage examples:
 
  * Create a new database:
 
 ```bash
-$ safely --create
+$ safely --create --keys <your_key_id>
 ```
 
  * Add a new account:
 
 ```bash
-$ safely --add google.com
+$ safely --add google.com --keys <your_key_id>
 ```
 
  * Show password of a given account:
 
 ```bash
-$ safely --passwd google.com
+$ safely --pass google.com
 ```
 
  * Save password to X clipboard:
 
 ```bash
-$ safely --passwd google.com | xclip -loops 1
+$ safely --pass google.com | xclip -loops 1
 ```
 
- * Search accounts matching to a string:
+ * Search accounts matching a string:
 
 ```bash
 $ safely --search google
@@ -60,41 +56,25 @@ $ safely --search google
  * Remove account:
 
 ```bash
-$ safely --remove google.com
+$ safely --remove google.com --keys <your_key_id>
 ```
 
 See the [man page](http://ghedo.github.io/safely/) for more information.
 
-## SECURITY
-
-safely checks, at startup, that the following conditions are true:
-
- * Running as non-root
- * Core dumps are disabled
- * Memory is locked (via `mlockall()`)
-
-If any of them fails, safely refuses to work, unless the **--nosecure**
-option is used (see the man page for more info).
-
 ## DEPENDENCIES
 
- * `gpgme`
- * `jansson`
- * `liblockfile` (optional)
+ * `libgpgme`
 
 ## BUILDING
 
 safely is distributed as source code. Install with:
 
 ```bash
-$ mkdir build && cd build
-$ cmake ..
 $ make
-$ [sudo] make install
 ```
 
 ## COPYRIGHT
 
-Copyright (C) 2011-2012 Alessandro Ghedini <alessandro@ghedini.me>
+Copyright (C) 2014 Alessandro Ghedini <alessandro@ghedini.me>
 
 See COPYING for the license.

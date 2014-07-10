@@ -1,7 +1,7 @@
 /*
  * Pretty command-line password manager.
  *
- * Copyright (c) 2011-2012, Alessandro Ghedini
+ * Copyright (c) 2014, Alessandro Ghedini
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,25 +28,53 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <setjmp.h>
+package util
 
-#define INPUT_MAX_SIZE	256
+import "bufio"
+import "bytes"
+import "fmt"
+import "log"
+import "os"
+import "os/user"
+import "strings"
 
-#define COLOR_GREEN	"[1;32m"
-#define COLOR_YELLOW	"[1;33m"
-#define COLOR_RED	"[1;31m"
-#define COLOR_BGRED	"[1;41m"
-#define COLOR_OFF	"[0m"
+import "code.google.com/p/go.crypto/ssh/terminal"
 
-extern __thread char *error_str;
-extern __thread jmp_buf error_jmp;
+func ReadLine(prompt string) string {
+	fmt.Fprint(os.Stderr, prompt);
 
-extern void get_input(char str[]);
+	tmp, err := bufio.NewReader(os.Stdin).ReadBytes('\n');
+	if err != nil {
+		log.Fatal("Input error: ", err);
+	}
 
-extern void ok_printf(const char *fmt, ...);
-extern void debug_printf(const char *fmt, ...);
-extern void err_printf(const char *fmt, ...);
-extern void fail_printf(const char *fmt, ...);
+	tmp = bytes.TrimSuffix(tmp, []byte("\n"));
 
-#define try_error setjmp(error_jmp)
-extern void throw_error(int err, const char *fmt, ...);
+	return bytes.NewBuffer(tmp).String();
+}
+
+func ReadPass(prompt string) string {
+	fmt.Fprint(os.Stderr, prompt);
+
+	tmp, err := terminal.ReadPassword(0);
+	if err != nil {
+		log.Fatal("Input error: ", err);
+	}
+
+	fmt.Fprintln(os.Stderr, "");
+
+	return bytes.NewBuffer(tmp).String();
+}
+
+func ExpandUser(path string) string {
+	user, err := user.Current();
+	if err != nil {
+		log.Fatal("Could not find current user: ", err);
+	}
+
+	if strings.HasPrefix(path, "~/") {
+		return strings.Replace(path, "~", user.HomeDir, 1);
+	}
+
+	return path;
+}

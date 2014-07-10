@@ -1,7 +1,7 @@
 /*
  * Pretty command-line password manager.
  *
- * Copyright (c) 2011-2012, Alessandro Ghedini
+ * Copyright (c) 2014, Alessandro Ghedini
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,12 +28,45 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extern void item_add(void *db, const char *item, const char *usr, const char *pwd);
+package db
 
-extern int item_exist(void *db, const char *item);
+import "log"
+import "fmt"
+import "os"
 
-extern const char *item_get_fld(void *db, const char *item, const char *field);
-extern const char *item_get_usr(void *db, const char *item);
-extern const char *item_get_pwd(void *db, const char *item);
+func is_locked(lock_file string) bool {
+	if _, err := os.Stat(lock_file); err == nil {
+		return true;
+	}
 
-extern void item_remove(void *db, const char *item);
+	return false;
+}
+
+func lock(db_file string) {
+	lock_file := fmt.Sprintf("%s.lock", db_file);
+
+	if is_locked(lock_file) == true {
+		log.Panic("Could not create lock file: already locked");
+	}
+
+	lock, err := os.OpenFile(
+		lock_file, os.O_RDWR | os.O_CREATE | os.O_TRUNC, 0600,
+	);
+	if err != nil {
+		log.Panic("Could not create lock file: ", err);
+	}
+	defer lock.Close();
+}
+
+func unlock(db_file string) {
+	lock_file := fmt.Sprintf("%s.lock", db_file);
+
+	if is_locked(lock_file) != true {
+		log.Panic("Could not remove lock file: not locked");
+	}
+
+	err := os.Remove(lock_file);
+	if err != nil {
+		log.Panic("Could not remove lock file: ", err);
+	}
+}

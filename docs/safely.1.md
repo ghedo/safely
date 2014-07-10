@@ -22,22 +22,22 @@ Create a new password database.
 `-a, --add`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Add the given account.
+Add a new account to the database.
 
-`-p, --passwd`
+`-p, --pass`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Show the given account's password.
+Print the password of the given account.
 
 `-u, --user`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Show the given account's username.
+Print the user name of the given account.
 
 `-e, --edit`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Edit the given account.
+Modify the given account.
 
 `-r, --remove`
 
@@ -47,86 +47,51 @@ Remove the given account.
 `-s, --search`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Search for the given pattern.
+Search the database for the given query.
 
 `-d, --dump`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Dump JSON database.
-
-`-t, --tests`
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Run the security tests only.
-
-`-v, --version`
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Show program's version and exit.
+Dump the database in JSON format.
 
 `-h, --help`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Show program's help and exit.
+Show the program's help message and exit.
 
 ## OPTIONS ##
 
 `-D, --db`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Specifies a custom path to the password database.
+Use this database file [default: ~/.safely.db].
 
 `-K, --keys`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Space-separated list of keys to be used.
-
-`-H, --hide`
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Print the passwords in red on red to avoid shoulder surfing.
-
-`-Q, --quiet`
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Output errors only (i.e. no "[ok]" messages).
+Use these space-separated GPG keys [default: ].
 
 `-F, --fuzzy`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Search for non-exact (fuzzy) matches.
+Enable non-exact (fuzzy) matches.
 
-`-S, --nosecure`
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Ignore any security test failure.
-
-`-B, --nobackup`
+`-Q, --quiet`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Do not create database file backups.
+Quiet output.
 
-`-A, --noagent`
+`-B, --no-backup`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Do not use the default gpg agent.
+Do not create a backup of the database.
 
 ## ENVIRONMENT ##
 
 `GPG_AGENT_INFO`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Used to locate the gpg-agent. This is only used when `--noagent` is not set.
-
-## GPG CONFIGURATION ##
-
-Before starting, you may want to add the following config to your `gpg.conf`:
-
-    default-key <MYKEY>
-    default-recipient-self
-
-Where `<MYKEY>` is the ID of your key. Otherwise the `--keys` option must be
-provided.
+Used to locate the gpg-agent.
 
 ## FILES ##
 
@@ -155,6 +120,6 @@ Alessandro Ghedini <alessandro@ghedini.me>
 
 ## COPYRIGHT ##
 
-Copyright (C) 2011-2012 Alessandro Ghedini <alessandro@ghedini.me>
+Copyright (C) 2014 Alessandro Ghedini <alessandro@ghedini.me>
 
 This program is released under the 2 clause BSD license.
