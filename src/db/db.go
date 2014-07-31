@@ -107,7 +107,7 @@ func Dump(db_file string) ([]byte, error) {
 	return plain, nil;
 }
 
-func (db *Db) Sync(keys []string, do_backup bool) error {
+func (db *Db) Sync(do_backup bool) error {
 	lock(db.Path);
 	defer unlock(db.Path);
 
@@ -122,7 +122,7 @@ func (db *Db) Sync(keys []string, do_backup bool) error {
 		return fmt.Errorf("Could not encode DB: %s", err);
 	}
 
-	cipher, err := gpg.Encrypt(data, keys);
+	cipher, err := gpg.Encrypt(data);
 	if err != nil {
 		return fmt.Errorf("Could not encrypt DB: %s", err);
 	}
@@ -135,8 +135,8 @@ func (db *Db) Sync(keys []string, do_backup bool) error {
 	return nil;
 }
 
-func (db *Db) DeferredSync(keys []string, do_backup bool) {
-	err := db.Sync(keys, do_backup);
+func (db *Db) DeferredSync(do_backup bool) {
+	err := db.Sync(do_backup);
 	if err != nil {
 		log.Panic("Error syncing DB: ", err);
 	}

@@ -35,9 +35,12 @@ package gpg
 import "C"
 
 import "fmt"
+import "strings"
 import "unsafe"
 
-func Init() error {
+var keys []string;
+
+func Init(keys_spec string) error {
 	C.gpgme_check_version(nil);
 
 	gpg_err := C.gpgme_engine_check_version(C.GPGME_PROTOCOL_OpenPGP);
@@ -45,10 +48,12 @@ func Init() error {
 		return &GPGError{gpg_err};
 	}
 
+	keys = strings.Split(keys_spec, " ");
+
 	return nil;
 }
 
-func Encrypt(data []byte, keys []string) ([]byte, error) {
+func Encrypt(data []byte) ([]byte, error) {
 	var gpg_data C.gpgme_data_t;
 
 	c_data := C.CString(string(data));
@@ -60,10 +65,10 @@ func Encrypt(data []byte, keys []string) ([]byte, error) {
 	}
 	defer C.gpgme_data_release(gpg_data);
 
-	return EncryptData(gpg_data, keys);
+	return EncryptData(gpg_data);
 }
 
-func EncryptData(gpg_in C.gpgme_data_t, keys []string) ([]byte, error) {
+func EncryptData(gpg_in C.gpgme_data_t) ([]byte, error) {
 	var gpg_ctx C.gpgme_ctx_t;
 	var gpg_out C.gpgme_data_t;
 	var gpg_keys []C.gpgme_key_t;

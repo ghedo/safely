@@ -34,7 +34,6 @@ import "fmt"
 import "log"
 import "os"
 import "regexp"
-import "strings"
 import "syscall"
 import "time"
 
@@ -91,12 +90,10 @@ Options:
 
 	SecurityCheck();
 
-	gpg.Init();
+	gpg.Init(keys_spec);
 
 	switch {
 		case args["--create"].(bool) == true:
-			keys := strings.Split(keys_spec, " ");
-
 			mydb, err := db.Create(db_file);
 			if err != nil {
 				log.Fatal("Error creating database: ", err);
@@ -114,14 +111,12 @@ Options:
 				}
 			}();
 
-			defer mydb.DeferredSync(keys, false);
+			defer mydb.DeferredSync(false);
 
 			break;
 
 		case args["--add"] != nil:
 			account := args["--add"].(string);
-
-			keys := strings.Split(keys_spec, " ");
 
 			mydb, err := db.Open(db_file);
 			if err != nil {
@@ -139,7 +134,7 @@ Options:
 				}
 			}();
 
-			defer mydb.DeferredSync(keys, !no_backup);
+			defer mydb.DeferredSync(!no_backup);
 
 			if mydb.Search(account, false) != nil {
 				log.Fatalf("Account '%s' already exists",
@@ -205,8 +200,6 @@ Options:
 		case args["--edit"] != nil:
 			query := args["--edit"].(string);
 
-			keys := strings.Split(keys_spec, " ");
-
 			mydb, err := db.Open(db_file);
 			if err != nil {
 				log.Fatal("Error opening database: ", err);
@@ -223,7 +216,7 @@ Options:
 				}
 			}();
 
-			defer mydb.DeferredSync(keys, !no_backup);
+			defer mydb.DeferredSync(!no_backup);
 
 			account := mydb.Search(query, false);
 			if account == nil {
@@ -249,8 +242,6 @@ Options:
 		case args["--remove"] != nil:
 			account := args["--remove"].(string);
 
-			keys := strings.Split(keys_spec, " ");
-
 			mydb, err := db.Open(db_file);
 			if err != nil {
 				log.Fatal("Error opening database: ", err);
@@ -267,7 +258,7 @@ Options:
 				}
 			}();
 
-			defer mydb.DeferredSync(keys, !no_backup);
+			defer mydb.DeferredSync(!no_backup);
 
 			if mydb.Search(account, false) == nil {
 				log.Fatalf("Account '%s' not found", account);
