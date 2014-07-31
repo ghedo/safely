@@ -35,6 +35,7 @@ import "io"
 import "io/ioutil"
 import "log"
 import "fmt"
+import "path/filepath"
 import "regexp"
 import "os"
 
@@ -52,6 +53,12 @@ type Account struct {
 }
 
 func Create(db_file string) (*Db, error) {
+	err := os.MkdirAll(filepath.Dir(db_file), 0700);
+	if err != nil {
+		return nil, fmt.Errorf("Could not create config dir '%s': %s",
+		                       filepath.Dir(db_file), err);
+	}
+
 	lock(db_file);
 	defer unlock(db_file);
 

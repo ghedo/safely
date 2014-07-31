@@ -64,7 +64,7 @@ Show the program's help message and exit.
 `-D, --db`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Use this database file [default: ~/.safely.db].
+Use this database file [default: ~/.config/safely/passwords.db].
 
 `-K, --keys`
 
@@ -95,20 +95,20 @@ Used to locate the gpg-agent.
 
 ## FILES ##
 
-`~/.safely.db`
+`~/.config/safely/passwords.db`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 The default password database file. The option `--db` can be used to 
 override it.
 
-`~/.safely.db~`
+`~/.config/safely/passwords.db~`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 The default password database backup file. If the `--db` option is set, this
 will change accordingly. If the `--nobackup` option is used, this file is 
 not created/modified.
 
-`~/.safely.db.lock`
+`~/.config/safely/passwords.db.lock`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 The default password database lock file. If the `--db` option is set, this

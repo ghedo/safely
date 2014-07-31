@@ -69,7 +69,7 @@ Options:
   -r <name>, --remove <name>    Remove the given account.
   -s <query>, --search <query>  Search the database for the given query.
   -d, --dump                    Dump the database in JSON format.
-  -D <file>, --db <file>        Use this database file [default: ~/.safely.db].
+  -D <file>, --db <file>        Use this database file [default: ~/.config/safely/passwords.db].
   -K <keys>, --keys <keys>      Use these space-separated GPG keys [default: ].
   -F, --fuzzy                   Enable non-exact (fuzzy) matches.
   -Q, --quiet                   Quiet output.
