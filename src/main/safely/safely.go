@@ -72,6 +72,7 @@ Options:
   -D <file>, --db <file>        Use this database file [default: ~/.config/safely/passwords.db].
   -K <keys>, --keys <keys>      Use these space-separated GPG keys [default: ].
   -F, --fuzzy                   Enable non-exact (fuzzy) matches.
+  -N, --print-newline           Force printing a trailing newline.
   -Q, --quiet                   Quiet output.
   -B, --no-backup               Do not create a backup of the database.
   -h, --help                    Show the program's help message and exit.`
@@ -174,7 +175,7 @@ Options:
 
 			fmt.Print(account.User);
 
-			if terminal.IsTerminal(int(os.Stdout.Fd())) {
+			if args["--print-newline"].(bool) || terminal.IsTerminal(int(os.Stdout.Fd())) {
 				fmt.Println("");
 			}
 
@@ -195,7 +196,7 @@ Options:
 
 			fmt.Print(account.Pass);
 
-			if terminal.IsTerminal(int(os.Stdout.Fd())) {
+			if args["--print-newline"].(bool) || terminal.IsTerminal(int(os.Stdout.Fd())) {
 				fmt.Println("");
 			}
 

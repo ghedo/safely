@@ -76,6 +76,14 @@ Use these space-separated GPG keys [default: ].
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Enable non-exact (fuzzy) matches.
 
+`-N, --print-newline`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Force printing a trailing newline even if the output doesn't go to a terminal.
+
+This is useful for piping safely output to programs that expect a trailing
+newline.
+
 `-Q, --quiet`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
