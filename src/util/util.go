@@ -30,19 +30,19 @@
 
 package util
 
-import "log"
+import "fmt"
 import "os/user"
 import "strings"
 
-func ExpandUser(path string) string {
+func ExpandUser(path string) (string, error) {
 	user, err := user.Current();
 	if err != nil {
-		log.Fatalf("Could not find current user: %s", err);
+		return "", fmt.Errorf("Could not find current user: %s", err);
 	}
 
 	if strings.HasPrefix(path, "~/") {
-		return strings.Replace(path, "~", user.HomeDir, 1);
+		return strings.Replace(path, "~", user.HomeDir, 1), nil;
 	}
 
-	return path;
+	return path, nil;
 }

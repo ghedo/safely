@@ -85,7 +85,11 @@ Options:
 		log.Fatal("Invalid arguments: ", err);
 	}
 
-	db_file   := util.ExpandUser(args["--db"].(string));
+	db_file, err := util.ExpandUser(args["--db"].(string));
+	if err != nil {
+		log.Fatal("Error expanding home directory: ", err);
+	}
+
 	keys_spec := args["--keys"].(string);
 
 	fuzzy     := args["--fuzzy"].(bool);
