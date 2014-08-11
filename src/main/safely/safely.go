@@ -228,10 +228,18 @@ Options:
 				query, account.User,
 			));
 
+			if user == "" {
+				user = account.User;
+			}
+
 			pass := util.ReadPass(fmt.Sprintf(
 				"Enter new password for '%s' [%s]: ",
 				query, account.Pass,
 			));
+
+			if pass == "" {
+				pass = account.Pass;
+			}
 
 			mydb.Accounts[query] = &db.Account{
 				user, pass, time.Now().Format(time.RFC3339),
