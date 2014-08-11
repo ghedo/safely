@@ -82,12 +82,12 @@ Options:
 
 	args, err := docopt.Parse(usage, nil, true, "", false)
 	if err != nil {
-		log.Fatal("Invalid arguments: ", err);
+		log.Fatalf("Invalid arguments: %s", err);
 	}
 
 	db_file, err := util.ExpandUser(args["--db"].(string));
 	if err != nil {
-		log.Fatal("Error expanding home directory: ", err);
+		log.Fatalf("Error expanding home directory: %s", err);
 	}
 
 	keys_spec := args["--keys"].(string);
@@ -104,7 +104,7 @@ Options:
 		case args["--create"].(bool) == true:
 			mydb, err := db.Create(db_file);
 			if err != nil {
-				log.Fatal("Error creating database: ", err);
+				log.Fatalf("Error creating database: %s", err);
 			}
 
 			defer func() {
@@ -126,7 +126,7 @@ Options:
 
 			mydb, err := db.Open(db_file);
 			if err != nil {
-				log.Fatal("Error opening database: ", err);
+				log.Fatalf("Error opening database: %s", err);
 			}
 
 			defer func() {
@@ -181,7 +181,7 @@ Options:
 
 			mydb, err := db.Open(db_file);
 			if err != nil {
-				log.Fatal("Error opening database: ", err);
+				log.Fatalf("Error opening database: %s", err);
 			}
 
 			account := mydb.Search(query, fuzzy);
@@ -200,7 +200,7 @@ Options:
 
 			mydb, err := db.Open(db_file);
 			if err != nil {
-				log.Fatal("Error opening database: ", err);
+				log.Fatalf("Error opening database: %s", err);
 			}
 
 			account := mydb.Search(query, fuzzy);
@@ -219,7 +219,7 @@ Options:
 
 			mydb, err := db.Open(db_file);
 			if err != nil {
-				log.Fatal("Error opening database: ", err);
+				log.Fatalf("Error opening database: %s", err);
 			}
 
 			account := mydb.Search(query, fuzzy);
@@ -246,7 +246,7 @@ Options:
 
 			mydb, err := db.Open(db_file);
 			if err != nil {
-				log.Fatal("Error opening database: ", err);
+				log.Fatalf("Error opening database: %s", err);
 			}
 
 			defer func() {
@@ -316,7 +316,7 @@ Options:
 
 			mydb, err := db.Open(db_file);
 			if err != nil {
-				log.Fatal("Error opening database: ", err);
+				log.Fatalf("Error opening database: %s", err);
 			}
 
 			defer func() {
@@ -343,7 +343,7 @@ Options:
 
 			mydb, err := db.Open(db_file);
 			if err != nil {
-				log.Fatal("Error opening database: ", err);
+				log.Fatalf("Error opening database: %s", err);
 			}
 
 			for name, _ := range mydb.Accounts {
@@ -355,7 +355,7 @@ Options:
 		case args["--dump"].(bool) == true:
 			plain, err := db.Dump(db_file);
 			if err != nil {
-				log.Fatal("Error dumping database: ", err);
+				log.Fatalf("Error dumping database: %s", err);
 			}
 
 			fmt.Printf("%s\n", plain);
@@ -374,7 +374,7 @@ func SecurityCheck() {
 
 	err := syscall.Getrlimit(syscall.RLIMIT_CORE, &lim);
 	if err != nil {
-		log.Fatal("Could not get rlimit: ", err);
+		log.Fatalf("Could not get rlimit: %s", err);
 	}
 
 	if lim.Cur != 0 {
