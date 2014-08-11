@@ -138,7 +138,7 @@ func (db *Db) Sync(do_backup bool) error {
 func (db *Db) DeferredSync(do_backup bool) {
 	err := db.Sync(do_backup);
 	if err != nil {
-		log.Panic("Error syncing DB: ", err);
+		log.Panicf("Error syncing DB: %s", err);
 	}
 }
 

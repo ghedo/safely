@@ -45,7 +45,7 @@ func ReadLine(prompt string) string {
 
 	tmp, err := bufio.NewReader(os.Stdin).ReadBytes('\n');
 	if err != nil {
-		log.Fatal("Input error: ", err);
+		log.Fatalf("Input error: %s", err);
 	}
 
 	tmp = bytes.TrimSuffix(tmp, []byte("\n"));
@@ -58,7 +58,7 @@ func ReadPass(prompt string) string {
 
 	tmp, err := terminal.ReadPassword(0);
 	if err != nil {
-		log.Fatal("Input error: ", err);
+		log.Fatalf("Input error: %s", err);
 	}
 
 	fmt.Fprintln(os.Stderr, "");
@@ -69,7 +69,7 @@ func ReadPass(prompt string) string {
 func ExpandUser(path string) string {
 	user, err := user.Current();
 	if err != nil {
-		log.Fatal("Could not find current user: ", err);
+		log.Fatalf("Could not find current user: %s", err);
 	}
 
 	if strings.HasPrefix(path, "~/") {

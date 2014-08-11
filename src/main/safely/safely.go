@@ -113,8 +113,6 @@ Options:
 
 			defer mydb.DeferredSync(false);
 
-			break;
-
 		case args["--add"] != nil:
 			account := args["--add"].(string);
 
@@ -153,8 +151,6 @@ Options:
 				user, pass, time.Now().Format(time.RFC3339),
 			};
 
-			break;
-
 		case args["--user"] != nil:
 			query := args["--user"].(string);
 
@@ -174,8 +170,6 @@ Options:
 				fmt.Println("");
 			}
 
-			break;
-
 		case args["--pass"] != nil:
 			query := args["--pass"].(string);
 
@@ -194,8 +188,6 @@ Options:
 			if args["--print-newline"].(bool) || terminal.IsTerminal(int(os.Stdout.Fd())) {
 				fmt.Println("");
 			}
-
-			break;
 
 		case args["--edit"] != nil:
 			query := args["--edit"].(string);
@@ -245,8 +237,6 @@ Options:
 				user, pass, time.Now().Format(time.RFC3339),
 			};
 
-			break;
-
 		case args["--remove"] != nil:
 			account := args["--remove"].(string);
 
@@ -274,8 +264,6 @@ Options:
 
 			delete(mydb.Accounts, account);
 
-			break;
-
 		case args["--search"] != nil:
 			query := args["--search"].(string);
 
@@ -290,8 +278,6 @@ Options:
 				}
 			}
 
-			break;
-
 		case args["--dump"].(bool) == true:
 			plain, err := db.Dump(db_file);
 			if err != nil {
@@ -300,11 +286,8 @@ Options:
 
 			fmt.Printf("%s\n", plain);
 
-			break;
-
 		default:
 			log.Fatal("Invalid command");
-			break;
 	}
 }
 

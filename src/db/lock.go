@@ -53,7 +53,7 @@ func lock(db_file string) {
 		lock_file, os.O_RDWR | os.O_CREATE | os.O_TRUNC, 0600,
 	);
 	if err != nil {
-		log.Panic("Could not create lock file: ", err);
+		log.Panicf("Could not create lock file: %s", err);
 	}
 	defer lock.Close();
 }
@@ -67,6 +67,6 @@ func unlock(db_file string) {
 
 	err := os.Remove(lock_file);
 	if err != nil {
-		log.Panic("Could not remove lock file: ", err);
+		log.Panicf("Could not remove lock file: %s", err);
 	}
 }
