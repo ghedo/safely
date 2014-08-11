@@ -24,6 +24,6 @@ release-all: BUILDTAGS=release
 release-all: all
 
 clean:
-	go clean -i main/safely db gpg util
+	go clean -i main/safely db gpg oath util
 
 .PHONY: all safely deps clean

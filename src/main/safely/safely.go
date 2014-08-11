@@ -39,10 +39,10 @@ import "time"
 
 import "code.google.com/p/go.crypto/ssh/terminal"
 import "github.com/docopt/docopt-go"
-import "github.com/tapir/oath"
 
 import "db"
 import "gpg"
+import "oath"
 import "util"
 
 func main() {
@@ -214,15 +214,11 @@ Options:
 				log.Fatalf("No 2-factor auth key for '%s'", query);
 			}
 
-			oath.Init();
-			defer oath.Done();
+			secret, err := oath.Base32Secret(account.TFKey);
 
-			otp, err := oath.TOTPGenerate(account.TFKey, 30, 6);
-			if err != nil {
-				log.Fatalf("Error generating 2fa token: %s", err);
-			}
+			totp := oath.TOTP(secret);
 
-			fmt.Print(otp);
+			fmt.Print(totp);
 
 			if args["--print-newline"].(bool) || terminal.IsTerminal(int(os.Stdout.Fd())) {
 				fmt.Println("");
