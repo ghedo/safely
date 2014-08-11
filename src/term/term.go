@@ -28,21 +28,38 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package util
+package term
 
+import "bufio"
+import "bytes"
+import "fmt"
 import "log"
-import "os/user"
-import "strings"
+import "os"
 
-func ExpandUser(path string) string {
-	user, err := user.Current();
+import "code.google.com/p/go.crypto/ssh/terminal"
+
+func ReadLine(prompt string) string {
+	fmt.Fprint(os.Stderr, prompt);
+
+	tmp, err := bufio.NewReader(os.Stdin).ReadBytes('\n');
 	if err != nil {
-		log.Fatalf("Could not find current user: %s", err);
+		log.Fatalf("Input error: %s", err);
 	}
 
-	if strings.HasPrefix(path, "~/") {
-		return strings.Replace(path, "~", user.HomeDir, 1);
+	tmp = bytes.TrimSuffix(tmp, []byte("\n"));
+
+	return bytes.NewBuffer(tmp).String();
+}
+
+func ReadPass(prompt string) string {
+	fmt.Fprint(os.Stderr, prompt);
+
+	tmp, err := terminal.ReadPassword(0);
+	if err != nil {
+		log.Fatalf("Input error: %s", err);
 	}
 
-	return path;
+	fmt.Fprintln(os.Stderr, "");
+
+	return bytes.NewBuffer(tmp).String();
 }

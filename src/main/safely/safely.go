@@ -43,6 +43,7 @@ import "github.com/docopt/docopt-go"
 import "db"
 import "gpg"
 import "oath"
+import "term"
 import "util"
 
 func main() {
@@ -142,15 +143,15 @@ Options:
 				           account);
 			}
 
-			user := util.ReadLine(fmt.Sprintf(
+			user := term.ReadLine(fmt.Sprintf(
 				"Enter user name for '%s': ", account,
 			));
 
-			pass := util.ReadPass(fmt.Sprintf(
+			pass := term.ReadPass(fmt.Sprintf(
 				"Enter password for '%s': ", account,
 			));
 
-			tfkey := util.ReadLine(fmt.Sprintf(
+			tfkey := term.ReadLine(fmt.Sprintf(
 				"Enter 2-factor auth key for '%s': ", account,
 			));
 
@@ -250,7 +251,7 @@ Options:
 				log.Fatalf("Account '%s' not found", query);
 			}
 
-			user := util.ReadLine(fmt.Sprintf(
+			user := term.ReadLine(fmt.Sprintf(
 				"Enter new user name for '%s' [%s]: ",
 				query, account.User,
 			));
@@ -259,7 +260,7 @@ Options:
 				user = account.User;
 			}
 
-			pass := util.ReadPass(fmt.Sprintf(
+			pass := term.ReadPass(fmt.Sprintf(
 				"Enter new password for '%s' [%s]: ",
 				query, account.Pass,
 			));
@@ -268,7 +269,7 @@ Options:
 				pass = account.Pass;
 			}
 
-			tfkey := util.ReadLine(fmt.Sprintf(
+			tfkey := term.ReadLine(fmt.Sprintf(
 				"Enter new 2-factor auth key for '%s' [%s]: ",
 				query, account.TFKey,
 			));
