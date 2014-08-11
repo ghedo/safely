@@ -33,33 +33,32 @@ package term
 import "bufio"
 import "bytes"
 import "fmt"
-import "log"
 import "os"
 
 import "code.google.com/p/go.crypto/ssh/terminal"
 
-func ReadLine(prompt string) string {
+func ReadLine(prompt string) (string, error) {
 	fmt.Fprint(os.Stderr, prompt);
 
 	tmp, err := bufio.NewReader(os.Stdin).ReadBytes('\n');
 	if err != nil {
-		log.Fatalf("Input error: %s", err);
+		return "", fmt.Errorf("Input error: %s", err);
 	}
 
 	tmp = bytes.TrimSuffix(tmp, []byte("\n"));
 
-	return bytes.NewBuffer(tmp).String();
+	return bytes.NewBuffer(tmp).String(), nil;
 }
 
-func ReadPass(prompt string) string {
+func ReadPass(prompt string) (string, error) {
 	fmt.Fprint(os.Stderr, prompt);
 
 	tmp, err := terminal.ReadPassword(0);
 	if err != nil {
-		log.Fatalf("Input error: %s", err);
+		return "", fmt.Errorf("Input error: %s", err);
 	}
 
 	fmt.Fprintln(os.Stderr, "");
 
-	return bytes.NewBuffer(tmp).String();
+	return bytes.NewBuffer(tmp).String(), nil;
 }

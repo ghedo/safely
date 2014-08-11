@@ -147,17 +147,29 @@ Options:
 				           account);
 			}
 
-			user := term.ReadLine(fmt.Sprintf(
+			user, err := term.ReadLine(fmt.Sprintf(
 				"Enter user name for '%s': ", account,
 			));
 
-			pass := term.ReadPass(fmt.Sprintf(
+			if err != nil {
+				log.Fatalf("Error reading input: %s", err);
+			}
+
+			pass, err := term.ReadPass(fmt.Sprintf(
 				"Enter password for '%s': ", account,
 			));
 
-			tfkey := term.ReadLine(fmt.Sprintf(
+			if err != nil {
+				log.Fatalf("Error reading input: %s", err);
+			}
+
+			tfkey, err := term.ReadLine(fmt.Sprintf(
 				"Enter 2-factor auth key for '%s': ", account,
 			));
+
+			if err != nil {
+				log.Fatalf("Error reading input: %s", err);
+			}
 
 			mydb.Accounts[account] = &db.Account{
 				user, pass, tfkey,
@@ -255,28 +267,40 @@ Options:
 				log.Fatalf("Account '%s' not found", query);
 			}
 
-			user := term.ReadLine(fmt.Sprintf(
+			user, err := term.ReadLine(fmt.Sprintf(
 				"Enter new user name for '%s' [%s]: ",
 				query, account.User,
 			));
+
+			if err != nil {
+				log.Fatalf("Error reading input: %s", err);
+			}
 
 			if user == "" {
 				user = account.User;
 			}
 
-			pass := term.ReadPass(fmt.Sprintf(
+			pass, err := term.ReadPass(fmt.Sprintf(
 				"Enter new password for '%s' [%s]: ",
 				query, account.Pass,
 			));
+
+			if err != nil {
+				log.Fatalf("Error reading input: %s", err);
+			}
 
 			if pass == "" {
 				pass = account.Pass;
 			}
 
-			tfkey := term.ReadLine(fmt.Sprintf(
+			tfkey, err := term.ReadLine(fmt.Sprintf(
 				"Enter new 2-factor auth key for '%s' [%s]: ",
 				query, account.TFKey,
 			));
+
+			if err != nil {
+				log.Fatalf("Error reading input: %s", err);
+			}
 
 			if tfkey == "" {
 				tfkey = account.TFKey;
