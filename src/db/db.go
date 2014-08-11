@@ -49,6 +49,7 @@ type Db struct {
 type Account struct {
 	User     string              `json:"user"`
 	Pass     string              `json:"pass"`
+	TFKey    string              `json:"2fakey"`
 	Date     string              `json:"date"`
 }
 

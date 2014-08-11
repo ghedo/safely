@@ -39,6 +39,7 @@ import "time"
 
 import "code.google.com/p/go.crypto/ssh/terminal"
 import "github.com/docopt/docopt-go"
+import "github.com/tapir/oath"
 
 import "db"
 import "gpg"
@@ -54,6 +55,7 @@ Usage:
   safely [options] --keys <keys> --add <name>
   safely [options] --user <name>
   safely [options] --pass <name>
+  safely [options] --2fa <name>
   safely [options] --keys <keys> --edit <name>
   safely [options] --keys <keys> --remove <name>
   safely [options] --search <query>
@@ -64,6 +66,7 @@ Options:
   -a <name>, --add <name>       Add a new account to the database.
   -u <name>, --user <name>      Print the user name of the given account.
   -p <name>, --pass <name>      Print the password of the given account.
+  -2 <name>, --2fa <name>       Print 2-factor auth token for the given account.
   -e <name>, --edit <name>      Modify the given account.
   -r <name>, --remove <name>    Remove the given account.
   -s <query>, --search <query>  Search the database for the given query.
@@ -147,8 +150,13 @@ Options:
 				"Enter password for '%s': ", account,
 			));
 
+			tfkey := util.ReadLine(fmt.Sprintf(
+				"Enter 2-factor auth key for '%s': ", account,
+			));
+
 			mydb.Accounts[account] = &db.Account{
-				user, pass, time.Now().Format(time.RFC3339),
+				user, pass, tfkey,
+				time.Now().Format(time.RFC3339),
 			};
 
 		case args["--user"] != nil:
@@ -184,6 +192,37 @@ Options:
 			}
 
 			fmt.Print(account.Pass);
+
+			if args["--print-newline"].(bool) || terminal.IsTerminal(int(os.Stdout.Fd())) {
+				fmt.Println("");
+			}
+
+		case args["--2fa"] != nil:
+			query := args["--2fa"].(string);
+
+			mydb, err := db.Open(db_file);
+			if err != nil {
+				log.Fatal("Error opening database: ", err);
+			}
+
+			account := mydb.Search(query, fuzzy);
+			if account == nil {
+				log.Fatalf("Account '%s' not found", query);
+			}
+
+			if account.TFKey == "" {
+				log.Fatalf("No 2-factor auth key for '%s'", query);
+			}
+
+			oath.Init();
+			defer oath.Done();
+
+			otp, err := oath.TOTPGenerate(account.TFKey, 30, 6);
+			if err != nil {
+				log.Fatalf("Error generating 2fa token: %s", err);
+			}
+
+			fmt.Print(otp);
 
 			if args["--print-newline"].(bool) || terminal.IsTerminal(int(os.Stdout.Fd())) {
 				fmt.Println("");
@@ -233,8 +272,18 @@ Options:
 				pass = account.Pass;
 			}
 
+			tfkey := util.ReadLine(fmt.Sprintf(
+				"Enter new 2-factor auth key for '%s' [%s]: ",
+				query, account.TFKey,
+			));
+
+			if tfkey == "" {
+				tfkey = account.TFKey;
+			}
+
 			mydb.Accounts[query] = &db.Account{
-				user, pass, time.Now().Format(time.RFC3339),
+				user, pass, tfkey,
+				time.Now().Format(time.RFC3339),
 			};
 
 		case args["--remove"] != nil:

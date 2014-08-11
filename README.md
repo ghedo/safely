@@ -14,6 +14,8 @@ safely was implemented with the following design goals in mind:
  * Secure, GPG-based encryption which allows manual decryption (see above)
  * Fool-proof command-line based and non interactive interface
  * Featureless ("do one thing, do it well")
+ * Support for generating google-authenticator compatible 2-factor
+   authentication tokens (TOTP).
 
 ## GETTING STARTED
 
@@ -39,6 +41,13 @@ $ safely --add google.com --keys <your_key_id>
 
 ```bash
 $ safely --pass google.com
+```
+
+ * Generate a 2-factor authentication token (you need to provide the 2-factor
+   secret key during --add or --edit):
+
+```bash
+$ safely --search google
 ```
 
  * Save password to X clipboard:

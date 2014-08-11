@@ -34,6 +34,11 @@ Print the password of the given account.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Print the user name of the given account.
 
+`-2, --2fa`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Print 2-factor auth token for the given account.
+
 `-e, --edit`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
