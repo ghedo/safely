@@ -47,7 +47,7 @@ $ safely --pass google.com
    secret key during --add or --edit):
 
 ```bash
-$ safely --2fa google
+$ safely --2fa google.com
 ```
 
  * Save password to X clipboard:
