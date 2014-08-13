@@ -8,8 +8,8 @@ safely(1) -- pretty command-line password manager
 ## DESCRIPTION
 
 **safely** is a command-line tool to manage passwords. It stores all your
-login information (usernames and passwords) in a simple, JSON-formatted 
-file, encrypted and signed using your OpenPGP key: this makes it pretty 
+login information (usernames and passwords) in a simple, JSON-formatted
+file, encrypted and signed using your OpenPGP key: this makes it pretty
 secure and allows manual decryption of the database when needed.
 
 ## COMMANDS ##
@@ -111,14 +111,14 @@ Used to locate the gpg-agent.
 `~/.config/safely/passwords.db`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-The default password database file. The option `--db` can be used to 
+The default password database file. The option `--db` can be used to
 override it.
 
 `~/.config/safely/passwords.db~`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 The default password database backup file. If the `--db` option is set, this
-will change accordingly. If the `--nobackup` option is used, this file is 
+will change accordingly. If the `--no-backup` option is used, this file is
 not created/modified.
 
 `~/.config/safely/passwords.db.lock`
