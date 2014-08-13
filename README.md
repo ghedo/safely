@@ -8,12 +8,11 @@ login information (usernames and passwords) in a simple, JSON-formatted
 file, encrypted and signed using your OpenPGP key: this makes it pretty
 secure and allows manual decryption of the database when needed.
 
-safely was implemented with the following design goals in mind:
+## FEATURES
 
  * Simple database format and schema (to ease manual manipulation)
  * Secure, GPG-based encryption which allows manual decryption (see above)
  * Fool-proof command-line based and non interactive interface
- * Featureless ("do one thing, do it well")
  * Support for generating google-authenticator compatible 2-factor
    authentication tokens (TOTP).
 
