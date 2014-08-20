@@ -47,7 +47,7 @@ func ReadLine(prompt string) (string, error) {
 
 	tmp = bytes.TrimSuffix(tmp, []byte("\n"));
 
-	return bytes.NewBuffer(tmp).String(), nil;
+	return string(tmp), nil;
 }
 
 func ReadPass(prompt string) (string, error) {
@@ -60,5 +60,5 @@ func ReadPass(prompt string) (string, error) {
 
 	fmt.Fprintln(os.Stderr, "");
 
-	return bytes.NewBuffer(tmp).String(), nil;
+	return string(tmp), nil;
 }

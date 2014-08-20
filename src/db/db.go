@@ -113,7 +113,8 @@ func (db *Db) Sync(do_backup bool) error {
 	defer unlock(db.Path);
 
 	if do_backup == true {
-		if err := backup(db.Path); err != nil {
+		err := backup(db.Path);
+		if err != nil {
 			return err;
 		}
 	}
