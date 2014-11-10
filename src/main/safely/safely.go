@@ -47,7 +47,7 @@ import "term"
 import "util"
 
 func main() {
-	log.SetFlags(0);
+	log.SetFlags(0)
 
 	usage := `safely [options]
 
@@ -82,302 +82,305 @@ Options:
 
 	args, err := docopt.Parse(usage, nil, true, "", false)
 	if err != nil {
-		log.Fatalf("Invalid arguments: %s", err);
+		log.Fatalf("Invalid arguments: %s", err)
 	}
 
-	db_file, err := util.ExpandUser(args["--db"].(string));
+	db_file, err := util.ExpandUser(args["--db"].(string))
 	if err != nil {
-		log.Fatalf("Error expanding home directory: %s", err);
+		log.Fatalf("Error expanding home directory: %s", err)
 	}
 
-	keys_spec := args["--keys"].(string);
+	keys_spec := args["--keys"].(string)
 
-	fuzzy     := args["--fuzzy"].(bool);
-	quiet     := args["--quiet"].(bool);
-	no_backup := args["--no-backup"].(bool);
+	fuzzy := args["--fuzzy"].(bool)
+	quiet := args["--quiet"].(bool)
+	no_backup := args["--no-backup"].(bool)
 
-	SecurityCheck();
+	SecurityCheck()
 
-	gpg.Init(keys_spec);
+	gpg.Init(keys_spec)
 
 	switch {
-		case args["--create"].(bool) == true:
-			mydb, err := db.Create(db_file);
-			if err != nil {
-				log.Fatalf("Error creating database: %s", err);
+	case args["--create"].(bool) == true:
+		mydb, err := db.Create(db_file)
+		if err != nil {
+			log.Fatalf("Error creating database: %s", err)
+		}
+
+		defer func() {
+			if r := recover(); r != nil {
+				mydb.Remove()
+				os.Exit(1)
 			}
 
-			defer func() {
-				if r := recover(); r != nil {
-					mydb.Remove();
-					os.Exit(1);
-				}
+			if quiet != true {
+				log.Printf("Database '%s' created",
+					db_file)
+			}
+		}()
 
-				if quiet != true {
-					log.Printf("Database '%s' created",
-					           db_file);
-				}
-			}();
+		defer mydb.DeferredSync(false)
 
-			defer mydb.DeferredSync(false);
+	case args["--add"] != nil:
+		account := args["--add"].(string)
 
-		case args["--add"] != nil:
-			account := args["--add"].(string);
+		mydb, err := db.Open(db_file)
+		if err != nil {
+			log.Fatalf("Error opening database: %s", err)
+		}
 
-			mydb, err := db.Open(db_file);
-			if err != nil {
-				log.Fatalf("Error opening database: %s", err);
+		defer func() {
+			if r := recover(); r != nil {
+				os.Exit(1)
 			}
 
-			defer func() {
-				if r := recover(); r != nil {
-					os.Exit(1);
-				}
+			if quiet != true {
+				log.Printf("Account '%s' added",
+					account)
+			}
+		}()
 
-				if quiet != true {
-					log.Printf("Account '%s' added",
-					           account);
-				}
-			}();
+		defer mydb.DeferredSync(!no_backup)
 
-			defer mydb.DeferredSync(!no_backup);
+		if mydb.Search(account, false) != nil {
+			log.Fatalf("Account '%s' already exists",
+				account)
+		}
 
-			if mydb.Search(account, false) != nil {
-				log.Fatalf("Account '%s' already exists",
-				           account);
+		user, err := term.ReadLine(fmt.Sprintf(
+			"Enter user name for '%s': ", account,
+		))
+
+		if err != nil {
+			log.Fatalf("Error reading input: %s", err)
+		}
+
+		pass, err := term.ReadPass(fmt.Sprintf(
+			"Enter password for '%s': ", account,
+		))
+
+		if err != nil {
+			log.Fatalf("Error reading input: %s", err)
+		}
+
+		tfkey, err := term.ReadLine(fmt.Sprintf(
+			"Enter 2-factor auth key for '%s': ", account,
+		))
+
+		if err != nil {
+			log.Fatalf("Error reading input: %s", err)
+		}
+
+		mydb.Accounts[account] = &db.Account{
+			user, pass, tfkey,
+			time.Now().Format(time.RFC3339),
+		}
+
+	case args["--user"] != nil:
+		query := args["--user"].(string)
+
+		mydb, err := db.Open(db_file)
+		if err != nil {
+			log.Fatalf("Error opening database: %s", err)
+		}
+
+		account := mydb.Search(query, fuzzy)
+		if account == nil {
+			log.Fatalf("Account '%s' not found", query)
+		}
+
+		fmt.Print(account.User)
+
+		if args["--print-newline"].(bool) ||
+		   terminal.IsTerminal(int(os.Stdout.Fd())) {
+			fmt.Println("")
+		}
+
+	case args["--pass"] != nil:
+		query := args["--pass"].(string)
+
+		mydb, err := db.Open(db_file)
+		if err != nil {
+			log.Fatalf("Error opening database: %s", err)
+		}
+
+		account := mydb.Search(query, fuzzy)
+		if account == nil {
+			log.Fatalf("Account '%s' not found", query)
+		}
+
+		fmt.Print(account.Pass)
+
+		if args["--print-newline"].(bool) ||
+		   terminal.IsTerminal(int(os.Stdout.Fd())) {
+			fmt.Println("")
+		}
+
+	case args["--2fa"] != nil:
+		query := args["--2fa"].(string)
+
+		mydb, err := db.Open(db_file)
+		if err != nil {
+			log.Fatalf("Error opening database: %s", err)
+		}
+
+		account := mydb.Search(query, fuzzy)
+		if account == nil {
+			log.Fatalf("Account '%s' not found", query)
+		}
+
+		if account.TFKey == "" {
+			log.Fatalf("No 2-factor auth key for '%s'", query)
+		}
+
+		secret, err := oath.Base32Secret(account.TFKey)
+
+		totp := oath.TOTP(secret)
+
+		fmt.Print(totp)
+
+		if args["--print-newline"].(bool) ||
+		   terminal.IsTerminal(int(os.Stdout.Fd())) {
+			fmt.Println("")
+		}
+
+	case args["--edit"] != nil:
+		query := args["--edit"].(string)
+
+		mydb, err := db.Open(db_file)
+		if err != nil {
+			log.Fatalf("Error opening database: %s", err)
+		}
+
+		defer func() {
+			if r := recover(); r != nil {
+				os.Exit(1)
 			}
 
-			user, err := term.ReadLine(fmt.Sprintf(
-				"Enter user name for '%s': ", account,
-			));
+			if quiet != true {
+				log.Printf("Account '%s' edited",
+					query)
+			}
+		}()
 
-			if err != nil {
-				log.Fatalf("Error reading input: %s", err);
+		defer mydb.DeferredSync(!no_backup)
+
+		account := mydb.Search(query, false)
+		if account == nil {
+			log.Fatalf("Account '%s' not found", query)
+		}
+
+		user, err := term.ReadLine(fmt.Sprintf(
+			"Enter new user name for '%s' [%s]: ",
+			query, account.User,
+		))
+
+		if err != nil {
+			log.Fatalf("Error reading input: %s", err)
+		}
+
+		if user == "" {
+			user = account.User
+		}
+
+		pass, err := term.ReadPass(fmt.Sprintf(
+			"Enter new password for '%s' [%s]: ",
+			query, account.Pass,
+		))
+
+		if err != nil {
+			log.Fatalf("Error reading input: %s", err)
+		}
+
+		if pass == "" {
+			pass = account.Pass
+		}
+
+		tfkey, err := term.ReadLine(fmt.Sprintf(
+			"Enter new 2-factor auth key for '%s' [%s]: ",
+			query, account.TFKey,
+		))
+
+		if err != nil {
+			log.Fatalf("Error reading input: %s", err)
+		}
+
+		if tfkey == "" {
+			tfkey = account.TFKey
+		}
+
+		mydb.Accounts[query] = &db.Account{
+			user, pass, tfkey,
+			time.Now().Format(time.RFC3339),
+		}
+
+	case args["--remove"] != nil:
+		account := args["--remove"].(string)
+
+		mydb, err := db.Open(db_file)
+		if err != nil {
+			log.Fatalf("Error opening database: %s", err)
+		}
+
+		defer func() {
+			if r := recover(); r != nil {
+				os.Exit(1)
 			}
 
-			pass, err := term.ReadPass(fmt.Sprintf(
-				"Enter password for '%s': ", account,
-			));
-
-			if err != nil {
-				log.Fatalf("Error reading input: %s", err);
+			if quiet != true {
+				log.Printf("Account '%s' removed",
+					account)
 			}
+		}()
 
-			tfkey, err := term.ReadLine(fmt.Sprintf(
-				"Enter 2-factor auth key for '%s': ", account,
-			));
+		defer mydb.DeferredSync(!no_backup)
 
-			if err != nil {
-				log.Fatalf("Error reading input: %s", err);
+		if mydb.Search(account, false) == nil {
+			log.Fatalf("Account '%s' not found", account)
+		}
+
+		delete(mydb.Accounts, account)
+
+	case args["--search"] != nil:
+		query := args["--search"].(string)
+
+		mydb, err := db.Open(db_file)
+		if err != nil {
+			log.Fatalf("Error opening database: %s", err)
+		}
+
+		for name, _ := range mydb.Accounts {
+			if m, _ := regexp.MatchString(query, name); m {
+				fmt.Println(name)
 			}
+		}
 
-			mydb.Accounts[account] = &db.Account{
-				user, pass, tfkey,
-				time.Now().Format(time.RFC3339),
-			};
+	case args["--dump"].(bool) == true:
+		plain, err := db.Dump(db_file)
+		if err != nil {
+			log.Fatalf("Error dumping database: %s", err)
+		}
 
-		case args["--user"] != nil:
-			query := args["--user"].(string);
+		fmt.Printf("%s\n", plain)
 
-			mydb, err := db.Open(db_file);
-			if err != nil {
-				log.Fatalf("Error opening database: %s", err);
-			}
-
-			account := mydb.Search(query, fuzzy);
-			if account == nil {
-				log.Fatalf("Account '%s' not found", query);
-			}
-
-			fmt.Print(account.User);
-
-			if args["--print-newline"].(bool) || terminal.IsTerminal(int(os.Stdout.Fd())) {
-				fmt.Println("");
-			}
-
-		case args["--pass"] != nil:
-			query := args["--pass"].(string);
-
-			mydb, err := db.Open(db_file);
-			if err != nil {
-				log.Fatalf("Error opening database: %s", err);
-			}
-
-			account := mydb.Search(query, fuzzy);
-			if account == nil {
-				log.Fatalf("Account '%s' not found", query);
-			}
-
-			fmt.Print(account.Pass);
-
-			if args["--print-newline"].(bool) || terminal.IsTerminal(int(os.Stdout.Fd())) {
-				fmt.Println("");
-			}
-
-		case args["--2fa"] != nil:
-			query := args["--2fa"].(string);
-
-			mydb, err := db.Open(db_file);
-			if err != nil {
-				log.Fatalf("Error opening database: %s", err);
-			}
-
-			account := mydb.Search(query, fuzzy);
-			if account == nil {
-				log.Fatalf("Account '%s' not found", query);
-			}
-
-			if account.TFKey == "" {
-				log.Fatalf("No 2-factor auth key for '%s'", query);
-			}
-
-			secret, err := oath.Base32Secret(account.TFKey);
-
-			totp := oath.TOTP(secret);
-
-			fmt.Print(totp);
-
-			if args["--print-newline"].(bool) || terminal.IsTerminal(int(os.Stdout.Fd())) {
-				fmt.Println("");
-			}
-
-		case args["--edit"] != nil:
-			query := args["--edit"].(string);
-
-			mydb, err := db.Open(db_file);
-			if err != nil {
-				log.Fatalf("Error opening database: %s", err);
-			}
-
-			defer func() {
-				if r := recover(); r != nil {
-					os.Exit(1);
-				}
-
-				if quiet != true {
-					log.Printf("Account '%s' edited",
-					           query);
-				}
-			}();
-
-			defer mydb.DeferredSync(!no_backup);
-
-			account := mydb.Search(query, false);
-			if account == nil {
-				log.Fatalf("Account '%s' not found", query);
-			}
-
-			user, err := term.ReadLine(fmt.Sprintf(
-				"Enter new user name for '%s' [%s]: ",
-				query, account.User,
-			));
-
-			if err != nil {
-				log.Fatalf("Error reading input: %s", err);
-			}
-
-			if user == "" {
-				user = account.User;
-			}
-
-			pass, err := term.ReadPass(fmt.Sprintf(
-				"Enter new password for '%s' [%s]: ",
-				query, account.Pass,
-			));
-
-			if err != nil {
-				log.Fatalf("Error reading input: %s", err);
-			}
-
-			if pass == "" {
-				pass = account.Pass;
-			}
-
-			tfkey, err := term.ReadLine(fmt.Sprintf(
-				"Enter new 2-factor auth key for '%s' [%s]: ",
-				query, account.TFKey,
-			));
-
-			if err != nil {
-				log.Fatalf("Error reading input: %s", err);
-			}
-
-			if tfkey == "" {
-				tfkey = account.TFKey;
-			}
-
-			mydb.Accounts[query] = &db.Account{
-				user, pass, tfkey,
-				time.Now().Format(time.RFC3339),
-			};
-
-		case args["--remove"] != nil:
-			account := args["--remove"].(string);
-
-			mydb, err := db.Open(db_file);
-			if err != nil {
-				log.Fatalf("Error opening database: %s", err);
-			}
-
-			defer func() {
-				if r := recover(); r != nil {
-					os.Exit(1);
-				}
-
-				if quiet != true {
-					log.Printf("Account '%s' removed",
-					           account);
-				}
-			}();
-
-			defer mydb.DeferredSync(!no_backup);
-
-			if mydb.Search(account, false) == nil {
-				log.Fatalf("Account '%s' not found", account);
-			}
-
-			delete(mydb.Accounts, account);
-
-		case args["--search"] != nil:
-			query := args["--search"].(string);
-
-			mydb, err := db.Open(db_file);
-			if err != nil {
-				log.Fatalf("Error opening database: %s", err);
-			}
-
-			for name, _ := range mydb.Accounts {
-				if m, _ := regexp.MatchString(query, name); m {
-					fmt.Println(name);
-				}
-			}
-
-		case args["--dump"].(bool) == true:
-			plain, err := db.Dump(db_file);
-			if err != nil {
-				log.Fatalf("Error dumping database: %s", err);
-			}
-
-			fmt.Printf("%s\n", plain);
-
-		default:
-			log.Fatal("Invalid command");
+	default:
+		log.Fatal("Invalid command")
 	}
 }
 
 func SecurityCheck() {
-	var lim syscall.Rlimit;
+	var lim syscall.Rlimit
 
 	if os.Getuid() == 0 || os.Getgid() == 0 {
-		log.Fatal("Running as root");
+		log.Fatal("Running as root")
 	}
 
-	err := syscall.Getrlimit(syscall.RLIMIT_CORE, &lim);
+	err := syscall.Getrlimit(syscall.RLIMIT_CORE, &lim)
 	if err != nil {
-		log.Fatalf("Could not get rlimit: %s", err);
+		log.Fatalf("Could not get rlimit: %s", err)
 	}
 
 	if lim.Cur != 0 {
-		log.Fatal("Core dumps are enabled");
+		log.Fatal("Core dumps are enabled")
 	}
 }

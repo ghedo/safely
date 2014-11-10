@@ -36,37 +36,37 @@ import "os"
 
 func is_locked(lock_file string) bool {
 	if _, err := os.Stat(lock_file); err == nil {
-		return true;
+		return true
 	}
 
-	return false;
+	return false
 }
 
 func lock(db_file string) {
-	lock_file := fmt.Sprintf("%s.lock", db_file);
+	lock_file := fmt.Sprintf("%s.lock", db_file)
 
 	if is_locked(lock_file) == true {
-		log.Panic("Could not create lock file: already locked");
+		log.Panic("Could not create lock file: already locked")
 	}
 
 	lock, err := os.OpenFile(
-		lock_file, os.O_RDWR | os.O_CREATE | os.O_TRUNC, 0600,
-	);
+		lock_file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600,
+	)
 	if err != nil {
-		log.Panicf("Could not create lock file: %s", err);
+		log.Panicf("Could not create lock file: %s", err)
 	}
-	defer lock.Close();
+	defer lock.Close()
 }
 
 func unlock(db_file string) {
-	lock_file := fmt.Sprintf("%s.lock", db_file);
+	lock_file := fmt.Sprintf("%s.lock", db_file)
 
 	if is_locked(lock_file) != true {
-		log.Panic("Could not remove lock file: not locked");
+		log.Panic("Could not remove lock file: not locked")
 	}
 
-	err := os.Remove(lock_file);
+	err := os.Remove(lock_file)
 	if err != nil {
-		log.Panicf("Could not remove lock file: %s", err);
+		log.Panicf("Could not remove lock file: %s", err)
 	}
 }

@@ -38,27 +38,27 @@ import "os"
 import "code.google.com/p/go.crypto/ssh/terminal"
 
 func ReadLine(prompt string) (string, error) {
-	fmt.Fprint(os.Stderr, prompt);
+	fmt.Fprint(os.Stderr, prompt)
 
-	tmp, err := bufio.NewReader(os.Stdin).ReadBytes('\n');
+	tmp, err := bufio.NewReader(os.Stdin).ReadBytes('\n')
 	if err != nil {
-		return "", fmt.Errorf("Input error: %s", err);
+		return "", fmt.Errorf("Input error: %s", err)
 	}
 
-	tmp = bytes.TrimSuffix(tmp, []byte("\n"));
+	tmp = bytes.TrimSuffix(tmp, []byte("\n"))
 
-	return string(tmp), nil;
+	return string(tmp), nil
 }
 
 func ReadPass(prompt string) (string, error) {
-	fmt.Fprint(os.Stderr, prompt);
+	fmt.Fprint(os.Stderr, prompt)
 
-	tmp, err := terminal.ReadPassword(0);
+	tmp, err := terminal.ReadPassword(0)
 	if err != nil {
-		return "", fmt.Errorf("Input error: %s", err);
+		return "", fmt.Errorf("Input error: %s", err)
 	}
 
-	fmt.Fprintln(os.Stderr, "");
+	fmt.Fprintln(os.Stderr, "")
 
-	return string(tmp), nil;
+	return string(tmp), nil
 }

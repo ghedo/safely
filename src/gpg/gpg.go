@@ -32,141 +32,143 @@ package gpg
 
 // #cgo LDFLAGS: -lgpgme
 // #include <gpgme.h>
+// #include <stdlib.h>
 import "C"
 
 import "fmt"
 import "strings"
 import "unsafe"
 
-var keys []string;
+var keys []string
 
 func Init(keys_spec string) error {
-	C.gpgme_check_version(nil);
+	C.gpgme_check_version(nil)
 
-	gpg_err := C.gpgme_engine_check_version(C.GPGME_PROTOCOL_OpenPGP);
+	gpg_err := C.gpgme_engine_check_version(C.GPGME_PROTOCOL_OpenPGP)
 	if gpg_err != C.GPG_ERR_NO_ERROR {
-		return &GPGError{gpg_err};
+		return &GPGError{gpg_err}
 	}
 
-	keys = strings.Split(keys_spec, " ");
+	keys = strings.Split(keys_spec, " ")
 
-	return nil;
+	return nil
 }
 
 func Encrypt(data []byte) ([]byte, error) {
-	var gpg_data C.gpgme_data_t;
+	var gpg_data C.gpgme_data_t
 
-	c_data := C.CString(string(data));
-	c_len  := C.size_t(len(data));
+	c_data := C.CString(string(data))
+	defer C.free(unsafe.Pointer(c_data))
+	c_len  := C.size_t(len(data))
 
-	gpg_err := C.gpgme_data_new_from_mem(&gpg_data, c_data, c_len, 0);
+	gpg_err := C.gpgme_data_new_from_mem(&gpg_data, c_data, c_len, 0)
 	if gpg_err != C.GPG_ERR_NO_ERROR {
-		return nil, &GPGError{gpg_err};
+		return nil, &GPGError{gpg_err}
 	}
-	defer C.gpgme_data_release(gpg_data);
+	defer C.gpgme_data_release(gpg_data)
 
-	return EncryptData(gpg_data);
+	return EncryptData(gpg_data)
 }
 
 func EncryptData(gpg_in C.gpgme_data_t) ([]byte, error) {
-	var gpg_ctx C.gpgme_ctx_t;
-	var gpg_out C.gpgme_data_t;
-	var gpg_keys []C.gpgme_key_t;
+	var gpg_ctx C.gpgme_ctx_t
+	var gpg_out C.gpgme_data_t
+	var gpg_keys []C.gpgme_key_t
 
-	gpg_err := C.gpgme_new(&gpg_ctx);
+	gpg_err := C.gpgme_new(&gpg_ctx)
 	if gpg_err != C.GPG_ERR_NO_ERROR {
-		return nil, &GPGError{gpg_err};
+		return nil, &GPGError{gpg_err}
 	}
-	defer C.gpgme_release(gpg_ctx);
+	defer C.gpgme_release(gpg_ctx)
 
-	C.gpgme_set_textmode(gpg_ctx, 1);
-	C.gpgme_set_armor(gpg_ctx, 1);
+	C.gpgme_set_textmode(gpg_ctx, 1)
+	C.gpgme_set_armor(gpg_ctx, 1)
 
-	gpg_err = C.gpgme_data_new(&gpg_out);
+	gpg_err = C.gpgme_data_new(&gpg_out)
 	if gpg_err != C.GPG_ERR_NO_ERROR {
-		return nil, &GPGError{gpg_err};
+		return nil, &GPGError{gpg_err}
 	}
-	defer C.gpgme_data_release(gpg_out);
+	defer C.gpgme_data_release(gpg_out)
 
 	for _, key := range keys {
-		var gpg_key C.gpgme_key_t;
+		var gpg_key C.gpgme_key_t
 
-		gpg_err = C.gpgme_get_key(gpg_ctx, C.CString(key), &gpg_key, 1);
+		gpg_err = C.gpgme_get_key(gpg_ctx, C.CString(key), &gpg_key, 1)
 		if gpg_err != C.GPG_ERR_NO_ERROR {
 			return nil, fmt.Errorf(
 				"Could not load key '%s': %s",
 				key, &GPGError{gpg_err},
-			);
+			)
 		}
-		defer C.gpgme_key_unref(gpg_key);
+		defer C.gpgme_key_unref(gpg_key)
 
-		gpg_err = C.gpgme_signers_add(gpg_ctx, gpg_key);
+		gpg_err = C.gpgme_signers_add(gpg_ctx, gpg_key)
 		if gpg_err != C.GPG_ERR_NO_ERROR {
-			return nil, &GPGError{gpg_err};
+			return nil, &GPGError{gpg_err}
 		}
 
-		gpg_keys = append(gpg_keys, gpg_key);
+		gpg_keys = append(gpg_keys, gpg_key)
 	}
 
-	gpg_keys = append(gpg_keys, nil);
+	gpg_keys = append(gpg_keys, nil)
 
 	gpg_err = C.gpgme_op_encrypt_sign(
 		gpg_ctx, (*C.gpgme_key_t)(&gpg_keys[0]),
 		C.GPGME_ENCRYPT_ALWAYS_TRUST, gpg_in, gpg_out,
-	);
+	)
 	if gpg_err != C.GPG_ERR_NO_ERROR {
-		return nil, &GPGError{gpg_err};
+		return nil, &GPGError{gpg_err}
 	}
 
-	return ReadDataAll(gpg_out), nil;
+	return ReadDataAll(gpg_out), nil
 }
 
 func DecryptFile(path string) ([]byte, error) {
-	var gpg_data C.gpgme_data_t;
+	var gpg_data C.gpgme_data_t
 
-	gpg_err := C.gpgme_data_new_from_file(&gpg_data, C.CString(path), 1);
+	gpg_err := C.gpgme_data_new_from_file(&gpg_data, C.CString(path), 1)
 	if gpg_err != C.GPG_ERR_NO_ERROR {
-		return nil, &GPGError{gpg_err};
+		return nil, &GPGError{gpg_err}
 	}
-	defer C.gpgme_data_release(gpg_data);
+	defer C.gpgme_data_release(gpg_data)
 
-	return DecryptData(gpg_data);
+	return DecryptData(gpg_data)
 }
 
 func DecryptData(gpg_in C.gpgme_data_t) ([]byte, error) {
-	var gpg_ctx C.gpgme_ctx_t;
-	var gpg_out C.gpgme_data_t;
+	var gpg_ctx C.gpgme_ctx_t
+	var gpg_out C.gpgme_data_t
 
-	gpg_err := C.gpgme_new(&gpg_ctx);
+	gpg_err := C.gpgme_new(&gpg_ctx)
 	if gpg_err != C.GPG_ERR_NO_ERROR {
-		return nil, &GPGError{gpg_err};
+		return nil, &GPGError{gpg_err}
 	}
-	defer C.gpgme_release(gpg_ctx);
+	defer C.gpgme_release(gpg_ctx)
 
-	gpg_err = C.gpgme_data_new(&gpg_out);
+	gpg_err = C.gpgme_data_new(&gpg_out)
 	if gpg_err != C.GPG_ERR_NO_ERROR {
-		return nil, &GPGError{gpg_err};
+		return nil, &GPGError{gpg_err}
 	}
-	defer C.gpgme_data_release(gpg_out);
+	defer C.gpgme_data_release(gpg_out)
 
-	gpg_err = C.gpgme_op_decrypt_verify(gpg_ctx, gpg_in, gpg_out);
+	gpg_err = C.gpgme_op_decrypt_verify(gpg_ctx, gpg_in, gpg_out)
 	if gpg_err != C.GPG_ERR_NO_ERROR {
-		return nil, &GPGError{gpg_err};
+		return nil, &GPGError{gpg_err}
 	}
 
-	buf := ReadDataAll(gpg_out);
+	buf := ReadDataAll(gpg_out)
 
-	return buf, nil;
+	return buf, nil
 }
 
 func ReadDataAll(gpg_data C.gpgme_data_t) []byte {
-	size := C.gpgme_data_seek(gpg_data, 0, C.SEEK_END);
-	data := make([]byte, size);
+	size := C.gpgme_data_seek(gpg_data, 0, C.SEEK_END)
+	data := make([]byte, size)
 
-	C.gpgme_data_seek(gpg_data, 0, C.SEEK_SET);
-	C.gpgme_data_read(gpg_data, unsafe.Pointer(&data[0]), C.size_t(size));
+	C.gpgme_data_seek(gpg_data, 0, C.SEEK_SET)
+	C.gpgme_data_read(gpg_data, unsafe.Pointer(&data[0]), C.size_t(size))
 
-	return data;
+	return data
 }
 
 type GPGError struct {
@@ -174,5 +176,5 @@ type GPGError struct {
 }
 
 func (e *GPGError) Error() string {
-	return C.GoString(C.gpgme_strerror(e.err));
+	return C.GoString(C.gpgme_strerror(e.err))
 }
