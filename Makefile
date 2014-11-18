@@ -8,11 +8,9 @@ BUILDTAGS=debug
 
 all: safely
 
-safely: deps
-	go install -tags '$(BUILDTAGS)' main/safely
-
-deps:
+safely:
 	go get -tags '$(BUILDTAGS)' -d -v main/safely
+	go install -tags '$(BUILDTAGS)' main/safely
 
 man: docs/safely.1.md
 	ronn -r $<
