@@ -35,7 +35,7 @@ import "bytes"
 import "fmt"
 import "os"
 
-import "code.google.com/p/go.crypto/ssh/terminal"
+import "golang.org/x/crypto/ssh/terminal"
 
 func ReadLine(prompt string) (string, error) {
 	fmt.Fprint(os.Stderr, prompt)

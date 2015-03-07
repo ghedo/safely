@@ -37,7 +37,7 @@ import "regexp"
 import "syscall"
 import "time"
 
-import "code.google.com/p/go.crypto/ssh/terminal"
+import "golang.org/x/crypto/ssh/terminal"
 import "github.com/docopt/docopt-go"
 
 import "db"
