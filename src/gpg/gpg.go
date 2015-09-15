@@ -46,9 +46,16 @@ func Init(keys_spec string) error {
 func Encrypt(data []byte) ([]byte, error) {
 	var stdout, stderr bytes.Buffer
 
-	args := []string{ "--encrypt", "--sign", "--batch", "--armor", "--always-trust" }
+	args := []string{
+		"--encrypt", "--sign", "--batch", "--armor",
+		"--always-trust", "--default-recipient-self",
+	}
 
 	for _, k := range keys {
+		if k == "" {
+			break
+		}
+
 		args = append(args, "--recipient", k)
 	}
 

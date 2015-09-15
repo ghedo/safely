@@ -52,13 +52,13 @@ func main() {
 	usage := `safely [options]
 
 Usage:
-  safely [options] --keys <keys> --create
-  safely [options] --keys <keys> --add <name>
+  safely [options] [--keys <keys>] --create
+  safely [options] [--keys <keys>] --add <name>
   safely [options] --user <name>
   safely [options] --pass <name>
   safely [options] --2fa <name>
-  safely [options] --keys <keys> --edit <name>
-  safely [options] --keys <keys> --remove <name>
+  safely [options] [--keys <keys>] --edit <name>
+  safely [options] [--keys <keys>] --remove <name>
   safely [options] --search <query>
   safely [options] --dump
 
