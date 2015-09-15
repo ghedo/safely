@@ -4,11 +4,11 @@ safely
 ![Travis CI](https://secure.travis-ci.org/ghedo/safely.png)
 
 **safely** is a command-line tool to manage passwords. It stores all your
-login information (usernames and passwords) in a simple, JSON-formatted
+login information (usernames and passwords) in a simple JSON-formatted
 file, encrypted and signed using your OpenPGP key: this makes it pretty
 secure and allows manual decryption of the database when needed.
 
-## FEATURES
+## Features
 
  * Simple database format and schema (to ease manual manipulation)
  * Secure, GPG-based encryption which allows manual decryption (see above)
@@ -16,11 +16,13 @@ secure and allows manual decryption of the database when needed.
  * Support for generating google-authenticator compatible 2-factor
    authentication tokens (TOTP).
 
-## GETTING STARTED
+## Getting Started
 
 Before starting, note that a running gpg-agent is required for secret key
-operations, which is generally a good thing since, this way, safely doesn't
+operations, which is generally a good thing since this way safely doesn't
 need to know your GPG key's passphrase.
+
+## Usage
 
 Here are a few usage examples:
 
@@ -69,13 +71,9 @@ $ safely --remove google.com --keys <your_key_id>
 
 See the [man page](http://ghedo.github.io/safely/) for more information.
 
-## DEPENDENCIES
+## Building
 
- * `libgpgme`
-
-## BUILDING
-
-safely is distributed as source code. Install with:
+safely is distributed as source code. Build with:
 
 ```bash
 $ make

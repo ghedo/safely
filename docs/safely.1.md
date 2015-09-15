@@ -8,7 +8,7 @@ safely(1) -- pretty command-line password manager
 ## DESCRIPTION
 
 **safely** is a command-line tool to manage passwords. It stores all your
-login information (usernames and passwords) in a simple, JSON-formatted
+login information (usernames and passwords) in a simple JSON-formatted
 file, encrypted and signed using your OpenPGP key: this makes it pretty
 secure and allows manual decryption of the database when needed.
 
