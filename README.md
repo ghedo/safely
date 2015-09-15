@@ -22,6 +22,15 @@ Before starting, note that a running gpg-agent is required for secret key
 operations, which is generally a good thing since this way safely doesn't
 need to know your GPG key's passphrase.
 
+You may also want to add the following definition to your `gpg.conf`:
+
+```
+default-key <your_key_id>
+```
+
+Where `<your_key_id>` is the ID of your key. This way the `--keys <your_key_id>`
+argument used below can be omitted.
+
 ## Usage
 
 Here are a few usage examples:
