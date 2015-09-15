@@ -30,151 +30,54 @@
 
 package gpg
 
-// #cgo LDFLAGS: -lgpgme
-// #include <gpgme.h>
-// #include <stdlib.h>
-import "C"
-
+import "bytes"
 import "fmt"
+import "os/exec"
 import "strings"
-import "unsafe"
 
 var keys []string
 
 func Init(keys_spec string) error {
-	C.gpgme_check_version(nil)
-
-	gpg_err := C.gpgme_engine_check_version(C.GPGME_PROTOCOL_OpenPGP)
-	if gpg_err != C.GPG_ERR_NO_ERROR {
-		return &GPGError{gpg_err}
-	}
-
 	keys = strings.Split(keys_spec, " ")
 
 	return nil
 }
 
 func Encrypt(data []byte) ([]byte, error) {
-	var gpg_data C.gpgme_data_t
+	var stdout, stderr bytes.Buffer
 
-	c_data := C.CString(string(data))
-	defer C.free(unsafe.Pointer(c_data))
-	c_len  := C.size_t(len(data))
+	args := []string{ "--encrypt", "--sign", "--batch", "--armor", "--always-trust" }
 
-	gpg_err := C.gpgme_data_new_from_mem(&gpg_data, c_data, c_len, 0)
-	if gpg_err != C.GPG_ERR_NO_ERROR {
-		return nil, &GPGError{gpg_err}
-	}
-	defer C.gpgme_data_release(gpg_data)
-
-	return EncryptData(gpg_data)
-}
-
-func EncryptData(gpg_in C.gpgme_data_t) ([]byte, error) {
-	var gpg_ctx C.gpgme_ctx_t
-	var gpg_out C.gpgme_data_t
-	var gpg_keys []C.gpgme_key_t
-
-	gpg_err := C.gpgme_new(&gpg_ctx)
-	if gpg_err != C.GPG_ERR_NO_ERROR {
-		return nil, &GPGError{gpg_err}
-	}
-	defer C.gpgme_release(gpg_ctx)
-
-	C.gpgme_set_textmode(gpg_ctx, 1)
-	C.gpgme_set_armor(gpg_ctx, 1)
-
-	gpg_err = C.gpgme_data_new(&gpg_out)
-	if gpg_err != C.GPG_ERR_NO_ERROR {
-		return nil, &GPGError{gpg_err}
-	}
-	defer C.gpgme_data_release(gpg_out)
-
-	for _, key := range keys {
-		var gpg_key C.gpgme_key_t
-
-		gpg_err = C.gpgme_get_key(gpg_ctx, C.CString(key), &gpg_key, 1)
-		if gpg_err != C.GPG_ERR_NO_ERROR {
-			return nil, fmt.Errorf(
-				"Could not load key '%s': %s",
-				key, &GPGError{gpg_err},
-			)
-		}
-		defer C.gpgme_key_unref(gpg_key)
-
-		gpg_err = C.gpgme_signers_add(gpg_ctx, gpg_key)
-		if gpg_err != C.GPG_ERR_NO_ERROR {
-			return nil, &GPGError{gpg_err}
-		}
-
-		gpg_keys = append(gpg_keys, gpg_key)
+	for _, k := range keys {
+		args = append(args, "--recipient", k)
 	}
 
-	gpg_keys = append(gpg_keys, nil)
+	cmd := exec.Command("gpg", args...)
 
-	gpg_err = C.gpgme_op_encrypt_sign(
-		gpg_ctx, (*C.gpgme_key_t)(&gpg_keys[0]),
-		C.GPGME_ENCRYPT_ALWAYS_TRUST, gpg_in, gpg_out,
-	)
-	if gpg_err != C.GPG_ERR_NO_ERROR {
-		return nil, &GPGError{gpg_err}
+	cmd.Stdin  = bytes.NewBuffer(data)
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+
+	err := cmd.Run()
+	if err != nil {
+		return nil, fmt.Errorf("%s", stderr.String())
 	}
 
-	return ReadDataAll(gpg_out), nil
+	return stdout.Bytes(), nil
 }
 
 func DecryptFile(path string) ([]byte, error) {
-	var gpg_data C.gpgme_data_t
+	var stdout, stderr bytes.Buffer
 
-	gpg_err := C.gpgme_data_new_from_file(&gpg_data, C.CString(path), 1)
-	if gpg_err != C.GPG_ERR_NO_ERROR {
-		return nil, &GPGError{gpg_err}
-	}
-	defer C.gpgme_data_release(gpg_data)
+	cmd := exec.Command("gpg", "--batch", "--decrypt", path)
 
-	return DecryptData(gpg_data)
-}
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
 
-func DecryptData(gpg_in C.gpgme_data_t) ([]byte, error) {
-	var gpg_ctx C.gpgme_ctx_t
-	var gpg_out C.gpgme_data_t
-
-	gpg_err := C.gpgme_new(&gpg_ctx)
-	if gpg_err != C.GPG_ERR_NO_ERROR {
-		return nil, &GPGError{gpg_err}
-	}
-	defer C.gpgme_release(gpg_ctx)
-
-	gpg_err = C.gpgme_data_new(&gpg_out)
-	if gpg_err != C.GPG_ERR_NO_ERROR {
-		return nil, &GPGError{gpg_err}
-	}
-	defer C.gpgme_data_release(gpg_out)
-
-	gpg_err = C.gpgme_op_decrypt_verify(gpg_ctx, gpg_in, gpg_out)
-	if gpg_err != C.GPG_ERR_NO_ERROR {
-		return nil, &GPGError{gpg_err}
+	err := cmd.Run()
+	if err != nil {
+		return nil, fmt.Errorf("%s", stderr.String())
 	}
 
-	buf := ReadDataAll(gpg_out)
-
-	return buf, nil
-}
-
-func ReadDataAll(gpg_data C.gpgme_data_t) []byte {
-	size := C.gpgme_data_seek(gpg_data, 0, C.SEEK_END)
-	data := make([]byte, size)
-
-	C.gpgme_data_seek(gpg_data, 0, C.SEEK_SET)
-	C.gpgme_data_read(gpg_data, unsafe.Pointer(&data[0]), C.size_t(size))
-
-	return data
-}
-
-type GPGError struct {
-	err C.gpgme_error_t
-}
-
-func (e *GPGError) Error() string {
-	return C.GoString(C.gpgme_strerror(e.err))
+	return stdout.Bytes(), nil
 }
