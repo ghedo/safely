@@ -5,10 +5,3 @@ install:
 
 script:
  - make
-
-notifications:
-  recipient:
-   - alessandro@ghedini.me
-  email:
-    on_success: change
-    on_failure: always
