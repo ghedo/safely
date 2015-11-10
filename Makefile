@@ -12,6 +12,9 @@ safely:
 	go get -tags '$(BUILDTAGS)' -d -v main/safely
 	go install -tags '$(BUILDTAGS)' main/safely
 
+vet:
+	go vet ./...
+
 man: docs/safely.1.md
 	ronn -r $<
 
