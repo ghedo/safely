@@ -34,7 +34,6 @@ import "fmt"
 import "log"
 import "os"
 import "regexp"
-import "syscall"
 import "time"
 
 import "golang.org/x/crypto/ssh/terminal"
@@ -95,8 +94,6 @@ Options:
 	fuzzy := args["--fuzzy"].(bool)
 	quiet := args["--quiet"].(bool)
 	no_backup := args["--no-backup"].(bool)
-
-	SecurityCheck()
 
 	gpg.Init(keys_spec)
 
@@ -365,22 +362,5 @@ Options:
 
 	default:
 		log.Fatal("Invalid command")
-	}
-}
-
-func SecurityCheck() {
-	var lim syscall.Rlimit
-
-	if os.Getuid() == 0 || os.Getgid() == 0 {
-		log.Fatal("Running as root")
-	}
-
-	err := syscall.Getrlimit(syscall.RLIMIT_CORE, &lim)
-	if err != nil {
-		log.Fatalf("Could not get rlimit: %s", err)
-	}
-
-	if lim.Cur != 0 {
-		log.Fatal("Core dumps are enabled")
 	}
 }
