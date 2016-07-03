@@ -33,7 +33,6 @@ package db
 import "encoding/json"
 import "io"
 import "io/ioutil"
-import "log"
 import "fmt"
 import "path/filepath"
 import "regexp"
@@ -135,13 +134,6 @@ func (db *Db) Sync(do_backup bool) error {
     }
 
     return nil
-}
-
-func (db *Db) DeferredSync(do_backup bool) {
-    err := db.Sync(do_backup)
-    if err != nil {
-        log.Panicf("Error syncing DB: %s", err)
-    }
 }
 
 func (db *Db) Search(query string, fuzzy bool) *Account {

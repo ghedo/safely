@@ -101,21 +101,18 @@ Options:
     case args["--create"].(bool) == true:
         mydb, err := db.Create(db_file)
         if err != nil {
+            mydb.Remove()
             log.Fatalf("Error creating database: %s", err)
         }
 
-        defer func() {
-            if r := recover(); r != nil {
-                mydb.Remove()
-                os.Exit(1)
-            }
+        err = mydb.Sync(false)
+        if err != nil {
+            log.Fatalf("Error syncing DB: %s", err)
+        }
 
-            if quiet != true {
-                log.Printf("Database '%s' created", db_file)
-            }
-        }()
-
-        defer mydb.DeferredSync(false)
+        if quiet != true {
+            log.Printf("Database '%s' created", db_file)
+        }
 
     case args["--add"] != nil:
         account := args["--add"].(string)
@@ -124,18 +121,6 @@ Options:
         if err != nil {
             log.Fatalf("Error opening database: %s", err)
         }
-
-        defer func() {
-            if r := recover(); r != nil {
-                os.Exit(1)
-            }
-
-            if quiet != true {
-                log.Printf("Account '%s' added", account)
-            }
-        }()
-
-        defer mydb.DeferredSync(!no_backup)
 
         if mydb.Search(account, false) != nil {
             log.Fatalf("Account '%s' already exists", account)
@@ -168,6 +153,15 @@ Options:
         mydb.Accounts[account] = &db.Account{
             user, pass, tfkey,
             time.Now().Format(time.RFC3339),
+        }
+
+        err = mydb.Sync(!no_backup)
+        if err != nil {
+            log.Fatalf("Error syncing DB: %s", err)
+        }
+
+        if quiet != true {
+            log.Printf("Account '%s' added", account)
         }
 
     case args["--user"] != nil:
@@ -246,18 +240,6 @@ Options:
             log.Fatalf("Error opening database: %s", err)
         }
 
-        defer func() {
-            if r := recover(); r != nil {
-                os.Exit(1)
-            }
-
-            if quiet != true {
-                log.Printf("Account '%s' edited", query)
-            }
-        }()
-
-        defer mydb.DeferredSync(!no_backup)
-
         account := mydb.Search(query, false)
         if account == nil {
             log.Fatalf("Account '%s' not found", query)
@@ -307,6 +289,15 @@ Options:
             time.Now().Format(time.RFC3339),
         }
 
+        err = mydb.Sync(!no_backup)
+        if err != nil {
+            log.Fatalf("Error syncing DB: %s", err)
+        }
+
+        if quiet != true {
+            log.Printf("Account '%s' edited", query)
+        }
+
     case args["--remove"] != nil:
         account := args["--remove"].(string)
 
@@ -315,23 +306,20 @@ Options:
             log.Fatalf("Error opening database: %s", err)
         }
 
-        defer func() {
-            if r := recover(); r != nil {
-                os.Exit(1)
-            }
-
-            if quiet != true {
-                log.Printf("Account '%s' removed", account)
-            }
-        }()
-
-        defer mydb.DeferredSync(!no_backup)
-
         if mydb.Search(account, false) == nil {
             log.Fatalf("Account '%s' not found", account)
         }
 
         delete(mydb.Accounts, account)
+
+        err = mydb.Sync(!no_backup)
+        if err != nil {
+            log.Fatalf("Error syncing DB: %s", err)
+        }
+
+        if quiet != true {
+            log.Printf("Account '%s' removed", account)
+        }
 
     case args["--search"] != nil:
         query := args["--search"].(string)
