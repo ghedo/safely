@@ -38,53 +38,53 @@ import "strings"
 var keys []string
 
 func Init(keys_spec string) error {
-	keys = strings.Split(keys_spec, " ")
+    keys = strings.Split(keys_spec, " ")
 
-	return nil
+    return nil
 }
 
 func Encrypt(data []byte) ([]byte, error) {
-	var stdout, stderr bytes.Buffer
+    var stdout, stderr bytes.Buffer
 
-	args := []string{
-		"--encrypt", "--sign", "--batch", "--armor",
-		"--always-trust", "--default-recipient-self",
-	}
+    args := []string{
+        "--encrypt", "--sign", "--batch", "--armor",
+        "--always-trust", "--default-recipient-self",
+    }
 
-	for _, k := range keys {
-		if k == "" {
-			break
-		}
+    for _, k := range keys {
+        if k == "" {
+            break
+        }
 
-		args = append(args, "--recipient", k)
-	}
+        args = append(args, "--recipient", k)
+    }
 
-	cmd := exec.Command("gpg", args...)
+    cmd := exec.Command("gpg", args...)
 
-	cmd.Stdin  = bytes.NewBuffer(data)
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
+    cmd.Stdin  = bytes.NewBuffer(data)
+    cmd.Stdout = &stdout
+    cmd.Stderr = &stderr
 
-	err := cmd.Run()
-	if err != nil {
-		return nil, fmt.Errorf("%s", stderr.String())
-	}
+    err := cmd.Run()
+    if err != nil {
+        return nil, fmt.Errorf("%s", stderr.String())
+    }
 
-	return stdout.Bytes(), nil
+    return stdout.Bytes(), nil
 }
 
 func DecryptFile(path string) ([]byte, error) {
-	var stdout, stderr bytes.Buffer
+    var stdout, stderr bytes.Buffer
 
-	cmd := exec.Command("gpg", "--batch", "--decrypt", path)
+    cmd := exec.Command("gpg", "--batch", "--decrypt", path)
 
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
+    cmd.Stdout = &stdout
+    cmd.Stderr = &stderr
 
-	err := cmd.Run()
-	if err != nil {
-		return nil, fmt.Errorf("%s", stderr.String())
-	}
+    err := cmd.Run()
+    if err != nil {
+        return nil, fmt.Errorf("%s", stderr.String())
+    }
 
-	return stdout.Bytes(), nil
+    return stdout.Bytes(), nil
 }
