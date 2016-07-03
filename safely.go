@@ -33,6 +33,7 @@ package main
 import "fmt"
 import "log"
 import "os"
+import "os/signal"
 import "regexp"
 import "time"
 
@@ -94,6 +95,8 @@ Options:
     fuzzy := args["--fuzzy"].(bool)
     quiet := args["--quiet"].(bool)
     no_backup := args["--no-backup"].(bool)
+
+    signal.Ignore(os.Interrupt)
 
     gpg.Init(keys_spec)
 
