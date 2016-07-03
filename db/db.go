@@ -39,7 +39,7 @@ import "path/filepath"
 import "regexp"
 import "os"
 
-import "gpg"
+import "github.com/ghedo/safely/gpg"
 
 type Db struct {
 	Path     string              `json:"-"`

@@ -9,8 +9,8 @@ BUILDTAGS=debug
 all: safely
 
 safely:
-	go get -tags '$(BUILDTAGS)' -d -v main/safely
-	go install -tags '$(BUILDTAGS)' main/safely
+	go get -tags '$(BUILDTAGS)' -d -v .
+	go build -tags '$(BUILDTAGS)' .
 
 vet:
 	go vet ./...
@@ -25,6 +25,6 @@ release-all: BUILDTAGS=release
 release-all: all
 
 clean:
-	go clean -i main/safely db gpg oath util
+	go clean -i .
 
 .PHONY: all safely deps clean

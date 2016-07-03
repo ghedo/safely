@@ -39,11 +39,11 @@ import "time"
 import "golang.org/x/crypto/ssh/terminal"
 import "github.com/docopt/docopt-go"
 
-import "db"
-import "gpg"
-import "oath"
-import "term"
-import "util"
+import "github.com/ghedo/safely/db"
+import "github.com/ghedo/safely/gpg"
+import "github.com/ghedo/safely/oath"
+import "github.com/ghedo/safely/term"
+import "github.com/ghedo/safely/util"
 
 func main() {
 	log.SetFlags(0)

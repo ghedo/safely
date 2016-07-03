@@ -31,6 +31,12 @@ default-key <your_key_id>
 Where `<your_key_id>` is the ID of your key. This way the `--keys <your_key_id>`
 argument used below can be omitted.
 
+To install, simply run:
+
+```bash
+$ go get github.com/ghedo/safely
+```
+
 ## Usage
 
 Here are a few usage examples:
