@@ -3,18 +3,17 @@ safely
 
 ![Travis CI](https://secure.travis-ci.org/ghedo/safely.png)
 
-**safely** is a command-line tool to manage passwords. It stores all your
-login information (usernames and passwords) in a simple JSON-formatted
-file, encrypted and signed using your OpenPGP key: this makes it pretty
-secure and allows manual decryption of the database when needed.
+**safely** is a command-line tool for managing passwords. It stores all your
+credentials in a simple JSON-formatted file, encrypted and signed using your
+private OpenPGP key: this makes it pretty secure and allows manual decryption
+of the database when needed.
 
 ## Features
 
- * Simple database format and schema (to ease manual manipulation)
- * Secure, GPG-based encryption which allows manual decryption (see above)
- * Fool-proof command-line based and non interactive interface
- * Support for generating google-authenticator compatible 2-factor
-   authentication tokens (TOTP).
+ * Simple database format and GPG-based encryption to avoid lock-in.
+ * Fool-proof command-line interface.
+ * Support for 2-factor authentication, based on the TOTP algorithm
+   (compatible with e.g. google-authenticator).
 
 ## Getting Started
 
