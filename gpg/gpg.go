@@ -32,6 +32,7 @@ package gpg
 
 import "bytes"
 import "fmt"
+import "io"
 import "os/exec"
 import "strings"
 
@@ -44,8 +45,6 @@ func Init(keys_spec string) error {
 }
 
 func Encrypt(data []byte) ([]byte, error) {
-    var stdout, stderr bytes.Buffer
-
     args := []string{
         "--encrypt", "--sign", "--batch", "--armor",
         "--always-trust", "--default-recipient-self",
@@ -59,25 +58,33 @@ func Encrypt(data []byte) ([]byte, error) {
         args = append(args, "--recipient", k)
     }
 
-    cmd := exec.Command("gpg", args...)
-
-    cmd.Stdin  = bytes.NewBuffer(data)
-    cmd.Stdout = &stdout
-    cmd.Stderr = &stderr
-
-    err := cmd.Run()
-    if err != nil {
-        return nil, fmt.Errorf("%s", stderr.String())
-    }
-
-    return stdout.Bytes(), nil
+    return ExecGPG(args, bytes.NewBuffer(data))
 }
 
 func DecryptFile(path string) ([]byte, error) {
+    args := []string{ "--batch", "--decrypt", path }
+    return ExecGPG(args, nil)
+}
+
+func ExecGPG(args []string, in io.Reader) ([]byte, error) {
+    var cmd *exec.Cmd
     var stdout, stderr bytes.Buffer
 
-    cmd := exec.Command("gpg", "--batch", "--decrypt", path)
+    for _, name := range []string{ "gpg2", "gpg" } {
+        exe, err := exec.LookPath(name)
+        if err != nil {
+            continue
+        }
 
+        cmd = exec.Command(exe, args...)
+        break
+    }
+
+    if cmd == nil {
+        return nil, fmt.Errorf("Could not find gpg executable")
+    }
+
+    cmd.Stdin  = in
     cmd.Stdout = &stdout
     cmd.Stderr = &stderr
 
