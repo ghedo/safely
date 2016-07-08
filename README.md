@@ -93,7 +93,7 @@ safely is distributed as source code. Build with:
 $ make
 ```
 
-## COPYRIGHT
+## Copyright
 
 Copyright (C) 2014 Alessandro Ghedini <alessandro@ghedini.me>
 
