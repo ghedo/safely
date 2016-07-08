@@ -36,6 +36,7 @@ import "io/ioutil"
 import "fmt"
 import "path/filepath"
 import "regexp"
+import "sort"
 import "os"
 
 import "github.com/ghedo/safely/gpg"
@@ -141,9 +142,17 @@ func (db *Db) Search(query string, fuzzy bool) *Account {
         return db.Accounts[query]
     }
 
-    for name, account := range db.Accounts {
+    keys := []string{}
+
+    for name, _ := range db.Accounts {
+        keys = append(keys, name)
+    }
+
+    sort.Strings(keys)
+
+    for _, name := range keys {
         if m, _ := regexp.MatchString(query, name); m {
-            return account
+            return db.Accounts[name]
         }
     }
 
