@@ -1,0 +1,29 @@
+Source: safely
+Section: utils
+Priority: optional
+Maintainer: Alessandro Ghedini <ghedo@debian.org>
+Build-Depends: debhelper (>= 9), dh-golang, golang-go,
+ golang-github-docopt-docopt-go-dev,
+ golang-golang-x-crypto-dev
+Standards-Version: 4.1.0
+Homepage: https://github.com/ghedo/safely
+Vcs-Browser: https://anonscm.debian.org/cgit/pkg-go/packages/safely.git
+Vcs-Git: https://anonscm.debian.org/git/pkg-go/packages/safely.git
+XS-Go-Import-Path: github.com/ghedo/safely
+
+Package: safely
+Architecture: any
+Built-Using: ${misc:Built-Using}
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: pretty command-line password manager
+ Safely is a command-line tool for managing passwords. It stores all your
+ credentials in a simple JSON-formatted file, encrypted and signed using your
+ private OpenPGP key: this makes it pretty secure and allows manual decryption
+ of the database when needed.
+ .
+ safely's features include:
+  * Simple database format and schema (to ease manual manipulation)
+  * Secure, GPG-based encryption which allows manual decryption (see above)
+  * Fool-proof command-line based and non interactive interface
+  * Support for generating google-authenticator compatible 2-factor
+    authentication tokens (TOTP).

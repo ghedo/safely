@@ -1,0 +1,22 @@
+#!/usr/bin/make -f
+
+TAG = $(shell git tag | tail -1 | cut -b 2-)
+VER = $(shell dpkg-parsechangelog | sed -rne 's,^Version: ([^-]+).*,\1,p')
+
+%:
+	dh $@ --buildsystem=golang --with=golang
+
+override_dh_auto_test:
+	# No tests
+
+override_dh_install:
+	dh_install
+	$(RM) -r debian/safely/usr/bin/testapp \
+	  debian/safely/usr/share/gocode/src/github.com/ghedo/safely/vendor
+
+override_dh_strip:
+	dh_strip --no-automatic-dbgsym
+
+create-orig:
+	git archive --format=tar.gz --prefix=safely-$(TAG)/	\
+		--output safely_$(VER).orig.tar.gz master

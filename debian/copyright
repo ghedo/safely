@@ -1,0 +1,15 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: safely
+Source: https://github.com/ghedo/safely
+
+Files: *
+Copyright: 2011 Alessandro Ghedini
+License: BSD-2-clause
+
+Files: debian/*
+Copyright: 2016 Alessandro Ghedini <ghedo@debian.org>
+License: BSD-2-clause
+Comment: Debian packaging is licensed under the same terms as upstream
+
+License: BSD-2-clause
+TODO
