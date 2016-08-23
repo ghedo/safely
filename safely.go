@@ -39,6 +39,7 @@ import "time"
 
 import "golang.org/x/crypto/ssh/terminal"
 import "github.com/docopt/docopt-go"
+import "github.com/nbutton23/zxcvbn-go"
 
 import "github.com/ghedo/safely/db"
 import "github.com/ghedo/safely/gpg"
@@ -60,6 +61,7 @@ Usage:
   safely [options] [--keys <keys>] --edit <name>
   safely [options] [--keys <keys>] --remove <name>
   safely [options] --search <query>
+  safely [options] --check <pass>
   safely [options] --dump
 
 Options:
@@ -71,6 +73,7 @@ Options:
   -e <name>, --edit <name>      Modify the given account.
   -r <name>, --remove <name>    Remove the given account.
   -s <query>, --search <query>  Search the database for the given query.
+  -C <pass>, --check <pass>     Check password strength.
   -d, --dump                    Dump the database in JSON format.
   -D <file>, --db <file>        Use this database file [default: ~/.config/safely/passwords.db].
   -K <keys>, --keys <keys>      Use these space-separated GPG keys [default: ].
@@ -144,6 +147,11 @@ Options:
         if err != nil {
             log.Fatalf("Error reading input: %s", err)
         }
+
+        score := zxcvbn.PasswordStrength(pass, nil)
+
+        log.Printf("It would take %v seconds (%s) to crack the password\n",
+                   score.CrackTime, score.CrackTimeDisplay)
 
         tfkey, err := term.ReadLine(fmt.Sprintf(
             "Enter 2-factor auth key for '%s': ", account,
@@ -337,6 +345,14 @@ Options:
                 fmt.Println(name)
             }
         }
+
+    case args["--check"] != nil:
+        pass := args["--check"].(string)
+
+        score := zxcvbn.PasswordStrength(pass, nil)
+
+        log.Printf("It would take %v seconds (%s) to crack the password\n",
+                   score.CrackTime, score.CrackTimeDisplay)
 
     case args["--dump"].(bool) == true:
         plain, err := db.Dump(db_file)

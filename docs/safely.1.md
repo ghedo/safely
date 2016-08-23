@@ -54,6 +54,11 @@ Remove the given account.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Search the database for the given query.
 
+`-C, --check`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Measure the given password's complexity.
+
 `-d, --dump`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
