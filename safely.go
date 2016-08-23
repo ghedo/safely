@@ -73,7 +73,7 @@ Options:
   -e <name>, --edit <name>      Modify the given account.
   -r <name>, --remove <name>    Remove the given account.
   -s <query>, --search <query>  Search the database for the given query.
-  -C <pass>, --check <pass>     Check password strength.
+  -C <pass>, --check <pass>     Estimate the given password's strength.
   -d, --dump                    Dump the database in JSON format.
   -D <file>, --db <file>        Use this database file [default: ~/.config/safely/passwords.db].
   -K <keys>, --keys <keys>      Use these space-separated GPG keys [default: ].

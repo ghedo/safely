@@ -14,7 +14,7 @@ of the database when needed.
  * Fool-proof command-line interface.
  * Support for 2-factor authentication, based on the TOTP algorithm
    (compatible with e.g. google-authenticator).
- * [Password complexity estimation](http://tech.dropbox.com/?p=165).
+ * Support for [password strength estimation](http://tech.dropbox.com/?p=165).
 
 ## Getting Started
 

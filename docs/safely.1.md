@@ -57,7 +57,7 @@ Search the database for the given query.
 `-C, --check`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Measure the given password's complexity.
+Estimate the given password's strength.
 
 `-d, --dump`
 
