@@ -256,6 +256,19 @@ Options:
             log.Fatalf("Account '%s' not found", query)
         }
 
+        name, err := term.ReadLine(fmt.Sprintf(
+            "Enter new account name [%s]: ",
+            query,
+        ))
+
+        if err != nil {
+            log.Fatalf("Error reading input: %s", err)
+        }
+
+        if name == "" {
+            name = query
+        }
+
         user, err := term.ReadLine(fmt.Sprintf(
             "Enter new user name for '%s' [%s]: ",
             query, account.User,
@@ -295,9 +308,13 @@ Options:
             tfkey = account.TFKey
         }
 
-        mydb.Accounts[query] = &db.Account{
+        mydb.Accounts[name] = &db.Account{
             user, pass, tfkey,
             time.Now().Format(time.RFC3339),
+        }
+
+        if name != query {
+            delete(mydb.Accounts, query)
         }
 
         err = mydb.Sync(!no_backup)
