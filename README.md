@@ -91,7 +91,7 @@ See the [man page](http://ghedo.github.io/safely/) for more information.
 safely is distributed as source code. Build with:
 
 ```bash
-$ make
+$ go build
 ```
 
 ## Copyright
