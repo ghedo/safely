@@ -4,6 +4,7 @@ sudo: false
 
 go:
  - "1.11"
+ - "stable"
  - "tip"
 
 env:
