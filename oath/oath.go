@@ -65,7 +65,7 @@ func HOTP(secret []byte, count int64) int {
 
 func TOTP(secret []byte) int {
     step  := int64(30)
-    count := int64(math.Floor(float64(time.Now().Unix() / step)))
+    count := int64(math.Round(float64(time.Now().Unix() / step)))
 
     return HOTP(secret, count)
 }
